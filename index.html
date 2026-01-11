@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAWARAN co</title>
+
+<style>
+:root {
+    --primary: #007bff;
+    --bg: #f5f5f5;
+    --border-radius: 8px;
+}
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 10px;
+    background: var(--bg);
+}
+
+.container {
+    max-width: 420px;
+    margin: auto;
+    background: #fff;
+    padding: 16px;
+    border-radius: var(--border-radius);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+input, select, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+button {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+.stars {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.stars span {
+    font-size: 32px;
+    cursor: pointer;
+    color: #ccc;
+}
+
+.stars span.active {
+    color: gold;
+}
+
+.loading {
+    text-align: center;
+    color: red;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- تسجيل المندوب -->
+<div class="container" id="loginBox">
+    <h2>تسجيل المندوب</h2>
+    <input id="repName" placeholder="اسم المندوب - ناوی نوێنەر ">
+    <input id="city" placeholder="المدينة - شار">
+    <button id="loginBtn">دخول</button>
+</div>
+
+<!-- النموذج -->
+<div class="container" id="formBox" hidden>
+    <h2>MAWARAN co</h2>
+
+    <input id="tradeName" placeholder="الاسم التجاري- ناوی بازرگانی" required>
+    <input id="ownerName" placeholder="اسم المالك - ناوی خاوەن دوکانەکە" required>
+    <input id="address" placeholder="العنوان - ناونیشان" required>
+    <input id="phone" type="tel" inputmode="numeric" placeholder="رقم الهاتف" required>
+
+    <select id="category" required>
+        <option value="">اختر الفئة - هەڵبژێرە</option>
+    </select>
+
+    <textarea id="note" placeholder="ملاحظة" required></textarea>
+
+    <div class="stars" id="stars">
+        <span data-rate="1">★</span>
+        <span data-rate="2">★</span>
+        <span data-rate="3">★</span>
+        <span data-rate="4">★</span>
+        <span data-rate="5">★</span>
+    </div>
+
+    <input id="visitDays" type="number" inputmode="numeric" placeholder="كل كم يوم يتم الزيارة - ماوەی نێوان سەردانەکان" required>
+
+    <button id="sendBtn">إرسال-ناردن</button>
+    <div class="loading" id="loading"></div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUBeetTPjPLWhshRnAQ9PIqxDzSIiHNfJayrbs13Mj9j-TFwSmuWU2A2YmOESE60vqww/exec";
+
+const loginBox = document.querySelector("#loginBox");
+const formBox  = document.querySelector("#formBox");
+const sendBtn  = document.querySelector("#sendBtn");
+const loading  = document.querySelector("#loading");
+const category = document.querySelector("#category");
+
+let rating = 0;
+
+/* ===== تسجيل المندوب ===== */
+document.querySelector("#loginBtn").addEventListener("click", () => {
+    const name = repName.value.trim();
+    const cityName = city.value.trim();
+
+    if (!name || !cityName) {
+        alert("الرجاء إدخال جميع البيانات");
+        return;
+    }
+
+    localStorage.setItem("repName", name);
+    localStorage.setItem("city", cityName);
+    showForm();
+});
+
+/* ===== عرض النموذج ===== */
+function showForm() {
+    loginBox.hidden = true;
+    formBox.hidden = false;
+    loadCategories();
+}
+
+/* ===== تحميل الفئات ===== */
+function loadCategories() {
+    fetch(`${SCRIPT_URL}?action=categories`)
+        .then(res => res.json())
+        .then(data => {
+            category.innerHTML = `<option value="">اختر الفئة</option>`;
+            data.forEach(item => {
+                const option = document.createElement("option");
+                option.value = item;
+                option.textContent = item;
+                category.appendChild(option);
+            });
+        });
+}
+
+/* ===== التقييم بالنجوم ===== */
+document.querySelectorAll("#stars span").forEach(star => {
+    star.addEventListener("click", () => {
+        rating = Number(star.dataset.rate);
+        document.querySelectorAll("#stars span").forEach((s, i) => {
+            s.classList.toggle("active", i < rating);
+        });
+    });
+});
+
+/* ===== إرسال البيانات ===== */
+sendBtn.addEventListener("click", () => {
+    if (!rating) {
+        alert("يرجى اختيار التقييم");
+        return;
+    }
+
+    sendBtn.disabled = true;
+    loading.textContent = "جاري الإرسال...";
+
+    navigator.geolocation.getCurrentPosition(pos => {
+        const payload = {
+            rep: localStorage.getItem("repName"),
+            city: localStorage.getItem("city"),
+            trade: tradeName.value,
+            owner: ownerName.value,
+            address: address.value,
+            phone: phone.value,
+            category: category.value,
+            note: note.value,
+            rating,
+            visitDays: visitDays.value,
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude
+        };
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        }).then(() => {
+            alert("تم الإرسال بنجاح");
+            location.reload();
+        });
+    });
+});
+
+/* ===== تحقق تلقائي ===== */
+if (localStorage.getItem("repName")) {
+    showForm();
+}
+</script>
+
+</body>
+</html>
