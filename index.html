@@ -38,26 +38,6 @@ button {
 button:disabled {
     background: gray;
 }
-
-/* ⭐⭐⭐⭐⭐ */
-.rating {
-    display: flex;
-    justify-content: center;
-    direction: ltr;
-    margin: 15px 0;
-}
-.rating input {
-    display: none;
-}
-.rating label {
-    font-size: 35px;
-    color: #ccc;
-    cursor: pointer;
-}
-.rating input:checked ~ label {
-    color: gold;
-}
-
 .loading {
     text-align: center;
     color: red;
@@ -88,14 +68,15 @@ button:disabled {
 
     <textarea id="note" placeholder="ملاحظة" required></textarea>
 
-    <!-- ⭐ التقييم -->
-    <div class="rating">
-        <input type="radio" name="rating" id="star5" value="5"><label for="star5">★</label>
-        <input type="radio" name="rating" id="star4" value="4"><label for="star4">★</label>
-        <input type="radio" name="rating" id="star3" value="3"><label for="star3">★</label>
-        <input type="radio" name="rating" id="star2" value="2"><label for="star2">★</label>
-        <input type="radio" name="rating" id="star1" value="1"><label for="star1">★</label>
-    </div>
+    <!-- ✅ التقييم (قائمة منسدلة) -->
+    <select id="rating" required>
+        <option value="">اختر مستوى التقييم</option>
+        <option value="1">⭐ ضعيف جدًا</option>
+        <option value="2">⭐⭐ ضعيف</option>
+        <option value="3">⭐⭐⭐ متوسط</option>
+        <option value="4">⭐⭐⭐⭐ جيد</option>
+        <option value="5">⭐⭐⭐⭐⭐ ممتاز</option>
+    </select>
 
     <input id="visitDays" type="number" placeholder="كل كم يوم يتم الزيارة" required>
 
@@ -106,14 +87,14 @@ button:disabled {
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWkqaqYva8A-Tz0lQ7O8AAw9HJo0GuFuQMbLufjuC9O2x3NaeOJ-j2bkdYrZ3uzrtkug/exec";
 
-// حفظ المندوب
+// تسجيل المندوب
 function saveRep(){
-    if(!repName.value || !city.value){
+    if(!repName.value.trim() || !city.value.trim()){
         alert("جميع الحقول إلزامية");
         return;
     }
-    localStorage.setItem("repName", repName.value);
-    localStorage.setItem("city", city.value);
+    localStorage.setItem("repName", repName.value.trim());
+    localStorage.setItem("city", city.value.trim());
     showForm();
 }
 
@@ -130,26 +111,27 @@ function loadCategories(){
         .then(data => {
             category.innerHTML = '<option value="">اختر الفئة</option>';
             data.forEach(c=>{
-                const op=document.createElement("option");
-                op.value=c;
-                op.textContent=c;
+                const op = document.createElement("option");
+                op.value = c;
+                op.textContent = c;
                 category.appendChild(op);
             });
         });
 }
 
-// إرسال
+// إرسال البيانات
 function sendData(){
 
-    const ratingInput = document.querySelector('input[name="rating"]:checked');
+    const fields = [
+        tradeName, ownerName, address, phone,
+        category, note, rating, visitDays
+    ];
 
-    if(
-        !tradeName.value || !ownerName.value || !address.value ||
-        !phone.value || !category.value || !note.value ||
-        !visitDays.value || !ratingInput
-    ){
-        alert("جميع الحقول إلزامية");
-        return;
+    for(let f of fields){
+        if(!f.value.trim()){
+            alert("جميع الحقول إلزامية");
+            return;
+        }
     }
 
     sendBtn.disabled = true;
@@ -166,24 +148,24 @@ function sendData(){
         formData.append("phone", phone.value);
         formData.append("category", category.value);
         formData.append("note", note.value);
-        formData.append("rating", ratingInput.value);
+        formData.append("rating", rating.value);
         formData.append("visitDays", visitDays.value);
         formData.append("lat", pos.coords.latitude);
         formData.append("lng", pos.coords.longitude);
 
-        fetch(SCRIPT_URL,{method:"POST",body:formData})
+        fetch(SCRIPT_URL, { method: "POST", body: formData })
         .then(()=>{
             alert("تم الإرسال بنجاح");
             location.reload();
         })
         .catch(()=>{
-            alert("فشل الإرسال");
-            sendBtn.disabled=false;
+            alert("حدث خطأ أثناء الإرسال");
+            sendBtn.disabled = false;
         });
 
     }, ()=>{
         alert("يرجى السماح بتحديد الموقع");
-        sendBtn.disabled=false;
+        sendBtn.disabled = false;
     });
 }
 
