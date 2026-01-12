@@ -22,7 +22,6 @@ body {
 }
 h2 {
     text-align: center;
-    color: #333;
 }
 input, select, textarea, button {
     width: 100%;
@@ -30,35 +29,38 @@ input, select, textarea, button {
     margin-top: 8px;
     font-size: 16px;
 }
-textarea {
-    resize: vertical;
-}
 button {
     background: #007bff;
-    color: white;
+    color: #fff;
     border: none;
     border-radius: 5px;
 }
 button:disabled {
     background: gray;
 }
-.stars {
-    text-align: center;
-    margin-top: 10px;
+
+/* ⭐⭐⭐⭐⭐ */
+.rating {
+    display: flex;
+    justify-content: center;
+    direction: ltr;
+    margin: 15px 0;
 }
-.stars span {
-    font-size: 30px;
-    cursor: pointer;
+.rating input {
+    display: none;
+}
+.rating label {
+    font-size: 35px;
     color: #ccc;
-    touch-action: manipulation;
+    cursor: pointer;
 }
-.stars .active {
+.rating input:checked ~ label {
     color: gold;
 }
+
 .loading {
     text-align: center;
     color: red;
-    margin-top: 10px;
 }
 </style>
 </head>
@@ -86,15 +88,16 @@ button:disabled {
 
     <textarea id="note" placeholder="ملاحظة" required></textarea>
 
-    <div class="stars" id="stars">
-        <span data-star="1">★</span>
-        <span data-star="2">★</span>
-        <span data-star="3">★</span>
-        <span data-star="4">★</span>
-        <span data-star="5">★</span>
+    <!-- ⭐ التقييم -->
+    <div class="rating">
+        <input type="radio" name="rating" id="star5" value="5"><label for="star5">★</label>
+        <input type="radio" name="rating" id="star4" value="4"><label for="star4">★</label>
+        <input type="radio" name="rating" id="star3" value="3"><label for="star3">★</label>
+        <input type="radio" name="rating" id="star2" value="2"><label for="star2">★</label>
+        <input type="radio" name="rating" id="star1" value="1"><label for="star1">★</label>
     </div>
 
-    <input id="visitDays" type="number" inputmode="numeric" placeholder="كل كم يوم يتم الزيارة" required>
+    <input id="visitDays" type="number" placeholder="كل كم يوم يتم الزيارة" required>
 
     <button id="sendBtn" onclick="sendData()">إرسال</button>
     <div class="loading" id="loading"></div>
@@ -102,20 +105,18 @@ button:disabled {
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWkqaqYva8A-Tz0lQ7O8AAw9HJo0GuFuQMbLufjuC9O2x3NaeOJ-j2bkdYrZ3uzrtkug/exec";
-let rating = 0;
 
-// تسجيل المندوب
+// حفظ المندوب
 function saveRep(){
-    if(!repName.value.trim() || !city.value.trim()){
+    if(!repName.value || !city.value){
         alert("جميع الحقول إلزامية");
         return;
     }
-    localStorage.setItem("repName", repName.value.trim());
-    localStorage.setItem("city", city.value.trim());
+    localStorage.setItem("repName", repName.value);
+    localStorage.setItem("city", city.value);
     showForm();
 }
 
-// عرض النموذج
 function showForm(){
     loginBox.style.display = "none";
     formBox.style.display = "block";
@@ -128,49 +129,26 @@ function loadCategories(){
         .then(r => r.json())
         .then(data => {
             category.innerHTML = '<option value="">اختر الفئة</option>';
-            data.forEach(c => {
-                const op = document.createElement("option");
-                op.value = c;
-                op.textContent = c;
+            data.forEach(c=>{
+                const op=document.createElement("option");
+                op.value=c;
+                op.textContent=c;
                 category.appendChild(op);
             });
         });
 }
 
-// النجوم (دعم الهاتف)
-const stars = document.querySelectorAll("#stars span");
-
-stars.forEach(star => {
-    star.addEventListener("click", () => setStars(star.dataset.star));
-    star.addEventListener("touchstart", e => {
-        e.preventDefault();
-        setStars(star.dataset.star);
-    });
-});
-
-function setStars(n){
-    rating = Number(n);
-    stars.forEach((s,i)=>{
-        s.classList.toggle("active", i < rating);
-    });
-}
-
-// إرسال البيانات
+// إرسال
 function sendData(){
-    const requiredFields = [
-        tradeName, ownerName, address, phone,
-        category, note, visitDays
-    ];
 
-    for(let f of requiredFields){
-        if(!f.value.trim()){
-            alert("جميع الحقول إلزامية");
-            return;
-        }
-    }
+    const ratingInput = document.querySelector('input[name="rating"]:checked');
 
-    if(rating === 0){
-        alert("يرجى اختيار التقييم");
+    if(
+        !tradeName.value || !ownerName.value || !address.value ||
+        !phone.value || !category.value || !note.value ||
+        !visitDays.value || !ratingInput
+    ){
+        alert("جميع الحقول إلزامية");
         return;
     }
 
@@ -188,26 +166,24 @@ function sendData(){
         formData.append("phone", phone.value);
         formData.append("category", category.value);
         formData.append("note", note.value);
-        formData.append("rating", rating);
+        formData.append("rating", ratingInput.value);
         formData.append("visitDays", visitDays.value);
         formData.append("lat", pos.coords.latitude);
         formData.append("lng", pos.coords.longitude);
 
-        fetch(SCRIPT_URL, { method: "POST", body: formData })
-        .then(() => {
+        fetch(SCRIPT_URL,{method:"POST",body:formData})
+        .then(()=>{
             alert("تم الإرسال بنجاح");
             location.reload();
         })
-        .catch(() => {
+        .catch(()=>{
             alert("فشل الإرسال");
-            sendBtn.disabled = false;
-            loading.textContent = "";
+            sendBtn.disabled=false;
         });
 
-    }, () => {
+    }, ()=>{
         alert("يرجى السماح بتحديد الموقع");
-        sendBtn.disabled = false;
-        loading.textContent = "";
+        sendBtn.disabled=false;
     });
 }
 
