@@ -1,180 +1,165 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MAWARAN co</title>
 
 <style>
-body {
-    font-family: Arial;
-    background: #f5f5f5;
-    margin: 0;
-    padding: 10px;
-    direction: rtl;
+body{
+  font-family: Arial;
+  background:#f5f5f5;
+  margin:0;
+  padding:10px;
 }
-.container {
-    max-width: 420px;
-    margin: auto;
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
+.container{
+  max-width:420px;
+  margin:auto;
+  background:#fff;
+  padding:15px;
+  border-radius:8px;
 }
-h2 {
-    text-align: center;
+h2{text-align:center}
+input,select,textarea,button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  font-size:16px;
 }
-input, select, textarea, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    font-size: 16px;
+button{
+  background:#007bff;
+  color:#fff;
+  border:none;
+  border-radius:5px;
 }
-button {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-}
-button:disabled {
-    background: gray;
-}
-.loading {
-    text-align: center;
-    color: red;
-}
+.loading{text-align:center;color:red}
 </style>
 </head>
 
 <body>
 
 <div class="container" id="loginBox">
-    <h2>تسجيل المندوب</h2>
-    <input id="repName" placeholder="اسم المندوب الثلاثي" required>
-    <input id="city" placeholder="المدينة" required>
-    <button onclick="saveRep()">دخول</button>
+  <h2>تسجيل المندوب</h2>
+  <input id="repName" placeholder="اسم المندوب الثلاثي" required>
+  <input id="city" placeholder="المدينة" required>
+  <button onclick="saveRep()">دخول</button>
 </div>
 
-<div class="container" id="formBox" style="display:none;">
-    <h2>MAWARAN co</h2>
+<div class="container" id="formBox" style="display:none">
+  <h2>MAWARAN co</h2>
 
-    <input id="tradeName" placeholder="الاسم التجاري" required>
-    <input id="ownerName" placeholder="اسم المالك" required>
-    <input id="address" placeholder="العنوان" required>
-    <input id="phone" type="tel" inputmode="numeric" placeholder="رقم الهاتف" required>
+  <select id="useOil" required>
+    <option value="">هل يستخدم زيت؟</option>
+    <option value="نعم">نعم</option>
+    <option value="لا">لا</option>
+  </select>
 
-    <select id="category" required>
-        <option value="">اختر الفئة</option>
-    </select>
+  <input id="tradeName" placeholder="الاسم التجاري" required>
+  <input id="ownerName" placeholder="اسم المالك" required>
+  <input id="address" placeholder="العنوان" required>
+  <input id="phone" type="tel" inputmode="numeric" placeholder="رقم الهاتف" required>
 
-    <textarea id="note" placeholder="ملاحظة" required></textarea>
+  <select id="category" required>
+    <option value="">اختر الفئة</option>
+  </select>
 
-    <!-- ✅ التقييم (قائمة منسدلة) -->
-    <select id="rating" required>
-        <option value="">اختر مستوى التقييم</option>
-        <option value="1">⭐ ضعيف جدًا</option>
-        <option value="2">⭐⭐ ضعيف</option>
-        <option value="3">⭐⭐⭐ متوسط</option>
-        <option value="4">⭐⭐⭐⭐ جيد</option>
-        <option value="5">⭐⭐⭐⭐⭐ ممتاز</option>
-    </select>
+  <textarea id="note" placeholder="ملاحظة" required></textarea>
 
-    <input id="visitDays" type="number" placeholder="كل كم يوم يتم الزيارة" required>
+  <select id="rating" required>
+    <option value="">التقييم</option>
+    <option value="1">⭐</option>
+    <option value="2">⭐⭐</option>
+    <option value="3">⭐⭐⭐</option>
+    <option value="4">⭐⭐⭐⭐</option>
+    <option value="5">⭐⭐⭐⭐⭐</option>
+  </select>
 
-    <button id="sendBtn" onclick="sendData()">إرسال</button>
-    <div class="loading" id="loading"></div>
+  <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
+
+  <input id="oilType" placeholder="نوع الزيت" required>
+  <input id="oilGrade" placeholder="درجة الزيت" required>
+
+  <select id="distance" required>
+    <option value="">المسافة</option>
+    <option value="3 كم">3 كم</option>
+    <option value="5 كم">5 كم</option>
+    <option value="10 كم">10 كم</option>
+    <option value="15 كم">15 كم</option>
+  </select>
+
+  <input id="price" type="number" placeholder="سعر اللتر" required>
+
+  <input id="image" type="file" accept="image/*" capture="environment" required>
+
+  <button id="sendBtn" onclick="sendData()">إرسال</button>
+  <div class="loading" id="loading"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzl0eHZx8eLZkwijeFj2lRh3rISZW_-ICxOWXWkDET6tAmOPZ5G--1XalRbnsiAklXv3Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbypaWCWNYGXtNJz5a0EqLJ3IYs31OZz_SQ_hNFsbAi-PyZqlhhDA848lEDOPPOY3ko0NA/exec";
 
-// تسجيل المندوب
 function saveRep(){
-    if(!repName.value.trim() || !city.value.trim()){
-        alert("جميع الحقول إلزامية");
-        return;
-    }
-    localStorage.setItem("repName", repName.value.trim());
-    localStorage.setItem("city", city.value.trim());
-    showForm();
+  if(!repName.value || !city.value) return alert("الحقول مطلوبة");
+  localStorage.setItem("repName",repName.value);
+  localStorage.setItem("city",city.value);
+  showForm();
 }
 
 function showForm(){
-    loginBox.style.display = "none";
-    formBox.style.display = "block";
-    loadCategories();
+  loginBox.style.display="none";
+  formBox.style.display="block";
+  loadCategories();
 }
 
-// تحميل الفئات
 function loadCategories(){
-    fetch(SCRIPT_URL + "?action=categories")
-        .then(r => r.json())
-        .then(data => {
-            category.innerHTML = '<option value="">اختر الفئة</option>';
-            data.forEach(c=>{
-                const op = document.createElement("option");
-                op.value = c;
-                op.textContent = c;
-                category.appendChild(op);
-            });
-        });
-}
-
-// إرسال البيانات
-function sendData(){
-
-    const fields = [
-        tradeName, ownerName, address, phone,
-        category, note, rating, visitDays
-    ];
-
-    for(let f of fields){
-        if(!f.value.trim()){
-            alert("جميع الحقول إلزامية");
-            return;
-        }
-    }
-
-    sendBtn.disabled = true;
-    loading.textContent = "جاري الإرسال...";
-
-    navigator.geolocation.getCurrentPosition(pos => {
-
-        const formData = new FormData();
-        formData.append("rep", localStorage.getItem("repName"));
-        formData.append("city", localStorage.getItem("city"));
-        formData.append("trade", tradeName.value);
-        formData.append("owner", ownerName.value);
-        formData.append("address", address.value);
-        formData.append("phone", phone.value);
-        formData.append("category", category.value);
-        formData.append("note", note.value);
-        formData.append("rating", rating.value);
-        formData.append("visitDays", visitDays.value);
-        formData.append("lat", pos.coords.latitude);
-        formData.append("lng", pos.coords.longitude);
-
-        fetch(SCRIPT_URL, { method: "POST", body: formData })
-        .then(()=>{
-            alert("تم الإرسال بنجاح");
-            location.reload();
-        })
-        .catch(()=>{
-            alert("حدث خطأ أثناء الإرسال");
-            sendBtn.disabled = false;
-        });
-
-    }, ()=>{
-        alert("يرجى السماح بتحديد الموقع");
-        sendBtn.disabled = false;
+  fetch(SCRIPT_URL+"?action=categories")
+  .then(r=>r.json())
+  .then(d=>{
+    category.innerHTML='<option value="">اختر الفئة</option>';
+    d.forEach(c=>{
+      let o=document.createElement("option");
+      o.value=c;o.textContent=c;
+      category.appendChild(o);
     });
+  });
 }
 
-// دخول تلقائي
-if(localStorage.getItem("repName")){
-    showForm();
+function sendData(){
+  const img=image.files[0];
+  if(!img) return alert("الصورة مطلوبة");
+
+  const r=new FileReader();
+  r.onloadend=function(){
+    const fd=new FormData();
+    fd.append("rep",localStorage.getItem("repName"));
+    fd.append("city",localStorage.getItem("city"));
+    fd.append("trade",tradeName.value);
+    fd.append("owner",ownerName.value);
+    fd.append("address",address.value);
+    fd.append("phone",phone.value);
+    fd.append("category",category.value);
+    fd.append("note",note.value);
+    fd.append("rating",rating.value);
+    fd.append("visitDays",visitDays.value);
+    fd.append("useOil",useOil.value);
+    fd.append("oilType",oilType.value);
+    fd.append("oilGrade",oilGrade.value);
+    fd.append("distance",distance.value);
+    fd.append("price",price.value);
+    fd.append("imageBase64",r.result);
+
+    navigator.geolocation.getCurrentPosition(pos=>{
+      fd.append("lat",pos.coords.latitude);
+      fd.append("lng",pos.coords.longitude);
+      fetch(SCRIPT_URL,{method:"POST",body:fd})
+      .then(()=>{alert("تم الإرسال");location.reload();});
+    });
+  };
+  r.readAsDataURL(img);
 }
+
+if(localStorage.getItem("repName")) showForm();
 </script>
 
 </body>
 </html>
-
