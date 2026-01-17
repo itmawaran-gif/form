@@ -6,45 +6,113 @@
 <title>MAWARAN co</title>
 
 <style>
-body{font-family:Arial;background:#f5f5f5;margin:0;padding:10px}
-.container{max-width:420px;margin:auto;background:#fff;padding:15px;border-radius:8px}
-h2{text-align:center}
-input,select,textarea,button{width:100%;padding:10px;margin-top:8px;font-size:16px}
-button{background:#007bff;color:#fff;border:none;border-radius:5px}
-button:disabled{background:gray}
-.loading{text-align:center;color:red;margin-top:10px}
+body{
+  font-family: "Segoe UI", Tahoma;
+  background: linear-gradient(135deg,#eef2f3,#d9e4f5);
+  margin:0;
+  padding:15px;
+}
+.card{
+  max-width:430px;
+  margin:auto;
+  background:#fff;
+  border-radius:14px;
+  padding:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.15);
+}
+h2{
+  text-align:center;
+  margin-bottom:15px;
+  color:#003366;
+}
+label{
+  font-size:14px;
+  color:#444;
+}
+input,select,textarea,button{
+  width:100%;
+  padding:11px;
+  margin-top:6px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:#007bff;
+}
+button{
+  background:#007bff;
+  color:#fff;
+  font-weight:bold;
+  border:none;
+}
+button:disabled{
+  background:#888;
+}
+.loading{
+  text-align:center;
+  color:#d00;
+  font-weight:bold;
+}
+.required::after{
+  content:" *";
+  color:red;
+}
 </style>
 </head>
 
 <body>
 
-<div class="container" id="loginBox">
+<div class="card" id="loginBox">
   <h2>تسجيل المندوب</h2>
-  <input id="repName" placeholder="اسم المندوب الثلاثي">
-  <input id="city" placeholder="المدينة">
+
+  <label class="required">اسم المندوب</label>
+  <input id="repName" required>
+
+  <label class="required">المدينة</label>
+  <input id="city" required>
+
   <button onclick="saveRep()">دخول</button>
 </div>
 
-<div class="container" id="formBox" style="display:none">
+<div class="card" id="formBox" style="display:none">
   <h2>MAWARAN co</h2>
 
-  <select id="useOil">
-    <option value="">هل يستخدم زيت؟</option>
-    <option value="نعم">نعم</option>
-    <option value="لا">لا</option>
+  <label class="required">هل يستخدم زيت؟</label>
+  <select id="useOil" required>
+    <option value="">اختر</option>
+    <option>نعم</option>
+    <option>لا</option>
   </select>
 
-  <input id="tradeName" placeholder="الاسم التجاري">
-  <input id="ownerName" placeholder="اسم المالك">
-  <input id="address" placeholder="العنوان">
-  <input id="phone" type="tel" inputmode="numeric" placeholder="رقم الهاتف">
+  <label class="required">الاسم التجاري</label>
+  <input id="tradeName" required>
 
-  <select id="category"><option value="">اختر الفئة</option></select>
+  <label class="required">اسم المالك</label>
+  <input id="ownerName" required>
 
-  <textarea id="note" placeholder="ملاحظة"></textarea>
+  <label class="required">العنوان</label>
+  <input id="address" required>
 
-  <select id="rating">
-    <option value="">التقييم</option>
+  <label class="required">رقم الهاتف</label>
+  <input id="phone" type="tel" inputmode="numeric" required>
+
+  <label class="required">الفئة</label>
+  <select id="category" required>
+    <option value="">اختر</option>
+    <option>محل زيوت</option>
+    <option>كراج</option>
+    <option>محطة وقود</option>
+  </select>
+
+  <label class="required">ملاحظة</label>
+  <textarea id="note" required></textarea>
+
+  <label class="required">التقييم</label>
+  <select id="rating" required>
+    <option value="">اختر</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
     <option value="3">⭐⭐⭐</option>
@@ -52,48 +120,62 @@ button:disabled{background:gray}
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <input id="visitDays" type="number" placeholder="أيام الزيارة">
-  <input id="oilType" placeholder="نوع الزيت">
-  <input id="oilGrade" placeholder="درجة الزيت">
+  <label class="required">أيام الزيارة</label>
+  <input id="visitDays" type="number" required>
 
+  <label>نوع الزيت</label>
+  <input id="oilType">
+
+  <label>درجة الزيت</label>
+  <input id="oilGrade">
+
+  <label>المسافة</label>
   <select id="distance">
-    <option value="">المسافة</option>
-    <option value="3 كم">3 كم</option>
-    <option value="5 كم">5 كم</option>
-    <option value="10 كم">10 كم</option>
-    <option value="15 كم">15 كم</option>
+    <option value="">اختر</option>
+    <option>3 كم</option>
+    <option>5 كم</option>
+    <option>10 كم</option>
+    <option>15 كم</option>
   </select>
 
-  <input id="price" type="number" placeholder="سعر اللتر">
-  <input id="image" type="file" accept="image/*" capture="environment">
+  <label>سعر اللتر</label>
+  <input id="price" type="number">
+
+  <label class="required">صورة الموقع</label>
+  <input id="image" type="file" accept="image/*" capture="environment" required>
 
   <button id="sendBtn" onclick="sendData()">إرسال</button>
   <div class="loading" id="loading"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYvCvlrrRBtI7ytAghL2-RaRHDGEsG8Ml5ijh4snzhHDEecTaluVrBytTcBirRTT5umA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNknsiZluIPtOEIR6smzCGUdj2Xbx3KxTLBR16pa4lDcRqXeoOhG4FNQC_SiXvPHbteA/exec";
 
 function saveRep(){
-  if(!repName.value || !city.value) return alert("الحقول مطلوبة");
+  if(!repName.value || !city.value){
+    alert("الحقول مطلوبة");
+    return;
+  }
   localStorage.setItem("repName",repName.value);
   localStorage.setItem("city",city.value);
-  showForm();
-}
-
-function showForm(){
   loginBox.style.display="none";
   formBox.style.display="block";
-  fetch(SCRIPT_URL+"?action=categories")
-  .then(r=>r.json())
-  .then(d=>{
-    category.innerHTML='<option value="">اختر الفئة</option>';
-    d.forEach(c=>{
-      let o=document.createElement("option");
-      o.value=c;o.textContent=c;
-      category.appendChild(o);
-    });
-  });
+}
+
+function compressImage(file, callback){
+  const img = new Image();
+  const r = new FileReader();
+  r.onload = e => img.src = e.target.result;
+  img.onload = () => {
+    const c = document.createElement("canvas");
+    const max = 800;
+    const s = max / img.width;
+    c.width = max;
+    c.height = img.height * s;
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    callback(c.toDataURL("image/jpeg",0.6));
+  };
+  r.readAsDataURL(file);
 }
 
 function sendData(){
@@ -101,10 +183,13 @@ function sendData(){
   loading.textContent="جاري الإرسال...";
 
   const img=image.files[0];
-  if(!img){ alert("الصورة مطلوبة"); resetBtn(); return; }
+  if(!img){
+    alert("الصورة مطلوبة");
+    reset();
+    return;
+  }
 
-  const r=new FileReader();
-  r.onloadend=function(){
+  compressImage(img, base64=>{
     const fd=new FormData();
     fd.append("rep",localStorage.getItem("repName"));
     fd.append("city",localStorage.getItem("city"));
@@ -121,35 +206,30 @@ function sendData(){
     fd.append("oilGrade",oilGrade.value);
     fd.append("distance",distance.value);
     fd.append("price",price.value);
-    fd.append("imageBase64",r.result);
+    fd.append("imageBase64",base64);
 
     navigator.geolocation.getCurrentPosition(pos=>{
       fd.append("lat",pos.coords.latitude);
       fd.append("lng",pos.coords.longitude);
-
       fetch(SCRIPT_URL,{method:"POST",body:fd})
-      .then(res=>res.text())
-      .then(txt=>{
-        if(txt.trim()==="success"){
+      .then(r=>r.text())
+      .then(t=>{
+        if(t.trim()==="success"){
           alert("تم الإرسال بنجاح");
           location.reload();
         }else{
-          alert(txt);
-          resetBtn();
+          alert(t);
+          reset();
         }
-      })
-      .catch(()=>{ alert("خطأ اتصال"); resetBtn(); });
+      });
     });
-  };
-  r.readAsDataURL(img);
+  });
 }
 
-function resetBtn(){
+function reset(){
   sendBtn.disabled=false;
   loading.textContent="";
 }
-
-if(localStorage.getItem("repName")) showForm();
 </script>
 
 </body>
