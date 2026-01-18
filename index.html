@@ -62,7 +62,6 @@ button:disabled{background:#aaa;}
 
 <body>
 
-<!-- تسجيل المندوب -->
 <div class="container" id="loginBox">
   <h2>تسجيل المندوب</h2>
   <input id="repInput" placeholder="اسم المندوب الثلاثي" required>
@@ -70,7 +69,6 @@ button:disabled{background:#aaa;}
   <button onclick="saveRep()">تسجيل</button>
 </div>
 
-<!-- الفورم -->
 <div class="container" id="formBox" style="display:none;">
 
   <div class="info">
@@ -79,28 +77,28 @@ button:disabled{background:#aaa;}
 
   <h2>MAWARAN CO</h2>
 
-  <select id="useOil" required>
+  <select id="useOil">
     <option value="">هل يستخدم زيت؟</option>
     <option value="نعم">نعم</option>
     <option value="لا">لا</option>
   </select>
 
-  <input id="trade" placeholder="الاسم التجاري" required>
-  <input id="owner" placeholder="اسم المالك" required>
-  <input id="address" placeholder="العنوان" required>
-  <input id="phone" type="tel" placeholder="رقم الهاتف" required>
+  <input id="trade" placeholder="الاسم التجاري">
+  <input id="owner" placeholder="اسم المالك">
+  <input id="address" placeholder="العنوان">
+  <input id="phone" type="tel" placeholder="رقم الهاتف">
 
-  <!-- حقل الفئة (جديد) -->
-  <select id="category" required>
+  <!-- الفئة -->
+  <select id="category">
     <option value="">اختر الفئة</option>
     <option value="كراج">كراج</option>
     <option value="جملة">جملة</option>
     <option value="مفرد">مفرد</option>
   </select>
 
-  <textarea id="note" placeholder="ملاحظات" required></textarea>
+  <textarea id="note" placeholder="ملاحظات"></textarea>
 
-  <select id="rating" required>
+  <select id="rating">
     <option value="">اختر التقييم</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
@@ -109,12 +107,11 @@ button:disabled{background:#aaa;}
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
+  <input id="visitDays" type="number" placeholder="أيام الزيارة">
+  <input id="oilType" placeholder="نوع الزيت">
+  <input id="oilGrade" placeholder="درجة الزيت">
 
-  <input id="oilType" placeholder="نوع الزيت" required>
-  <input id="oilGrade" placeholder="درجة الزيت" required>
-
-  <select id="distance" required>
+  <select id="distance">
     <option value="">المسافة المقطوعة</option>
     <option value="3 كم">3 كم</option>
     <option value="5 كم">5 كم</option>
@@ -122,9 +119,10 @@ button:disabled{background:#aaa;}
     <option value="15 كم">15 كم</option>
   </select>
 
-  <input id="price" type="number" placeholder="سعر اللتر" required>
+  <input id="price" type="number" placeholder="سعر اللتر">
 
-  <input id="imageInput" type="file" accept="image/*" capture="environment" required>
+  <!-- الصورة (نفس كودك الأصلي تمامًا) -->
+  <input id="imageInput" type="file" accept="image/*" capture="environment">
   <div class="preview" id="preview"></div>
 
   <button id="sendBtn" onclick="sendData()">إرسال</button>
@@ -135,6 +133,7 @@ button:disabled{background:#aaa;}
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxLawb6Wwb6qtzLCFp0q0hm-6y7M14phvLwYDEU7j6sECftn5x7Q7T4-ezNWtQqjSEIA/exec";
 let imageBase64 = "";
 
+/* تسجيل المندوب */
 function saveRep(){
   if(!repInput.value.trim() || !cityInput.value.trim()){
     alert("جميع الحقول إلزامية");
@@ -152,6 +151,7 @@ function showForm(){
   cityShow.textContent = localStorage.getItem("city");
 }
 
+/* الصورة — بدون أي تغيير */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
@@ -174,7 +174,14 @@ imageInput.addEventListener("change", ()=>{
   reader.readAsDataURL(file);
 });
 
+/* إرسال البيانات */
 function sendData(){
+
+  if(!category.value){
+    alert("الرجاء اختيار الفئة");
+    return;
+  }
+
   if(!imageBase64){
     alert("الصورة إلزامية");
     return;
@@ -191,7 +198,7 @@ function sendData(){
     fd.append("owner", owner.value);
     fd.append("address", address.value);
     fd.append("phone", phone.value);
-    fd.append("category", category.value); // الفئة
+    fd.append("category", category.value);
     fd.append("note", note.value);
     fd.append("rating", rating.value);
     fd.append("visitDays", visitDays.value);
