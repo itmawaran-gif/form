@@ -79,7 +79,6 @@ button:disabled{background:#aaa;}
 
   <h2>MAWARAN CO</h2>
 
-  <!-- هل يستخدم زيت (في البداية) -->
   <select id="useOil" required>
     <option value="">هل يستخدم زيت؟</option>
     <option value="نعم">نعم</option>
@@ -90,6 +89,14 @@ button:disabled{background:#aaa;}
   <input id="owner" placeholder="اسم المالك" required>
   <input id="address" placeholder="العنوان" required>
   <input id="phone" type="tel" placeholder="رقم الهاتف" required>
+
+  <!-- الفئة (جديد) -->
+  <select id="category" required>
+    <option value="">اختر الفئة</option>
+    <option value="كراج">كراج</option>
+    <option value="مفرد">مفرد</option>
+    <option value="جملة">جملة</option>
+  </select>
 
   <textarea id="note" placeholder="ملاحظات" required></textarea>
 
@@ -117,7 +124,6 @@ button:disabled{background:#aaa;}
 
   <input id="price" type="number" placeholder="سعر اللتر" required>
 
-  <!-- صورة (إلزامية) -->
   <input id="imageInput" type="file" accept="image/*" capture="environment" required>
   <div class="preview" id="preview"></div>
 
@@ -129,18 +135,16 @@ button:disabled{background:#aaa;}
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH7ayK_oYC1TROqFOyChIBQoktELaXAHEcTlqEpjhVLOAIELVRb9tWPpo3PJUyzba/exec";
 let imageBase64 = "";
 
-/* تسجيل المندوب */
 function saveRep(){
-  if(!repInput.value.trim() || !cityInput.value.trim()){
+  if(!repInput.value || !cityInput.value){
     alert("جميع الحقول إلزامية");
     return;
   }
-  localStorage.setItem("repName", repInput.value.trim());
-  localStorage.setItem("city", cityInput.value.trim());
+  localStorage.setItem("repName", repInput.value);
+  localStorage.setItem("city", cityInput.value);
   showForm();
 }
 
-/* عرض الفورم */
 function showForm(){
   loginBox.style.display="none";
   formBox.style.display="block";
@@ -148,34 +152,25 @@ function showForm(){
   cityShow.textContent = localStorage.getItem("city");
 }
 
-/* الصورة */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
 
-  const img = new Image();
   const reader = new FileReader();
-
-  reader.onload = e => img.src = e.target.result;
-
-  img.onload = ()=>{
-    const canvas = document.createElement("canvas");
-    const scale = 800 / img.width;
-    canvas.width = 800;
-    canvas.height = img.height * scale;
-    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
-    imageBase64 = canvas.toDataURL("image/jpeg",0.6);
-    preview.innerHTML = '<img src="'+imageBase64+'">';
+  reader.onload = e =>{
+    imageBase64 = e.target.result;
+    preview.innerHTML = `<img src="${imageBase64}">`;
   };
-
   reader.readAsDataURL(file);
 });
 
-/* إرسال البيانات */
 function sendData(){
-  if(!imageBase64){
-    alert("الصورة إلزامية");
-    return;
+  const requiredFields = document.querySelectorAll("#formBox input, #formBox select, #formBox textarea");
+  for(let f of requiredFields){
+    if(!f.value){
+      alert("جميع الحقول إلزامية");
+      return;
+    }
   }
 
   sendBtn.disabled=true;
@@ -189,6 +184,7 @@ function sendData(){
     fd.append("owner", owner.value);
     fd.append("address", address.value);
     fd.append("phone", phone.value);
+    fd.append("category", category.value);
     fd.append("note", note.value);
     fd.append("rating", rating.value);
     fd.append("visitDays", visitDays.value);
@@ -207,14 +203,13 @@ function sendData(){
       location.reload();
     })
     .catch(()=>{
-      alert("حدث خطأ أثناء الإرسال");
+      alert("حدث خطأ");
       sendBtn.disabled=false;
       loading.textContent="";
     });
   });
 }
 
-/* دخول تلقائي */
 if(localStorage.getItem("repName") && localStorage.getItem("city")){
   showForm();
 }
