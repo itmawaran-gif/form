@@ -90,6 +90,7 @@ button:disabled{background:#aaa;}
   <input id="address" placeholder="العنوان" required>
   <input id="phone" type="tel" placeholder="رقم الهاتف" required>
 
+  <!-- الفئة (جديد) -->
   <select id="category" required>
     <option value="">اختر الفئة</option>
     <option value="كراج">كراج</option>
@@ -109,6 +110,7 @@ button:disabled{background:#aaa;}
   </select>
 
   <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
+
   <input id="oilType" placeholder="نوع الزيت" required>
   <input id="oilGrade" placeholder="درجة الزيت" required>
 
@@ -130,10 +132,9 @@ button:disabled{background:#aaa;}
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxLawb6Wwb6qtzLCFp0q0hm-6y7M14phvLwYDEU7j6sECftn5x7Q7T4-ezNWtQqjSEIA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH7ayK_oYC1TROqFOyChIBQoktELaXAHEcTlqEpjhVLOAIELVRb9tWPpo3PJUyzba/exec";
 let imageBase64 = "";
 
-/* حفظ بيانات المندوب */
 function saveRep(){
   if(!repInput.value || !cityInput.value){
     alert("جميع الحقول إلزامية");
@@ -151,7 +152,6 @@ function showForm(){
   cityShow.textContent = localStorage.getItem("city");
 }
 
-/* قراءة الصورة Base64 */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
@@ -164,19 +164,19 @@ imageInput.addEventListener("change", ()=>{
   reader.readAsDataURL(file);
 });
 
-/* إرسال البيانات */
 function sendData(){
-
-  if(!imageBase64){
-    alert("الرجاء اختيار صورة");
-    return;
+  const requiredFields = document.querySelectorAll("#formBox input, #formBox select, #formBox textarea");
+  for(let f of requiredFields){
+    if(!f.value){
+      alert("جميع الحقول إلزامية");
+      return;
+    }
   }
 
-  sendBtn.disabled = true;
-  loading.textContent = "جاري الإرسال...";
+  sendBtn.disabled=true;
+  loading.textContent="جاري الإرسال...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
-
     const fd = new FormData();
     fd.append("rep", localStorage.getItem("repName"));
     fd.append("city", localStorage.getItem("city"));
@@ -197,28 +197,19 @@ function sendData(){
     fd.append("lng", pos.coords.longitude);
     fd.append("imageBase64", imageBase64);
 
-    fetch(SCRIPT_URL,{
-      method:"POST",
-      body: fd
-    })
-    .then(()=> {
+    fetch(SCRIPT_URL,{method:"POST",body:fd})
+    .then(()=>{
       alert("تم الإرسال بنجاح");
       location.reload();
     })
     .catch(()=>{
-      alert("حدث خطأ أثناء الإرسال");
-      sendBtn.disabled = false;
-      loading.textContent = "";
+      alert("حدث خطأ");
+      sendBtn.disabled=false;
+      loading.textContent="";
     });
-
-  },()=>{
-    alert("فشل تحديد الموقع");
-    sendBtn.disabled = false;
-    loading.textContent = "";
   });
 }
 
-/* دخول تلقائي */
 if(localStorage.getItem("repName") && localStorage.getItem("city")){
   showForm();
 }
@@ -226,4 +217,3 @@ if(localStorage.getItem("repName") && localStorage.getItem("city")){
 
 </body>
 </html>
-
