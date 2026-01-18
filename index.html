@@ -7,61 +7,101 @@
 
 <style>
 body{
-  font-family:Tahoma;
-  background:#f2f2f2;
-  padding:10px;
-}
-.box{
-  background:#fff;
+  font-family: Tahoma, Arial;
+  background:#f2f4f7;
+  margin:0;
   padding:15px;
-  border-radius:10px;
+}
+.container{
   max-width:420px;
   margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
+h2{text-align:center;margin-bottom:10px;}
 input,select,textarea,button{
   width:100%;
-  margin-top:8px;
-  padding:10px;
-  font-size:14px;
+  padding:12px;
+  margin-top:10px;
+  font-size:15px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
+textarea{resize:none;}
 button{
   background:#007bff;
   color:#fff;
   border:none;
-  border-radius:6px;
+}
+button:disabled{background:#aaa;}
+.info{
+  background:#eef3ff;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  font-size:14px;
+  text-align:center;
+}
+.loading{
+  text-align:center;
+  margin-top:10px;
+  color:#d00;
+}
+.preview{
+  margin-top:10px;
+  text-align:center;
 }
 .preview img{
   max-width:100%;
-  margin-top:8px;
-  border-radius:6px;
+  border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h3>MAWARAN CO</h3>
+<!-- تسجيل المندوب -->
+<div class="container" id="loginBox">
+  <h2>تسجيل المندوب</h2>
+  <input id="repInput" placeholder="اسم المندوب الثلاثي" required>
+  <input id="cityInput" placeholder="المدينة" required>
+  <button onclick="saveRep()">تسجيل</button>
+</div>
 
-  <input id="rep" placeholder="اسم المندوب">
-  <input id="city" placeholder="المدينة">
+<!-- الفورم -->
+<div class="container" id="formBox" style="display:none;">
 
-  <input id="trade" placeholder="الاسم التجاري">
-  <input id="owner" placeholder="اسم المالك">
-  <input id="address" placeholder="العنوان">
-  <input id="phone" placeholder="الهاتف">
+  <div class="info">
+    👤 <b id="repShow"></b> | 📍 <b id="cityShow"></b>
+  </div>
 
-  <select id="category">
-    <option value="">الفئة</option>
-    <option>كراج</option>
-    <option>جملة</option>
-    <option>مفرد</option>
+  <h2>MAWARAN CO</h2>
+
+  <select id="useOil" required>
+    <option value="">هل يستخدم زيت؟</option>
+    <option value="نعم">نعم</option>
+    <option value="لا">لا</option>
   </select>
 
-  <textarea id="note" placeholder="ملاحظات"></textarea>
+  <input id="trade" placeholder="الاسم التجاري" required>
+  <input id="owner" placeholder="اسم المالك" required>
+  <input id="address" placeholder="العنوان" required>
+  <input id="phone" type="tel" placeholder="رقم الهاتف" required>
 
-  <select id="rating">
-    <option value="">التقييم</option>
+  <!-- الفئة -->
+  <select id="category" required>
+    <option value="">اختر الفئة</option>
+    <option value="كراج">كراج</option>
+    <option value="جملة">جملة</option>
+    <option value="مفرد">مفرد</option>
+  </select>
+
+  <textarea id="note" placeholder="ملاحظات" required></textarea>
+
+  <select id="rating" required>
+    <option value="">اختر التقييم</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
     <option value="3">⭐⭐⭐</option>
@@ -69,38 +109,80 @@ button{
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <input id="visitDays" type="number" placeholder="أيام الزيارة">
-  <input id="useOil" placeholder="يستخدم زيت">
-  <input id="oilType" placeholder="نوع الزيت">
-  <input id="oilGrade" placeholder="درجة الزيت">
-  <input id="distance" placeholder="المسافة">
-  <input id="price" placeholder="السعر">
+  <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
 
-  <input id="image" type="file" accept="image/*" capture="environment">
+  <input id="oilType" placeholder="نوع الزيت" required>
+  <input id="oilGrade" placeholder="درجة الزيت" required>
+
+  <select id="distance" required>
+    <option value="">المسافة المقطوعة</option>
+    <option value="3 كم">3 كم</option>
+    <option value="5 كم">5 كم</option>
+    <option value="10 كم">10 كم</option>
+    <option value="15 كم">15 كم</option>
+  </select>
+
+  <input id="price" type="number" placeholder="سعر اللتر" required>
+
+  <!-- الصورة -->
+  <input id="imageInput" type="file" accept="image/*" capture="environment" required>
   <div class="preview" id="preview"></div>
 
-  <button onclick="send()">إرسال</button>
+  <button id="sendBtn" onclick="sendData()">إرسال</button>
+  <div class="loading" id="loading"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzzqLx7ENWeHNJMfPdR5Dc_EPvdVnjBJiocHIe9lfH2dHVtQQUsXqsjJaz8XMo81SvtTA/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzAp7nEHWrYG1Ibem1vrvg1iJaQaHZ8jNyXM5Trgkw6gUgaIGEE-MUVC12u5wIbEH2hRw/exec";
 let imageBase64 = "";
 
-image.onchange = () => {
-  const file = image.files[0];
+/* تسجيل المندوب */
+function saveRep(){
+  if(!repInput.value.trim() || !cityInput.value.trim()){
+    alert("جميع الحقول إلزامية");
+    return;
+  }
+  localStorage.setItem("repName", repInput.value.trim());
+  localStorage.setItem("city", cityInput.value.trim());
+  showForm();
+}
+
+function showForm(){
+  loginBox.style.display="none";
+  formBox.style.display="block";
+  repShow.textContent = localStorage.getItem("repName");
+  cityShow.textContent = localStorage.getItem("city");
+}
+
+/* معالجة الصورة */
+imageInput.addEventListener("change", ()=>{
+  const file = imageInput.files[0];
+  if(!file) return;
+
   const reader = new FileReader();
-  reader.onload = () => {
-    imageBase64 = reader.result;
+  reader.onload = e=>{
+    imageBase64 = e.target.result;
     preview.innerHTML = `<img src="${imageBase64}">`;
   };
   reader.readAsDataURL(file);
-};
+});
 
-function send(){
+/* إرسال البيانات */
+function sendData(){
+
+  if(!imageBase64){
+    alert("الصورة إلزامية");
+    return;
+  }
+
+  sendBtn.disabled = true;
+  loading.textContent = "جاري الإرسال...";
+
   navigator.geolocation.getCurrentPosition(pos=>{
+
     const data = new URLSearchParams({
-      rep: rep.value,
-      city: city.value,
+      rep: localStorage.getItem("repName"),
+      city: localStorage.getItem("city"),
       trade: trade.value,
       owner: owner.value,
       address: address.value,
@@ -121,12 +203,27 @@ function send(){
 
     fetch(SCRIPT_URL,{
       method:"POST",
-      headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+      headers:{
+        "Content-Type":"application/x-www-form-urlencoded"
+      },
       body:data.toString()
     })
-    .then(()=>alert("تم الإرسال بنجاح"))
-    .catch(()=>alert("فشل الإرسال"));
+    .then(r=>r.text())
+    .then(t=>{
+      alert("تم الإرسال بنجاح");
+      location.reload();
+    })
+    .catch(()=>{
+      alert("حدث خطأ أثناء الإرسال");
+      sendBtn.disabled=false;
+      loading.textContent="";
+    });
   });
+}
+
+/* دخول تلقائي */
+if(localStorage.getItem("repName") && localStorage.getItem("city")){
+  showForm();
 }
 </script>
 
