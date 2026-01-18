@@ -3,116 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAWARAN co</title>
+<title>MAWARAN CO</title>
 
 <style>
 body{
-  font-family: "Segoe UI", Tahoma;
-  background: linear-gradient(135deg,#eef2f3,#d9e4f5);
+  font-family: Tahoma, Arial;
+  background:#f2f4f7;
   margin:0;
   padding:15px;
 }
-.card{
-  max-width:430px;
+.container{
+  max-width:420px;
   margin:auto;
   background:#fff;
-  border-radius:14px;
   padding:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,.15);
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
-h2{
-  text-align:center;
-  margin-bottom:15px;
-  color:#003366;
-}
-label{
-  font-size:14px;
-  color:#444;
-}
+h2{text-align:center;margin-bottom:10px;}
 input,select,textarea,button{
   width:100%;
-  padding:11px;
-  margin-top:6px;
-  margin-bottom:12px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:12px;
+  margin-top:10px;
   font-size:15px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
-input:focus,select:focus,textarea:focus{
-  outline:none;
-  border-color:#007bff;
-}
+textarea{resize:none;}
 button{
   background:#007bff;
   color:#fff;
-  font-weight:bold;
   border:none;
 }
-button:disabled{
-  background:#888;
+button:disabled{background:#aaa;}
+.info{
+  background:#eef3ff;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  font-size:14px;
+  text-align:center;
 }
 .loading{
   text-align:center;
+  margin-top:10px;
   color:#d00;
-  font-weight:bold;
 }
-.required::after{
-  content:" *";
-  color:red;
+.preview{
+  margin-top:10px;
+  text-align:center;
+}
+.preview img{
+  max-width:100%;
+  border-radius:8px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="card" id="loginBox">
+<!-- تسجيل المندوب (مرة واحدة فقط) -->
+<div class="container" id="loginBox">
   <h2>تسجيل المندوب</h2>
-
-  <label class="required">اسم المندوب</label>
-  <input id="repName" required>
-
-  <label class="required">المدينة</label>
-  <input id="city" required>
-
-  <button onclick="saveRep()">دخول</button>
+  <input id="repInput" placeholder="اسم المندوب الثلاثي" required>
+  <input id="cityInput" placeholder="المدينة" required>
+  <button onclick="saveRep()">تسجيل</button>
 </div>
 
-<div class="card" id="formBox" style="display:none">
-  <h2>MAWARAN co</h2>
+<!-- الفورم -->
+<div class="container" id="formBox" style="display:none;">
 
-  <label class="required">هل يستخدم زيت؟</label>
-  <select id="useOil" required>
-    <option value="">اختر</option>
-    <option>نعم</option>
-    <option>لا</option>
-  </select>
+  <div class="info">
+    👤 <b id="repShow"></b> | 📍 <b id="cityShow"></b>
+  </div>
 
-  <label class="required">الاسم التجاري</label>
-  <input id="tradeName" required>
+  <h2>MAWARAN CO</h2>
 
-  <label class="required">اسم المالك</label>
-  <input id="ownerName" required>
+  <input id="trade" placeholder="الاسم التجاري" required>
+  <input id="owner" placeholder="اسم المالك" required>
+  <input id="address" placeholder="العنوان" required>
+  <input id="phone" type="tel" placeholder="رقم الهاتف" required>
 
-  <label class="required">العنوان</label>
-  <input id="address" required>
+  <textarea id="note" placeholder="ملاحظات" required></textarea>
 
-  <label class="required">رقم الهاتف</label>
-  <input id="phone" type="tel" inputmode="numeric" required>
-
-  <label class="required">الفئة</label>
-  <select id="category" required>
-    <option value="">اختر</option>
-    <option>محل زيوت</option>
-    <option>كراج</option>
-    <option>محطة وقود</option>
-  </select>
-
-  <label class="required">ملاحظة</label>
-  <textarea id="note" required></textarea>
-
-  <label class="required">التقييم</label>
   <select id="rating" required>
-    <option value="">اختر</option>
+    <option value="">اختر التقييم</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
     <option value="3">⭐⭐⭐</option>
@@ -120,115 +95,127 @@ button:disabled{
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <label class="required">أيام الزيارة</label>
-  <input id="visitDays" type="number" required>
+  <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
 
-  <label>نوع الزيت</label>
-  <input id="oilType">
-
-  <label>درجة الزيت</label>
-  <input id="oilGrade">
-
-  <label>المسافة</label>
-  <select id="distance">
-    <option value="">اختر</option>
-    <option>3 كم</option>
-    <option>5 كم</option>
-    <option>10 كم</option>
-    <option>15 كم</option>
+  <!-- يستخدم زيت -->
+  <select id="useOil" required>
+    <option value="">هل يستخدم زيت؟</option>
+    <option value="نعم">نعم</option>
+    <option value="لا">لا</option>
   </select>
 
-  <label>سعر اللتر</label>
-  <input id="price" type="number">
+  <input id="oilType" placeholder="نوع الزيت" required>
+  <input id="oilGrade" placeholder="درجة الزيت" required>
 
-  <label class="required">صورة الموقع</label>
-  <input id="image" type="file" accept="image/*" capture="environment" required>
+  <select id="distance" required>
+    <option value="">المسافة المقطوعة</option>
+    <option value="3 كم">3 كم</option>
+    <option value="5 كم">5 كم</option>
+    <option value="10 كم">10 كم</option>
+    <option value="15 كم">15 كم</option>
+  </select>
+
+  <input id="price" type="number" placeholder="سعر اللتر" required>
+
+  <!-- صورة -->
+  <input id="imageInput" type="file" accept="image/*" capture="environment" required>
+  <div class="preview" id="preview"></div>
 
   <button id="sendBtn" onclick="sendData()">إرسال</button>
   <div class="loading" id="loading"></div>
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW_iapLhfEZxAkHL9Q7p9Aa5SM59Aw2LErzvfDpPKxKtyX-RgNZqCK4DmKnb9FRaYvsQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRS0BSR9eqw9VpX-51TfMxk3MN70cPwbZIGuIP5ds35Imn28v1iR59mpQ-mxynVWA46g/exec";
+let imageBase64 = "";
 
+/* تسجيل المندوب */
 function saveRep(){
-  if(!repName.value || !city.value){
-    alert("الحقول مطلوبة");
+  if(!repInput.value.trim() || !cityInput.value.trim()){
+    alert("جميع الحقول إلزامية");
     return;
   }
-  localStorage.setItem("repName",repName.value);
-  localStorage.setItem("city",city.value);
+  localStorage.setItem("repName", repInput.value.trim());
+  localStorage.setItem("city", cityInput.value.trim());
+  showForm();
+}
+
+/* عرض الفورم */
+function showForm(){
   loginBox.style.display="none";
   formBox.style.display="block";
+  repShow.textContent = localStorage.getItem("repName");
+  cityShow.textContent = localStorage.getItem("city");
 }
 
-function compressImage(file, callback){
+/* ضغط وتحويل الصورة */
+imageInput.addEventListener("change", ()=>{
+  const file = imageInput.files[0];
+  if(!file) return;
+
   const img = new Image();
-  const r = new FileReader();
-  r.onload = e => img.src = e.target.result;
-  img.onload = () => {
-    const c = document.createElement("canvas");
-    const max = 800;
-    const s = max / img.width;
-    c.width = max;
-    c.height = img.height * s;
-    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-    callback(c.toDataURL("image/jpeg",0.6));
-  };
-  r.readAsDataURL(file);
-}
+  const reader = new FileReader();
 
+  reader.onload = e=>{
+    img.src = e.target.result;
+  };
+
+  img.onload = ()=>{
+    const canvas = document.createElement("canvas");
+    const scale = 800 / img.width;
+    canvas.width = 800;
+    canvas.height = img.height * scale;
+    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+    imageBase64 = canvas.toDataURL("image/jpeg",0.6);
+    preview.innerHTML = `<img src="${imageBase64}">`;
+  };
+
+  reader.readAsDataURL(file);
+});
+
+/* إرسال البيانات */
 function sendData(){
+  if(!imageBase64){
+    alert("الصورة إلزامية");
+    return;
+  }
+
   sendBtn.disabled=true;
   loading.textContent="جاري الإرسال...";
 
-  const img=image.files[0];
-  if(!img){
-    alert("الصورة مطلوبة");
-    reset();
-    return;
-  }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const fd = new FormData();
+    fd.append("rep", localStorage.getItem("repName"));
+    fd.append("city", localStorage.getItem("city"));
+    fd.append("trade", trade.value);
+    fd.append("owner", owner.value);
+    fd.append("address", address.value);
+    fd.append("phone", phone.value);
+    fd.append("note", note.value);
+    fd.append("rating", rating.value);
+    fd.append("visitDays", visitDays.value);
+    fd.append("useOil", useOil.value);
+    fd.append("oilType", oilType.value);
+    fd.append("oilGrade", oilGrade.value);
+    fd.append("distance", distance.value);
+    fd.append("price", price.value);
+    fd.append("lat", pos.coords.latitude);
+    fd.append("lng", pos.coords.longitude);
+    fd.append("imageBase64", imageBase64);
 
-  compressImage(img, base64=>{
-    const fd=new FormData();
-    fd.append("rep",localStorage.getItem("repName"));
-    fd.append("city",localStorage.getItem("city"));
-    fd.append("trade",tradeName.value);
-    fd.append("owner",ownerName.value);
-    fd.append("address",address.value);
-    fd.append("phone",phone.value);
-    fd.append("category",category.value);
-    fd.append("note",note.value);
-    fd.append("rating",rating.value);
-    fd.append("visitDays",visitDays.value);
-    fd.append("useOil",useOil.value);
-    fd.append("oilType",oilType.value);
-    fd.append("oilGrade",oilGrade.value);
-    fd.append("distance",distance.value);
-    fd.append("price",price.value);
-    fd.append("imageBase64",base64);
-
-    navigator.geolocation.getCurrentPosition(pos=>{
-      fd.append("lat",pos.coords.latitude);
-      fd.append("lng",pos.coords.longitude);
-      fetch(SCRIPT_URL,{method:"POST",body:fd})
-      .then(r=>r.text())
-      .then(t=>{
-        if(t.trim()==="success"){
-          alert("تم الإرسال بنجاح");
-          location.reload();
-        }else{
-          alert(t);
-          reset();
-        }
-      });
+    fetch(SCRIPT_URL,{method:"POST",body:fd})
+    .then(()=>{ alert("تم الإرسال بنجاح"); location.reload(); })
+    .catch(()=>{
+      alert("حدث خطأ أثناء الإرسال");
+      sendBtn.disabled=false;
+      loading.textContent="";
     });
   });
 }
 
-function reset(){
-  sendBtn.disabled=false;
-  loading.textContent="";
+/* دخول تلقائي */
+if(localStorage.getItem("repName") && localStorage.getItem("city")){
+  showForm();
 }
 </script>
 
