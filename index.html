@@ -62,45 +62,41 @@ button:disabled{background:#aaa;}
 
 <body>
 
-<!-- تسجيل المندوب -->
 <div class="container" id="loginBox">
   <h2>تسجيل المندوب</h2>
-  <input id="repInput" placeholder="اسم المندوب الثلاثي" required>
-  <input id="cityInput" placeholder="المدينة" required>
+  <input id="repInput" placeholder="اسم المندوب الثلاثي">
+  <input id="cityInput" placeholder="المدينة">
   <button onclick="saveRep()">تسجيل</button>
 </div>
 
-<!-- الفورم -->
 <div class="container" id="formBox" style="display:none;">
-
   <div class="info">
     👤 <b id="repShow"></b> | 📍 <b id="cityShow"></b>
   </div>
 
   <h2>MAWARAN CO</h2>
 
-  <select id="useOil" required>
+  <select id="useOil">
     <option value="">هل يستخدم زيت؟</option>
     <option value="نعم">نعم</option>
     <option value="لا">لا</option>
   </select>
 
-  <input id="trade" placeholder="الاسم التجاري" required>
-  <input id="owner" placeholder="اسم المالك" required>
-  <input id="address" placeholder="العنوان" required>
-  <input id="phone" type="tel" placeholder="رقم الهاتف" required>
+  <input id="trade" placeholder="الاسم التجاري">
+  <input id="owner" placeholder="اسم المالك">
+  <input id="address" placeholder="العنوان">
+  <input id="phone" placeholder="رقم الهاتف">
 
-  <!-- الفئة -->
-  <select id="category" required>
+  <select id="category">
     <option value="">اختر الفئة</option>
     <option value="كراج">كراج</option>
     <option value="جملة">جملة</option>
     <option value="مفرد">مفرد</option>
   </select>
 
-  <textarea id="note" placeholder="ملاحظات" required></textarea>
+  <textarea id="note" placeholder="ملاحظات"></textarea>
 
-  <select id="rating" required>
+  <select id="rating">
     <option value="">اختر التقييم</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
@@ -109,12 +105,11 @@ button:disabled{background:#aaa;}
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
+  <input id="visitDays" type="number" placeholder="أيام الزيارة">
+  <input id="oilType" placeholder="نوع الزيت">
+  <input id="oilGrade" placeholder="درجة الزيت">
 
-  <input id="oilType" placeholder="نوع الزيت" required>
-  <input id="oilGrade" placeholder="درجة الزيت" required>
-
-  <select id="distance" required>
+  <select id="distance">
     <option value="">المسافة المقطوعة</option>
     <option value="3 كم">3 كم</option>
     <option value="5 كم">5 كم</option>
@@ -122,10 +117,9 @@ button:disabled{background:#aaa;}
     <option value="15 كم">15 كم</option>
   </select>
 
-  <input id="price" type="number" placeholder="سعر اللتر" required>
+  <input id="price" type="number" placeholder="سعر اللتر">
 
-  <!-- الصورة -->
-  <input id="imageInput" type="file" accept="image/*" capture="environment" required>
+  <input id="imageInput" type="file" accept="image/*" capture="environment">
   <div class="preview" id="preview"></div>
 
   <button id="sendBtn" onclick="sendData()">إرسال</button>
@@ -136,14 +130,14 @@ button:disabled{background:#aaa;}
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxAV7VujFsbK0rZW18_1UO_mp_W2U-h2OI7Eu-SwD6MXABjq3rHM954BI6T94lOuYaIGQ/exec";
 let imageBase64 = "";
 
-/* تسجيل المندوب */
+/* تسجيل */
 function saveRep(){
-  if(!repInput.value.trim() || !cityInput.value.trim()){
-    alert("جميع الحقول إلزامية");
+  if(!repInput.value || !cityInput.value){
+    alert("الحقول إلزامية");
     return;
   }
-  localStorage.setItem("repName", repInput.value.trim());
-  localStorage.setItem("city", cityInput.value.trim());
+  localStorage.setItem("repName", repInput.value);
+  localStorage.setItem("city", cityInput.value);
   showForm();
 }
 
@@ -154,78 +148,75 @@ function showForm(){
   cityShow.textContent = localStorage.getItem("city");
 }
 
-/* معالجة الصورة (Base64) */
+/* صورة */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
 
-  const img = new Image();
   const reader = new FileReader();
-
-  reader.onload = e => img.src = e.target.result;
-
-  img.onload = ()=>{
-    const canvas = document.createElement("canvas");
-    const scale = 800 / img.width;
-    canvas.width = 800;
-    canvas.height = img.height * scale;
-    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
-    imageBase64 = canvas.toDataURL("image/jpeg",0.6);
-    preview.innerHTML = '<img src="'+imageBase64+'">';
+  reader.onload = ()=>{
+    const img = new Image();
+    img.src = reader.result;
+    img.onload = ()=>{
+      const canvas = document.createElement("canvas");
+      const scale = 800 / img.width;
+      canvas.width = 800;
+      canvas.height = img.height * scale;
+      canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+      imageBase64 = canvas.toDataURL("image/jpeg",0.6);
+      preview.innerHTML = `<img src="${imageBase64}">`;
+    };
   };
-
   reader.readAsDataURL(file);
 });
 
-/* إرسال البيانات */
+/* إرسال */
 function sendData(){
-
   if(!imageBase64){
     alert("الصورة إلزامية");
     return;
   }
 
-  sendBtn.disabled = true;
-  loading.textContent = "جاري الإرسال...";
+  sendBtn.disabled=true;
+  loading.textContent="جاري الإرسال...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
-    const fd = new FormData();
-    fd.append("rep", localStorage.getItem("repName"));
-    fd.append("city", localStorage.getItem("city"));
-    fd.append("trade", trade.value);
-    fd.append("owner", owner.value);
-    fd.append("address", address.value);
-    fd.append("phone", phone.value);
-    fd.append("category", category.value);
-    fd.append("note", note.value);
-    fd.append("rating", rating.value);
-    fd.append("visitDays", visitDays.value);
-    fd.append("useOil", useOil.value);
-    fd.append("oilType", oilType.value);
-    fd.append("oilGrade", oilGrade.value);
-    fd.append("distance", distance.value);
-    fd.append("price", price.value);
-    fd.append("lat", pos.coords.latitude);
-    fd.append("lng", pos.coords.longitude);
-    fd.append("imageBase64", imageBase64);
+
+    const data = new URLSearchParams({
+      rep: localStorage.getItem("repName"),
+      city: localStorage.getItem("city"),
+      trade: trade.value,
+      owner: owner.value,
+      address: address.value,
+      phone: phone.value,
+      category: category.value,
+      note: note.value,
+      rating: rating.value,
+      visitDays: visitDays.value,
+      useOil: useOil.value,
+      oilType: oilType.value,
+      oilGrade: oilGrade.value,
+      distance: distance.value,
+      price: price.value,
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      imageBase64: imageBase64
+    });
 
     fetch(SCRIPT_URL,{
       method:"POST",
-      body:fd
+      headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+      body:data.toString()
     })
-    .then(()=>{
-      alert("تم الإرسال بنجاح");
-      location.reload();
-    })
+    .then(()=>{ alert("تم الإرسال بنجاح"); location.reload(); })
     .catch(()=>{
-      alert("حدث خطأ أثناء الإرسال");
+      alert("خطأ في الإرسال");
       sendBtn.disabled=false;
       loading.textContent="";
     });
   });
 }
 
-/* دخول تلقائي */
 if(localStorage.getItem("repName") && localStorage.getItem("city")){
   showForm();
 }
@@ -233,4 +224,3 @@ if(localStorage.getItem("repName") && localStorage.getItem("city")){
 
 </body>
 </html>
-
