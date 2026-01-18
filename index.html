@@ -79,7 +79,6 @@ button:disabled{background:#aaa;}
 
   <h2>MAWARAN CO</h2>
 
-  <!-- هل يستخدم زيت (في البداية) -->
   <select id="useOil" required>
     <option value="">هل يستخدم زيت؟</option>
     <option value="نعم">نعم</option>
@@ -90,6 +89,14 @@ button:disabled{background:#aaa;}
   <input id="owner" placeholder="اسم المالك" required>
   <input id="address" placeholder="العنوان" required>
   <input id="phone" type="tel" placeholder="رقم الهاتف" required>
+
+  <!-- حقل الفئة (جديد) -->
+  <select id="category" required>
+    <option value="">اختر الفئة</option>
+    <option value="كراج">كراج</option>
+    <option value="جملة">جملة</option>
+    <option value="مفرد">مفرد</option>
+  </select>
 
   <textarea id="note" placeholder="ملاحظات" required></textarea>
 
@@ -117,7 +124,6 @@ button:disabled{background:#aaa;}
 
   <input id="price" type="number" placeholder="سعر اللتر" required>
 
-  <!-- صورة (إلزامية) -->
   <input id="imageInput" type="file" accept="image/*" capture="environment" required>
   <div class="preview" id="preview"></div>
 
@@ -129,7 +135,6 @@ button:disabled{background:#aaa;}
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxLawb6Wwb6qtzLCFp0q0hm-6y7M14phvLwYDEU7j6sECftn5x7Q7T4-ezNWtQqjSEIA/exec";
 let imageBase64 = "";
 
-/* تسجيل المندوب */
 function saveRep(){
   if(!repInput.value.trim() || !cityInput.value.trim()){
     alert("جميع الحقول إلزامية");
@@ -140,7 +145,6 @@ function saveRep(){
   showForm();
 }
 
-/* عرض الفورم */
 function showForm(){
   loginBox.style.display="none";
   formBox.style.display="block";
@@ -148,7 +152,6 @@ function showForm(){
   cityShow.textContent = localStorage.getItem("city");
 }
 
-/* الصورة */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
@@ -171,7 +174,6 @@ imageInput.addEventListener("change", ()=>{
   reader.readAsDataURL(file);
 });
 
-/* إرسال البيانات */
 function sendData(){
   if(!imageBase64){
     alert("الصورة إلزامية");
@@ -189,6 +191,7 @@ function sendData(){
     fd.append("owner", owner.value);
     fd.append("address", address.value);
     fd.append("phone", phone.value);
+    fd.append("category", category.value); // الفئة
     fd.append("note", note.value);
     fd.append("rating", rating.value);
     fd.append("visitDays", visitDays.value);
@@ -214,7 +217,6 @@ function sendData(){
   });
 }
 
-/* دخول تلقائي */
 if(localStorage.getItem("repName") && localStorage.getItem("city")){
   showForm();
 }
