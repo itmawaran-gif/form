@@ -21,10 +21,19 @@ body{
   box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
 h2{text-align:center;margin-bottom:10px;}
+label{
+  font-size:14px;
+  margin-top:10px;
+  display:block;
+}
+.req{
+  color:red;
+  font-weight:bold;
+}
 input,select,textarea,button{
   width:100%;
   padding:12px;
-  margin-top:10px;
+  margin-top:5px;
   font-size:15px;
   border-radius:6px;
   border:1px solid #ccc;
@@ -34,6 +43,7 @@ button{
   background:#007bff;
   color:#fff;
   border:none;
+  margin-top:15px;
 }
 button:disabled{background:#aaa;}
 .info{
@@ -65,8 +75,13 @@ button:disabled{background:#aaa;}
 <!-- تسجيل المندوب -->
 <div class="container" id="loginBox">
   <h2>تسجيل المندوب</h2>
-  <input id="repInput" placeholder="اسم المندوب الثلاثي">
-  <input id="cityInput" placeholder="المدينة">
+
+  <label>اسم المندوب <span class="req">*</span></label>
+  <input id="repInput">
+
+  <label>المدينة <span class="req">*</span></label>
+  <input id="cityInput">
+
   <button onclick="saveRep()">تسجيل</button>
 </div>
 
@@ -79,19 +94,29 @@ button:disabled{background:#aaa;}
 
   <h2>MAWARAN CO</h2>
 
+  <label>هل يستخدم الزيت؟ <span class="req">*</span></label>
   <select id="useOil">
-    <option value="">هل يستخدم زيت؟</option>
+    <option value="">اختر</option>
     <option value="نعم">نعم</option>
     <option value="لا">لا</option>
   </select>
 
-  <input id="trade" placeholder="الاسم التجاري">
-  <input id="owner" placeholder="اسم المالك">
-  <input id="address" placeholder="العنوان">
-  <input id="phone" type="tel" placeholder="رقم الهاتف">
+  <label>الاسم التجاري <span class="req">*</span></label>
+  <input id="trade">
 
-  <textarea id="note" placeholder="ملاحظات"></textarea>
+  <label>اسم المالك <span class="req">*</span></label>
+  <input id="owner">
 
+  <label>العنوان <span class="req">*</span></label>
+  <input id="address">
+
+  <label>رقم الهاتف <span class="req">*</span></label>
+  <input id="phone" type="tel">
+
+  <label>ملاحظات <span class="req">*</span></label>
+  <textarea id="note"></textarea>
+
+  <label>التقييم <span class="req">*</span></label>
   <select id="rating">
     <option value="">اختر التقييم</option>
     <option value="1">⭐</option>
@@ -101,21 +126,29 @@ button:disabled{background:#aaa;}
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <input id="visitDays" type="number" placeholder="أيام الزيارة">
+  <label>أيام الزيارة <span class="req">*</span></label>
+  <input id="visitDays" type="number">
 
-  <input id="oilType" placeholder="نوع الزيت">
-  <input id="oilGrade" placeholder="درجة الزيت">
+  <!-- غير إلزامية -->
+  <label>نوع الزيت</label>
+  <input id="oilType">
 
+  <label>درجة الزيت</label>
+  <input id="oilGrade">
+
+  <label>المسافة المقطوعة</label>
   <select id="distance">
-    <option value="">المسافة المقطوعة</option>
+    <option value="">— اختياري —</option>
     <option value="3 كم">3 كم</option>
     <option value="5 كم">5 كم</option>
     <option value="10 كم">10 كم</option>
     <option value="15 كم">15 كم</option>
   </select>
 
-  <input id="price" type="number" placeholder="سعر اللتر">
+  <label>سعر اللتر</label>
+  <input id="price" type="number">
 
+  <label>الصورة <span class="req">*</span></label>
   <input id="imageInput" type="file" accept="image/*" capture="environment">
   <div class="preview" id="preview"></div>
 
@@ -138,7 +171,6 @@ function saveRep(){
   showForm();
 }
 
-/* عرض الفورم */
 function showForm(){
   loginBox.style.display="none";
   formBox.style.display="block";
@@ -151,17 +183,9 @@ imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
 
-  const img = new Image();
   const reader = new FileReader();
-
-  reader.onload = e => img.src = e.target.result;
-  img.onload = ()=>{
-    const canvas = document.createElement("canvas");
-    const scale = 800 / img.width;
-    canvas.width = 800;
-    canvas.height = img.height * scale;
-    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
-    imageBase64 = canvas.toDataURL("image/jpeg",0.6);
+  reader.onload = e=>{
+    imageBase64 = e.target.result;
     preview.innerHTML = `<img src="${imageBase64}">`;
   };
   reader.readAsDataURL(file);
@@ -172,14 +196,12 @@ function sendData(){
 
   const requiredFields = [
     useOil, trade, owner, address, phone,
-    note, rating, visitDays,
-    oilType, oilGrade,
-    distance, price
+    note, rating, visitDays
   ];
 
-  for(let field of requiredFields){
-    if(!field.value.trim()){
-      alert("جميع الحقول من البداية إلى أيام الزيارة إلزامية");
+  for(let f of requiredFields){
+    if(!f.value.trim()){
+      alert("يرجى تعبئة جميع الحقول الإلزامية (*)");
       return;
     }
   }
@@ -196,6 +218,7 @@ function sendData(){
     const fd = new FormData();
     fd.append("rep", localStorage.getItem("repName"));
     fd.append("city", localStorage.getItem("city"));
+    fd.append("useOil", useOil.value);
     fd.append("trade", trade.value);
     fd.append("owner", owner.value);
     fd.append("address", address.value);
@@ -203,7 +226,6 @@ function sendData(){
     fd.append("note", note.value);
     fd.append("rating", rating.value);
     fd.append("visitDays", visitDays.value);
-    fd.append("useOil", useOil.value);
     fd.append("oilType", oilType.value);
     fd.append("oilGrade", oilGrade.value);
     fd.append("distance", distance.value);
