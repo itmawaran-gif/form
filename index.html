@@ -62,7 +62,7 @@ button:disabled{background:#aaa;}
 
 <body>
 
-<!-- تسجيل المندوب (مرة واحدة فقط) -->
+<!-- تسجيل المندوب -->
 <div class="container" id="loginBox">
   <h2>تسجيل المندوب</h2>
   <input id="repInput" placeholder="اسم المندوب الثلاثي" required>
@@ -78,6 +78,13 @@ button:disabled{background:#aaa;}
   </div>
 
   <h2>MAWARAN CO</h2>
+
+  <!-- هل يستخدم زيت (في البداية) -->
+  <select id="useOil" required>
+    <option value="">هل يستخدم زيت؟</option>
+    <option value="نعم">نعم</option>
+    <option value="لا">لا</option>
+  </select>
 
   <input id="trade" placeholder="الاسم التجاري" required>
   <input id="owner" placeholder="اسم المالك" required>
@@ -97,13 +104,6 @@ button:disabled{background:#aaa;}
 
   <input id="visitDays" type="number" placeholder="أيام الزيارة" required>
 
-  <!-- يستخدم زيت -->
-  <select id="useOil" required>
-    <option value="">هل يستخدم زيت؟</option>
-    <option value="نعم">نعم</option>
-    <option value="لا">لا</option>
-  </select>
-
   <input id="oilType" placeholder="نوع الزيت" required>
   <input id="oilGrade" placeholder="درجة الزيت" required>
 
@@ -117,7 +117,7 @@ button:disabled{background:#aaa;}
 
   <input id="price" type="number" placeholder="سعر اللتر" required>
 
-  <!-- صورة -->
+  <!-- صورة (إلزامية) -->
   <input id="imageInput" type="file" accept="image/*" capture="environment" required>
   <div class="preview" id="preview"></div>
 
@@ -148,7 +148,7 @@ function showForm(){
   cityShow.textContent = localStorage.getItem("city");
 }
 
-/* ضغط وتحويل الصورة */
+/* الصورة */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
@@ -156,9 +156,7 @@ imageInput.addEventListener("change", ()=>{
   const img = new Image();
   const reader = new FileReader();
 
-  reader.onload = e=>{
-    img.src = e.target.result;
-  };
+  reader.onload = e => img.src = e.target.result;
 
   img.onload = ()=>{
     const canvas = document.createElement("canvas");
@@ -167,7 +165,7 @@ imageInput.addEventListener("change", ()=>{
     canvas.height = img.height * scale;
     canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
     imageBase64 = canvas.toDataURL("image/jpeg",0.6);
-    preview.innerHTML = `<img src="${imageBase64}">`;
+    preview.innerHTML = '<img src="'+imageBase64+'">';
   };
 
   reader.readAsDataURL(file);
@@ -204,7 +202,10 @@ function sendData(){
     fd.append("imageBase64", imageBase64);
 
     fetch(SCRIPT_URL,{method:"POST",body:fd})
-    .then(()=>{ alert("تم الإرسال بنجاح"); location.reload(); })
+    .then(()=>{
+      alert("تم الإرسال بنجاح");
+      location.reload();
+    })
     .catch(()=>{
       alert("حدث خطأ أثناء الإرسال");
       sendBtn.disabled=false;
@@ -221,4 +222,3 @@ if(localStorage.getItem("repName") && localStorage.getItem("city")){
 
 </body>
 </html>
-
