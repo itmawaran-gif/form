@@ -20,20 +20,21 @@ body{
   border-radius:12px;
   box-shadow:0 4px 12px rgba(0,0,0,.12);
 }
-h2{text-align:center;margin-bottom:10px;}
+h2{text-align:center;}
 label{
   font-size:14px;
-  margin-top:10px;
+  margin-top:12px;
   display:block;
 }
-.req{
+.required::after{
+  content:" *";
   color:red;
   font-weight:bold;
 }
 input,select,textarea,button{
   width:100%;
   padding:12px;
-  margin-top:5px;
+  margin-top:6px;
   font-size:15px;
   border-radius:6px;
   border:1px solid #ccc;
@@ -56,16 +57,13 @@ button:disabled{background:#aaa;}
 }
 .loading{
   text-align:center;
-  margin-top:10px;
   color:#d00;
-}
-.preview{
   margin-top:10px;
-  text-align:center;
 }
 .preview img{
   max-width:100%;
   border-radius:8px;
+  margin-top:10px;
 }
 </style>
 </head>
@@ -76,10 +74,10 @@ button:disabled{background:#aaa;}
 <div class="container" id="loginBox">
   <h2>تسجيل المندوب</h2>
 
-  <label>اسم المندوب <span class="req">*</span></label>
+  <label class="required">اسم المندوب</label>
   <input id="repInput">
 
-  <label>المدينة <span class="req">*</span></label>
+  <label class="required">المدينة</label>
   <input id="cityInput">
 
   <button onclick="saveRep()">تسجيل</button>
@@ -94,31 +92,40 @@ button:disabled{background:#aaa;}
 
   <h2>MAWARAN CO</h2>
 
-  <label>هل يستخدم الزيت؟ <span class="req">*</span></label>
+  <label class="required">هل يستخدم زيت؟</label>
   <select id="useOil">
     <option value="">اختر</option>
-    <option value="نعم">نعم</option>
-    <option value="لا">لا</option>
+    <option>نعم</option>
+    <option>لا</option>
   </select>
 
-  <label>الاسم التجاري <span class="req">*</span></label>
-  <input id="trade">
+  <label class="required">الاسم التجاري</label>
+  <input id="tradeName">
 
-  <label>اسم المالك <span class="req">*</span></label>
-  <input id="owner">
+  <label class="required">اسم المالك</label>
+  <input id="ownerName">
 
-  <label>العنوان <span class="req">*</span></label>
+  <label class="required">العنوان</label>
   <input id="address">
 
-  <label>رقم الهاتف <span class="req">*</span></label>
-  <input id="phone" type="tel">
+  <label class="required">رقم الهاتف</label>
+  <input id="phone" type="tel" inputmode="numeric">
 
-  <label>ملاحظات <span class="req">*</span></label>
+  <!-- ✅ الفئة (تظهر الآن بشكل مؤكد) -->
+  <label class="required">الفئة</label>
+  <select id="category">
+    <option value="">اختر</option>
+    <option>محل زيوت</option>
+    <option>كراج</option>
+    <option>محطة وقود</option>
+  </select>
+
+  <label class="required">ملاحظة</label>
   <textarea id="note"></textarea>
 
-  <label>التقييم <span class="req">*</span></label>
+  <label class="required">التقييم</label>
   <select id="rating">
-    <option value="">اختر التقييم</option>
+    <option value="">اختر</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
     <option value="3">⭐⭐⭐</option>
@@ -126,29 +133,28 @@ button:disabled{background:#aaa;}
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <label>أيام الزيارة <span class="req">*</span></label>
+  <label class="required">أيام الزيارة</label>
   <input id="visitDays" type="number">
 
-  <!-- غير إلزامية -->
   <label>نوع الزيت</label>
   <input id="oilType">
 
   <label>درجة الزيت</label>
   <input id="oilGrade">
 
-  <label>المسافة المقطوعة</label>
+  <label>المسافة</label>
   <select id="distance">
-    <option value="">— اختياري —</option>
-    <option value="3 كم">3 كم</option>
-    <option value="5 كم">5 كم</option>
-    <option value="10 كم">10 كم</option>
-    <option value="15 كم">15 كم</option>
+    <option value="">اختر</option>
+    <option>3 كم</option>
+    <option>5 كم</option>
+    <option>10 كم</option>
+    <option>15 كم</option>
   </select>
 
   <label>سعر اللتر</label>
   <input id="price" type="number">
 
-  <label>الصورة <span class="req">*</span></label>
+  <label class="required">صورة الموقع</label>
   <input id="imageInput" type="file" accept="image/*" capture="environment">
   <div class="preview" id="preview"></div>
 
@@ -157,7 +163,7 @@ button:disabled{background:#aaa;}
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyKH7ayK_oYC1TROqFOyChIBQoktELaXAHEcTlqEpjhVLOAIELVRb9tWPpo3PJUyzba/exec";
+const SCRIPT_URL = "ضع_رابط_كوكل_سكربت_هنا";
 let imageBase64 = "";
 
 /* تسجيل المندوب */
@@ -172,17 +178,16 @@ function saveRep(){
 }
 
 function showForm(){
-  loginBox.style.display="none";
-  formBox.style.display="block";
+  loginBox.style.display = "none";
+  formBox.style.display = "block";
   repShow.textContent = localStorage.getItem("repName");
   cityShow.textContent = localStorage.getItem("city");
 }
 
-/* الصورة */
+/* معالجة الصورة */
 imageInput.addEventListener("change", ()=>{
   const file = imageInput.files[0];
   if(!file) return;
-
   const reader = new FileReader();
   reader.onload = e=>{
     imageBase64 = e.target.result;
@@ -194,12 +199,12 @@ imageInput.addEventListener("change", ()=>{
 /* إرسال البيانات */
 function sendData(){
 
-  const requiredFields = [
-    useOil, trade, owner, address, phone,
-    note, rating, visitDays
+  const required = [
+    useOil, tradeName, ownerName, address,
+    phone, category, note, rating, visitDays
   ];
 
-  for(let f of requiredFields){
+  for(let f of required){
     if(!f.value.trim()){
       alert("يرجى تعبئة جميع الحقول الإلزامية (*)");
       return;
@@ -207,7 +212,7 @@ function sendData(){
   }
 
   if(!imageBase64){
-    alert("الصورة إلزامية");
+    alert("صورة الموقع إلزامية");
     return;
   }
 
@@ -219,10 +224,11 @@ function sendData(){
     fd.append("rep", localStorage.getItem("repName"));
     fd.append("city", localStorage.getItem("city"));
     fd.append("useOil", useOil.value);
-    fd.append("trade", trade.value);
-    fd.append("owner", owner.value);
+    fd.append("trade", tradeName.value);
+    fd.append("owner", ownerName.value);
     fd.append("address", address.value);
     fd.append("phone", phone.value);
+    fd.append("category", category.value);
     fd.append("note", note.value);
     fd.append("rating", rating.value);
     fd.append("visitDays", visitDays.value);
@@ -234,16 +240,16 @@ function sendData(){
     fd.append("lng", pos.coords.longitude);
     fd.append("imageBase64", imageBase64);
 
-    fetch(SCRIPT_URL,{method:"POST",body:fd})
-    .then(()=>{
-      alert("تم الإرسال بنجاح");
-      location.reload();
-    })
-    .catch(()=>{
-      alert("حدث خطأ أثناء الإرسال");
-      sendBtn.disabled=false;
-      loading.textContent="";
-    });
+    fetch(SCRIPT_URL,{method:"POST", body:fd})
+      .then(()=>{
+        alert("تم الإرسال بنجاح");
+        location.reload();
+      })
+      .catch(()=>{
+        alert("حدث خطأ أثناء الإرسال");
+        sendBtn.disabled=false;
+        loading.textContent="";
+      });
   });
 }
 
