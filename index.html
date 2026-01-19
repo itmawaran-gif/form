@@ -55,7 +55,6 @@ button{
 #msg{text-align:center;margin-top:10px;font-weight:bold}
 .hidden{display:none}
 
-/* top info */
 #topInfo{
   background:#f0f4ff;
   padding:10px;
@@ -102,8 +101,7 @@ button{
 
   <div id="topInfo">
     <span data-t="rep">المندوب:</span>
-    <b id="repShow"></b>
-    |
+    <b id="repShow"></b> |
     <span data-t="city">المدينة:</span>
     <span id="cityShow"></span>
     <input id="cityEdit" class="hidden">
@@ -115,8 +113,8 @@ button{
   <label data-t="useOil">هل يمتلك زيت ريماكس *</label>
   <select id="useOil">
     <option value=""></option>
-    <option data-t="yes">نعم</option>
-    <option data-t="no">لا</option>
+    <option>نعم</option>
+    <option>لا</option>
   </select>
 
   <label data-t="tradeName">الاسم التجاري *</label>
@@ -129,14 +127,14 @@ button{
   <input id="address">
 
   <label data-t="phone">رقم الهاتف *</label>
-  <input id="phone" inputmode="numeric">
+  <input id="phone">
 
   <label data-t="category">الفئة *</label>
   <select id="category">
     <option value=""></option>
-    <option data-t="garage">كراج</option>
-    <option data-t="wholesale">جملة</option>
-    <option data-t="retail">مفرد</option>
+    <option>كراج</option>
+    <option>جملة</option>
+    <option>مفرد</option>
   </select>
 
   <label data-t="note">ملاحظة</label>
@@ -153,28 +151,26 @@ button{
   </select>
 
   <label data-t="visit">كل كم يوم زيارة *</label>
-  <input id="visitDays" inputmode="numeric">
+  <input id="visitDays">
 
-  <!-- ===== الحقول الاختيارية (تم إرجاعها) ===== -->
-  <label data-t="oilType">نوع الزيت</label>
+  <label>نوع الزيت</label>
   <input id="oilType">
 
-  <label data-t="oilGrade">درجة الزيت</label>
+  <label>درجة الزيت</label>
   <input id="oilGrade">
 
-  <label data-t="oilDistance">المسافة التي يقطعها الزيت</label>
+  <label>المسافة</label>
   <select id="oilDistance">
     <option value=""></option>
     <option>3 كم</option>
     <option>5 كم</option>
     <option>10 كم</option>
-    <option>15 كم</option>
   </select>
 
-  <label data-t="oilPrice">سعر اللتر</label>
-  <input id="oilPrice" inputmode="numeric">
+  <label>سعر اللتر</label>
+  <input id="oilPrice">
 
-  <button onclick="send()" data-t="send">إرسال</button>
+  <button onclick="send()">إرسال</button>
   <div id="msg"></div>
 </div>
 
@@ -182,48 +178,6 @@ button{
 
 <script>
 const URL="https://script.google.com/macros/s/AKfycbwbQkYePx5IvYev_Crtcv-6kXV4sTdGz6VhbSWsbNey7W4Vs3z4Y7kf8xAnH4D3KqXulQ/exec";
-
-/* ===== languages ===== */
-const langData={
-  ar:{
-    login:"تسجيل الدخول",repName:"اسم المندوب *",city:"المدينة *",
-    enter:"دخول",rep:"المندوب:",edit:"تعديل",
-    useOil:"هل يمتلك زيت ريماكس *",yes:"نعم",no:"لا",
-    tradeName:"الاسم التجاري *",ownerName:"اسم المالك *",
-    address:"العنوان *",phone:"رقم الهاتف *",
-    category:"الفئة *",garage:"كراج",wholesale:"جملة",retail:"مفرد",
-    note:"ملاحظة",rate:"التقييم *",visit:"كل كم يوم زيارة *",
-    oilType:"نوع الزيت",oilGrade:"درجة الزيت",
-    oilDistance:"المسافة التي يقطعها الزيت",
-    oilPrice:"سعر اللتر",send:"إرسال"
-  },
-  ku:{
-    login:"چوونەژوور",repName:"ناوی نێردراو *",city:"شار *",
-    enter:"چوونەژوور",rep:"نێردراو:",edit:"گۆڕین",
-    useOil:"ئایا ڕۆنی RYMAX هەیە *",yes:"بەڵێ",no:"نەخێر",
-    tradeName:"ناوی بازرگانی *",ownerName:"ناوی خاوەن *",
-    address:"ناونیشان *",phone:"ژمارەی تەلەفۆن *",
-    category:"جۆر *",garage:"گەراج",wholesale:"کۆمەڵ",retail:"تاك",
-    note:"تێبینی",rate:"هەڵسەنگاندن *",visit:"چەند ڕۆژ جارێک *",
-    oilType:"جۆری ڕۆن",oilGrade:"پلەی ڕۆن",
-    oilDistance:"ماوەی ڕۆن",oilPrice:"نرخی لیتر",
-    send:"ناردن"
-  }
-};
-
-let lang=localStorage.lang||"ar";
-applyLang();
-
-function toggleLang(){
-  lang=lang==="ar"?"ku":"ar";
-  localStorage.lang=lang;
-  applyLang();
-}
-function applyLang(){
-  document.querySelectorAll("[data-t]").forEach(e=>{
-    e.textContent=langData[lang][e.dataset.t];
-  });
-}
 
 /* ===== login ===== */
 if(localStorage.repName){
@@ -255,18 +209,56 @@ function toggleEdit(){
 
 /* ===== send ===== */
 function send(){
-  const req=[useOil,tradeName,ownerName,address,phone,category,rate,visitDays];
+  const required=[useOil,tradeName,ownerName,address,phone,category,rate,visitDays];
   let ok=true;
-  req.forEach(f=>{
+  required.forEach(f=>{
     f.classList.remove("error");
     if(!f.value){f.classList.add("error");ok=false;}
   });
   if(!ok)return;
 
-  msg.textContent=lang==="ar"?"جاري الإرسال...":"دەنێردرێت...";
+  msg.textContent="جاري الإرسال...";
+
+  const data={
+    repName:localStorage.repName,
+    city:localStorage.city,
+    tradeName:tradeName.value,
+    ownerName:ownerName.value,
+    address:address.value,
+    phone:phone.value,
+    category:category.value,
+    note:note.value,
+    rate:rate.value,
+    visitDays:visitDays.value,
+    useOil:useOil.value,
+    oilType:oilType.value,
+    oilGrade:oilGrade.value,
+    oilDistance:oilDistance.value,
+    oilPrice:oilPrice.value,
+    lat:"",
+    lng:""
+  };
+
+  fetch(URL,{
+    method:"POST",
+    body:JSON.stringify(data),
+    headers:{"Content-Type":"application/json"}
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.status==="success"){
+      msg.textContent="✅ تم الإرسال بنجاح";
+      document.querySelectorAll("#formBox input,#formBox textarea").forEach(i=>i.value="");
+      document.querySelectorAll("#formBox select").forEach(s=>s.value="");
+    }else{
+      msg.textContent="❌ "+res.message;
+    }
+  })
+  .catch(()=>{
+    msg.textContent="❌ فشل الاتصال";
+  });
 }
 </script>
 
 </body>
 </html>
-
