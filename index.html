@@ -19,69 +19,63 @@ body{
   border-radius:16px;
   box-shadow:0 10px 25px rgba(0,0,0,.12);
 }
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.langBtn{
-  background:#eee;
-  border:0;
-  border-radius:50%;
-  width:40px;
-  height:40px;
-  font-size:20px;
-}
 h2{text-align:center;margin:10px 0}
+
 label{display:block;margin-top:10px;font-weight:bold}
+
 input,select,textarea,button{
   width:100%;
   padding:10px;
   margin-top:4px;
   border-radius:10px;
   border:1px solid #ccc;
-  font-size:16px;
+  font-size:15px;
 }
 input.error,select.error,textarea.error{
   border-color:red;
   background:#ffecec;
 }
+
 button{
   background:#0a7cff;
   color:#fff;
   border:0;
   margin-top:16px;
 }
+
 #msg{text-align:center;margin-top:10px;font-weight:bold}
 .hidden{display:none}
 
+/* top info */
 #topInfo{
   background:#f0f4ff;
   padding:10px;
   border-radius:10px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex-wrap:wrap;
   font-size:14px;
 }
-#topInfo b{color:#0a7cff}
-#editBtn{
-  background:#666;
-  font-size:13px;
-  padding:6px 10px;
+
+/* مندوب + زر لغة */
+.repRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
 }
-#cityEdit{width:auto;padding:6px;font-size:14px}
+
+.langBtn{
+  background:#eee;
+  border:0;
+  border-radius:50%;
+  width:36px;
+  height:36px;
+  font-size:18px;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 <div class="container">
-
-<header>
-  <div></div>
-  <button class="langBtn" onclick="toggleLang()">🌐</button>
-</header>
 
 <!-- تسجيل الدخول -->
 <div id="login">
@@ -100,12 +94,18 @@ button{
 <div id="formBox" class="hidden">
 
   <div id="topInfo">
-    <span data-t="rep">المندوب:</span>
-    <b id="repShow"></b> |
-    <span data-t="city">المدينة:</span>
-    <span id="cityShow"></span>
-    <input id="cityEdit" class="hidden">
-    <button id="editBtn" onclick="toggleEdit()" data-t="edit">تعديل</button>
+    <div class="repRow">
+      <div>
+        <span data-t="rep">المندوب:</span>
+        <b id="repShow"></b>
+      </div>
+      <button class="langBtn" onclick="toggleLang()">🌐</button>
+    </div>
+
+    <div style="margin-top:6px">
+      <span data-t="city">المدينة:</span>
+      <b id="cityShow"></b>
+    </div>
   </div>
 
   <h2>MAWARAN CO</h2>
@@ -113,8 +113,8 @@ button{
   <label data-t="useOil">هل يمتلك زيت ريماكس *</label>
   <select id="useOil">
     <option value=""></option>
-    <option>نعم</option>
-    <option>لا</option>
+    <option data-t="yes">نعم</option>
+    <option data-t="no">لا</option>
   </select>
 
   <label data-t="tradeName">الاسم التجاري *</label>
@@ -132,9 +132,9 @@ button{
   <label data-t="category">الفئة *</label>
   <select id="category">
     <option value=""></option>
-    <option>كراج</option>
-    <option>جملة</option>
-    <option>مفرد</option>
+    <option data-t="garage">كراج</option>
+    <option data-t="wholesale">جملة</option>
+    <option data-t="retail">مفرد</option>
   </select>
 
   <label data-t="note">ملاحظة</label>
@@ -153,13 +153,13 @@ button{
   <label data-t="visit">كل كم يوم زيارة *</label>
   <input id="visitDays">
 
-  <label>نوع الزيت</label>
+  <label data-t="oilType">نوع الزيت</label>
   <input id="oilType">
 
-  <label>درجة الزيت</label>
+  <label data-t="oilGrade">درجة الزيت</label>
   <input id="oilGrade">
 
-  <label>المسافة</label>
+  <label data-t="oilDistance">المسافة</label>
   <select id="oilDistance">
     <option value=""></option>
     <option>3 كم</option>
@@ -167,10 +167,10 @@ button{
     <option>10 كم</option>
   </select>
 
-  <label>سعر اللتر</label>
+  <label data-t="oilPrice">سعر اللتر</label>
   <input id="oilPrice">
 
-  <button onclick="send()">إرسال</button>
+  <button onclick="send()" data-t="send">إرسال</button>
   <div id="msg"></div>
 </div>
 
@@ -179,13 +179,55 @@ button{
 <script>
 const URL="https://script.google.com/macros/s/AKfycbwbQkYePx5IvYev_Crtcv-6kXV4sTdGz6VhbSWsbNey7W4Vs3z4Y7kf8xAnH4D3KqXulQ/exec";
 
+/* ===== اللغات ===== */
+const langData={
+  ar:{
+    login:"تسجيل الدخول",repName:"اسم المندوب *",city:"المدينة *",
+    enter:"دخول",rep:"المندوب:",useOil:"هل يمتلك زيت ريماكس *",
+    yes:"نعم",no:"لا",tradeName:"الاسم التجاري *",
+    ownerName:"اسم المالك *",address:"العنوان *",
+    phone:"رقم الهاتف *",category:"الفئة *",
+    garage:"كراج",wholesale:"جملة",retail:"مفرد",
+    note:"ملاحظة",rate:"التقييم *",visit:"كل كم يوم زيارة *",
+    oilType:"نوع الزيت",oilGrade:"درجة الزيت",
+    oilDistance:"المسافة",oilPrice:"سعر اللتر",send:"إرسال"
+  },
+  ku:{
+    login:"چوونەژوور",repName:"ناوی نێردراو *",city:"شار *",
+    enter:"چوونەژوور",rep:"نێردراو:",
+    useOil:"ئایا ڕۆنی RYMAX هەیە *",
+    yes:"بەڵێ",no:"نەخێر",tradeName:"ناوی بازرگانی *",
+    ownerName:"ناوی خاوەن *",address:"ناونیشان *",
+    phone:"ژمارەی تەلەفۆن *",category:"جۆر *",
+    garage:"گەراج",wholesale:"کۆمەڵ",retail:"تاك",
+    note:"تێبینی",rate:"هەڵسەنگاندن *",
+    visit:"چەند ڕۆژ جارێک *",
+    oilType:"جۆری ڕۆن",oilGrade:"پلەی ڕۆن",
+    oilDistance:"ماوە",oilPrice:"نرخی لیتر",send:"ناردن"
+  }
+};
+
+let lang=localStorage.lang||"ar";
+applyLang();
+
+function toggleLang(){
+  lang=lang==="ar"?"ku":"ar";
+  localStorage.lang=lang;
+  applyLang();
+}
+
+function applyLang(){
+  document.querySelectorAll("[data-t]").forEach(e=>{
+    e.textContent=langData[lang][e.dataset.t];
+  });
+}
+
 /* ===== login ===== */
 if(localStorage.repName){
   login.classList.add("hidden");
   formBox.classList.remove("hidden");
   repShow.textContent=localStorage.repName;
   cityShow.textContent=localStorage.city;
-  cityEdit.value=localStorage.city;
 }
 
 function saveLogin(){
@@ -193,18 +235,6 @@ function saveLogin(){
   localStorage.repName=repName.value;
   localStorage.city=city.value;
   location.reload();
-}
-
-let edit=false;
-function toggleEdit(){
-  edit=!edit;
-  cityShow.classList.toggle("hidden",edit);
-  cityEdit.classList.toggle("hidden",!edit);
-  editBtn.textContent=edit?"حفظ":"تعديل";
-  if(!edit){
-    localStorage.city=cityEdit.value;
-    cityShow.textContent=cityEdit.value;
-  }
 }
 
 /* ===== send ===== */
@@ -217,7 +247,7 @@ function send(){
   });
   if(!ok)return;
 
-  msg.textContent="جاري الإرسال...";
+  msg.textContent=lang==="ar"?"جاري الإرسال...":"دەنێردرێت...";
 
   const data={
     repName:localStorage.repName,
@@ -246,17 +276,9 @@ function send(){
   })
   .then(r=>r.json())
   .then(res=>{
-    if(res.status==="success"){
-      msg.textContent="✅ تم الإرسال بنجاح";
-      document.querySelectorAll("#formBox input,#formBox textarea").forEach(i=>i.value="");
-      document.querySelectorAll("#formBox select").forEach(s=>s.value="");
-    }else{
-      msg.textContent="❌ "+res.message;
-    }
+    msg.textContent=res.status==="success"?"✅ تم الإرسال":"❌ "+res.message;
   })
-  .catch(()=>{
-    msg.textContent="❌ فشل الاتصال";
-  });
+  .catch(()=>msg.textContent="❌ فشل الاتصال");
 }
 </script>
 
