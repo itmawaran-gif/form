@@ -2,171 +2,166 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAWARAN co</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MAWARAN CO</title>
 
 <style>
-body{
-  font-family: Tahoma, Arial;
-  background:#f2f4f7;
-  margin:0;
-  padding:10px;
-}
-.container{
-  max-width:430px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 4px 15px rgba(0,0,0,.15);
-}
-h2,h3{text-align:center}
-label{display:block;margin-top:12px;font-weight:bold}
+body{font-family:Tahom,aArial;background:#f2f4f7;margin:0}
+.container{max-width:420px;margin:auto;background:#fff;
+padding:16px;border-radius:12px;box-shadow:0 4px 10px #0002}
+h2{text-align:center;margin:10px 0}
+label{display:block;margin-top:10px;font-weight:bold}
 input,select,textarea,button{
-  width:100%;
-  padding:10px;
-  margin-top:5px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-button{
-  background:#0b5ed7;
-  color:#fff;
-  border:none;
-  margin-top:15px;
-}
-button:disabled{background:#999}
+width:100%;padding:10px;margin-top:4px;
+border-radius:8px;border:1px solid #ccc;font-size:16px}
+button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
 .hidden{display:none}
-.required::after{content:" *";color:red}
-#status{text-align:center;margin-top:10px;font-weight:bold}
+#msg{margin-top:10px;text-align:center;font-weight:bold}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<div id="loginBox">
-  <h3>تسجيل المندوب</h3>
-  <label class="required">اسم المندوب</label>
-  <input id="repName">
-  <label class="required">المدينة</label>
-  <input id="city">
-  <button onclick="saveRep()">دخول</button>
+<!-- ===== شاشة الدخول ===== -->
+<div id="login">
+  <h2>تسجيل الدخول</h2>
+
+  <label>اسم المندوب الثلاثي *</label>
+  <input id="repName" required>
+
+  <label>المدينة *</label>
+  <input id="city" required>
+
+  <button onclick="saveLogin()">دخول</button>
 </div>
 
-<div id="formBox" class="hidden">
-<h2>MAWARAN co</h2>
+<!-- ===== الفورم ===== -->
+<div id="form" class="hidden">
+  <h2>MAWARAN CO</h2>
 
-<label class="required">هل يمتلك زيت ريماكس</label>
-<select id="useOil"><option value="">اختر</option><option>نعم</option><option>لا</option></select>
+  <label>هل يمتلك زيت ريماكس *</label>
+  <select id="useOil" required>
+    <option value="">اختر</option>
+    <option>نعم</option>
+    <option>لا</option>
+  </select>
 
-<label class="required">الاسم التجاري</label>
-<input id="tradeName">
+  <label>الاسم التجاري *</label>
+  <input id="tradeName" required>
 
-<label class="required">اسم المالك</label>
-<input id="ownerName">
+  <label>اسم المالك *</label>
+  <input id="ownerName" required>
 
-<label class="required">العنوان</label>
-<input id="address">
+  <label>العنوان *</label>
+  <input id="address" required>
 
-<label class="required">رقم الهاتف</label>
-<input id="phone" type="number" inputmode="numeric">
+  <label>رقم الهاتف *</label>
+  <input id="phone" type="tel" inputmode="numeric" required>
 
-<label class="required">الفئة</label>
-<select id="category"><option value="">اختر</option><option>كراج</option><option>جملة</option><option>مفرد</option></select>
+  <label>الفئة *</label>
+  <select id="category" required>
+    <option value="">اختر</option>
+    <option>كراج</option>
+    <option>جملة</option>
+    <option>مفرد</option>
+  </select>
 
-<label class="required">ملاحظة</label>
-<textarea id="note"></textarea>
+  <label>ملاحظة</label>
+  <textarea id="note"></textarea>
 
-<label class="required">التقييم</label>
-<select id="rate"><option value="">اختر</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+  <label>التقييم *</label>
+  <select id="rate" required>
+    <option value="">اختر</option>
+    <option>1</option><option>2</option><option>3</option>
+    <option>4</option><option>5</option>
+  </select>
 
-<label class="required">كل كم يوم تتم الزيارة</label>
-<input id="visitDays" type="number">
+  <label>كل كم يوم زيارة *</label>
+  <input id="visitDays" type="number" inputmode="numeric" required>
 
-<hr>
+  <!-- حقول اختيارية -->
+  <label>نوع الزيت</label>
+  <input id="oilType">
 
-<label>نوع الزيت</label><input id="oilType">
-<label>درجة الزيت</label><input id="oilGrade">
-<label>المسافة</label>
-<select id="oilDistance"><option value="">اختر</option><option>3كم</option><option>5كم</option><option>10كم</option><option>15كم</option></select>
-<label>سعر اللتر</label><input id="oilPrice" type="number">
+  <label>درجة الزيت</label>
+  <input id="oilGrade">
 
-<label class="required">التقاط صورة</label>
-<input id="image" type="file" accept="image/*" capture="environment">
+  <label>كم المسافة التي يقطعها الزيت</label>
+  <select id="oilDistance">
+    <option value="">اختر</option>
+    <option>3 كم</option>
+    <option>5 كم</option>
+    <option>10 كم</option>
+    <option>15 كم</option>
+  </select>
 
-<button id="sendBtn" onclick="sendData()">إرسال</button>
-<div id="status"></div>
+  <label>سعر اللتر</label>
+  <input id="oilPrice" type="number" inputmode="numeric">
+
+  <button onclick="send()">إرسال</button>
+  <div id="msg"></div>
 </div>
 
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwrge2UK7G5TtpXRu3CmRmwvjTtoGzj55TxvyO-uBPlovtLRPLWarPPgraIedv2IOXOag/exec";
+const URL = "https://script.google.com/macros/s/AKfycbx82nb5QE3kqFNULF-7iWN5Nat9CgJERh0JdHYDUtnYT3VOl1CGLXueRWG5QtmJ25KPJw/exec";
 
-function saveRep(){
-  localStorage.setItem("repName",repName.value);
-  localStorage.setItem("city",city.value);
-  loginBox.classList.add("hidden");
-  formBox.classList.remove("hidden");
+if(localStorage.repName){
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("form").classList.remove("hidden");
 }
 
-if(localStorage.getItem("repName")){
-  loginBox.classList.add("hidden");
-  formBox.classList.remove("hidden");
+function saveLogin(){
+  localStorage.repName = repName.value;
+  localStorage.city = city.value;
+  location.reload();
 }
 
-function toBase64(file){
-  return new Promise(r=>{
-    const f=new FileReader();
-    f.onload=()=>r(f.result);
-    f.readAsDataURL(file);
-  });
-}
+function send(){
+  const msg = document.getElementById("msg");
+  msg.textContent = "جاري الإرسال...";
 
-function sendData(){
-  const btn=sendBtn;
-  const status=document.getElementById("status");
-  if(!image.files.length){status.innerText="❌ التقط صورة";return;}
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const data = {
+      repName: localStorage.repName,
+      city: localStorage.city,
+      useOil: useOil.value,
+      tradeName: tradeName.value,
+      ownerName: ownerName.value,
+      address: address.value,
+      phone: phone.value,
+      category: category.value,
+      note: note.value,
+      rate: rate.value,
+      visitDays: visitDays.value,
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      oilType: oilType.value,
+      oilGrade: oilGrade.value,
+      oilDistance: oilDistance.value,
+      oilPrice: oilPrice.value
+    };
 
-  btn.disabled=true;
-  status.innerText="📡 تحديد الموقع...";
-
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    status.innerText="📷 تجهيز الصورة...";
-    const img=await toBase64(image.files[0]);
-
-    status.innerText="📤 جاري الإرسال...";
-    const res=await fetch(scriptURL,{
+    fetch(URL,{
       method:"POST",
-      body:JSON.stringify({
-        repName:localStorage.repName,
-        city:localStorage.city,
-        lat:pos.coords.latitude,
-        lng:pos.coords.longitude,
-        useOil:useOil.value,
-        tradeName:tradeName.value,
-        ownerName:ownerName.value,
-        address:address.value,
-        phone:phone.value,
-        category:category.value,
-        note:note.value,
-        rate:rate.value,
-        visitDays:visitDays.value,
-        oilType:oilType.value,
-        oilGrade:oilGrade.value,
-        oilDistance:oilDistance.value,
-        oilPrice:oilPrice.value,
-        image:img
-      })
-    });
+      body:JSON.stringify(data)
+    })
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.status==="success"){
+        msg.textContent="✅ تم الإرسال بنجاح";
+        document.querySelector("form")?.reset();
+      }else{
+        msg.textContent="❌ "+res.message;
+      }
+    })
+    .catch(()=>msg.textContent="❌ فشل الاتصال");
 
-    const t=await res.text();
-    status.innerText = t==="ok" ? "✅ تم الإرسال" : "❌ "+t;
-    btn.disabled=false;
-  });
+  },()=>msg.textContent="❌ لم يتم الحصول على الموقع");
 }
 </script>
+
 </body>
 </html>
-
