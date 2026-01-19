@@ -6,117 +6,146 @@
 <title>MAWARAN CO</title>
 
 <style>
-body{font-family:tahoma;background:#f2f4f7;margin:0}
-.container{
-  max-width:420px;margin:auto;background:#fff;
-  padding:16px;border-radius:12px;
-  box-shadow:0 4px 10px #0002
+body{
+  font-family:tahoma;
+  background:linear-gradient(135deg,#e9eef3,#f7f9fc);
+  margin:0;
 }
-h2{text-align:center}
+.container{
+  max-width:420px;
+  margin:auto;
+  background:#fff;
+  padding:16px;
+  border-radius:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.12);
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.langBtn{
+  background:#eee;
+  border:0;
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  font-size:20px;
+}
+h2{text-align:center;margin:10px 0}
 label{display:block;margin-top:10px;font-weight:bold}
 input,select,textarea,button{
-  width:100%;padding:10px;margin-top:4px;
-  border-radius:8px;border:1px solid #ccc;font-size:16px
+  width:100%;
+  padding:10px;
+  margin-top:4px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:16px;
 }
 input.error,select.error,textarea.error{
-  border-color:red;background:#ffecec
+  border-color:red;
+  background:#ffecec;
 }
-button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
+button{
+  background:#0a7cff;
+  color:#fff;
+  border:0;
+  margin-top:16px;
+}
 #msg{text-align:center;margin-top:10px;font-weight:bold}
 .hidden{display:none}
 
-/* ===== top info ===== */
+/* top info */
 #topInfo{
-  background:#eef;
+  background:#f0f4ff;
   padding:10px;
-  border-radius:8px;
-  margin-bottom:10px;
+  border-radius:10px;
   display:flex;
   align-items:center;
   gap:6px;
   flex-wrap:wrap;
+  font-size:14px;
 }
-#topInfo span{font-weight:bold}
+#topInfo b{color:#0a7cff}
 #editBtn{
-  width:auto;
-  padding:6px 10px;
-  font-size:14px;
   background:#666;
+  font-size:13px;
+  padding:6px 10px;
 }
-#cityEdit{
-  width:auto;
-  padding:6px;
-  font-size:14px;
-}
+#cityEdit{width:auto;padding:6px;font-size:14px}
 </style>
 </head>
 
 <body>
 <div class="container">
 
+<header>
+  <div></div>
+  <button class="langBtn" onclick="toggleLang()">🌐</button>
+</header>
+
 <!-- تسجيل الدخول -->
 <div id="login">
-  <h2>تسجيل الدخول</h2>
+  <h2 data-t="login">تسجيل الدخول</h2>
 
-  <label>اسم المندوب *</label>
+  <label data-t="repName">اسم المندوب *</label>
   <input id="repName">
 
-  <label>المدينة *</label>
+  <label data-t="city">المدينة *</label>
   <input id="city">
 
-  <button onclick="saveLogin()">دخول</button>
+  <button onclick="saveLogin()" data-t="enter">دخول</button>
 </div>
 
 <!-- الفورم -->
 <div id="formBox" class="hidden">
 
-  <!-- اسم المندوب + المدينة -->
   <div id="topInfo">
-    <span>المندوب:</span>
-    <span id="repShow"></span>
+    <span data-t="rep">المندوب:</span>
+    <b id="repShow"></b>
     |
-    <span>المدينة:</span>
+    <span data-t="city">المدينة:</span>
     <span id="cityShow"></span>
-
     <input id="cityEdit" class="hidden">
-    <button id="editBtn" onclick="toggleEdit()">تعديل</button>
+    <button id="editBtn" onclick="toggleEdit()" data-t="edit">تعديل</button>
   </div>
 
   <h2>MAWARAN CO</h2>
 
-  <label>هل يمتلك زيت ريماكس *</label>
+  <label data-t="useOil">هل يمتلك زيت ريماكس *</label>
   <select id="useOil">
-    <option value="">اختر</option>
-    <option>نعم</option>
-    <option>لا</option>
+    <option value="">---</option>
+    <option data-t="yes">نعم</option>
+    <option data-t="no">لا</option>
   </select>
 
-  <label>الاسم التجاري *</label>
+  <label data-t="tradeName">الاسم التجاري *</label>
   <input id="tradeName">
 
-  <label>اسم المالك *</label>
+  <label data-t="ownerName">اسم المالك *</label>
   <input id="ownerName">
 
-  <label>العنوان *</label>
+  <label data-t="address">العنوان *</label>
   <input id="address">
 
-  <label>رقم الهاتف *</label>
+  <label data-t="phone">رقم الهاتف *</label>
   <input id="phone" inputmode="numeric">
 
-  <label>الفئة *</label>
+  <label data-t="category">الفئة *</label>
   <select id="category">
-    <option value="">اختر</option>
-    <option>كراج</option>
-    <option>جملة</option>
-    <option>مفرد</option>
+    <option value="">---</option>
+    <option data-t="garage">كراج</option>
+    <option data-t="wholesale">جملة</option>
+    <option data-t="retail">مفرد</option>
   </select>
 
-  <label>ملاحظة</label>
+  <label data-t="note">ملاحظة</label>
   <textarea id="note"></textarea>
 
-  <label>التقييم *</label>
+  <label data-t="rate">التقييم *</label>
   <select id="rate">
-    <option value="">اختر</option>
+    <option value="">---</option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
     <option value="3">⭐⭐⭐</option>
@@ -124,29 +153,10 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
     <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
-  <label>كل كم يوم زيارة *</label>
+  <label data-t="visit">كل كم يوم زيارة *</label>
   <input id="visitDays" inputmode="numeric">
 
-  <!-- اختيارية -->
-  <label>نوع الزيت</label>
-  <input id="oilType">
-
-  <label>درجة الزيت</label>
-  <input id="oilGrade">
-
-  <label>كم المسافة التي يقطعها الزيت</label>
-  <select id="oilDistance">
-    <option value="">اختر</option>
-    <option>3 كم</option>
-    <option>5 كم</option>
-    <option>10 كم</option>
-    <option>15 كم</option>
-  </select>
-
-  <label>سعر اللتر</label>
-  <input id="oilPrice" inputmode="numeric">
-
-  <button onclick="send()">إرسال</button>
+  <button onclick="send()" data-t="send">إرسال</button>
   <div id="msg"></div>
 </div>
 
@@ -155,82 +165,113 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
 <script>
 const URL="https://script.google.com/macros/s/AKfycbzimo2-GE1OTVhggcbQj6eKYYaKz0DErEHwBDhVwr_t9KW_XwdekKOD8OBQthf3r02ZIg/exec";
 
+/* ===== language ===== */
+const langData={
+  ar:{
+    login:"تسجيل الدخول",repName:"اسم المندوب *",city:"المدينة *",
+    enter:"دخول",rep:"المندوب:",edit:"تعديل",
+    useOil:"هل يمتلك زيت ريماكس *",
+    yes:"نعم",no:"لا",
+    tradeName:"الاسم التجاري *",ownerName:"اسم المالك *",
+    address:"العنوان *",phone:"رقم الهاتف *",
+    category:"الفئة *",garage:"كراج",wholesale:"جملة",retail:"مفرد",
+    note:"ملاحظة",rate:"التقييم *",visit:"كل كم يوم زيارة *",
+    send:"إرسال"
+  },
+  ku:{
+    login:"چوونەژوور",repName:"ناوی نێردراو *",city:"شار *",
+    enter:"چوونەژوور",rep:"نێردراو:",edit:"گۆڕین",
+    useOil:"ئایا ڕۆنی RYMAX هەیە *",
+    yes:"بەڵێ",no:"نەخێر",
+    tradeName:"ناوی بازرگانی *",ownerName:"ناوی خاوەن *",
+    address:"ناونیشان *",phone:"ژمارەی تەلەفۆن *",
+    category:"جۆر *",garage:"گەراج",wholesale:"کۆمەڵ",retail:"تاك",
+    note:"تێبینی",rate:"هەڵسەنگاندن *",visit:"چەند ڕۆژ جارێک *",
+    send:"ناردن"
+  }
+};
+
+let lang=localStorage.lang||"ar";
+applyLang();
+
+function toggleLang(){
+  lang=lang==="ar"?"ku":"ar";
+  localStorage.lang=lang;
+  applyLang();
+}
+
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-t]").forEach(e=>{
+    e.textContent=langData[lang][e.dataset.t];
+  });
+}
+
+/* ===== login ===== */
 if(localStorage.repName){
   login.classList.add("hidden");
   formBox.classList.remove("hidden");
-  repShow.textContent = localStorage.repName;
-  cityShow.textContent = localStorage.city;
-  cityEdit.value = localStorage.city;
+  repShow.textContent=localStorage.repName;
+  cityShow.textContent=localStorage.city;
+  cityEdit.value=localStorage.city;
 }
 
 function saveLogin(){
-  if(!repName.value||!city.value) return;
-  localStorage.repName = repName.value;
-  localStorage.city = city.value;
+  if(!repName.value||!city.value)return;
+  localStorage.repName=repName.value;
+  localStorage.city=city.value;
   location.reload();
 }
 
-let editMode=false;
+let edit=false;
 function toggleEdit(){
-  editMode = !editMode;
-  cityShow.classList.toggle("hidden", editMode);
-  cityEdit.classList.toggle("hidden", !editMode);
-  editBtn.textContent = editMode ? "حفظ" : "تعديل";
-
-  if(!editMode){
-    localStorage.city = cityEdit.value;
-    cityShow.textContent = cityEdit.value;
+  edit=!edit;
+  cityShow.classList.toggle("hidden",edit);
+  cityEdit.classList.toggle("hidden",!edit);
+  editBtn.textContent=edit? (lang==="ar"?"حفظ":"پاشەکەوت") : langData[lang].edit;
+  if(!edit){
+    localStorage.city=cityEdit.value;
+    cityShow.textContent=cityEdit.value;
   }
 }
 
+/* ===== send ===== */
 function send(){
-  const required=[
-    useOil,tradeName,ownerName,
-    address,phone,category,rate,visitDays
-  ];
+  const req=[useOil,tradeName,ownerName,address,phone,category,rate,visitDays];
   let ok=true;
-  required.forEach(f=>{
+  req.forEach(f=>{
     f.classList.remove("error");
     if(!f.value){f.classList.add("error");ok=false;}
   });
   if(!ok)return;
 
-  msg.textContent="جاري الإرسال...";
+  msg.textContent= lang==="ar"?"جاري الإرسال...":"دەنێردرێت...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
-    const data={
-      repName:localStorage.repName,
-      city:localStorage.city,
-      tradeName:tradeName.value,
-      ownerName:ownerName.value,
-      useOil:useOil.value,
-      address:address.value,
-      phone:phone.value,
-      category:category.value,
-      note:note.value,
-      rate:rate.value,
-      visitDays:visitDays.value,
-      lat:pos.coords.latitude,
-      lng:pos.coords.longitude,
-      oilType:oilType.value,
-      oilGrade:oilGrade.value,
-      oilDistance:oilDistance.value,
-      oilPrice:oilPrice.value
-    };
-
-    fetch(URL,{method:"POST",body:JSON.stringify(data)})
+    fetch(URL,{
+      method:"POST",
+      body:JSON.stringify({
+        repName:localStorage.repName,
+        city:localStorage.city,
+        tradeName:tradeName.value,
+        ownerName:ownerName.value,
+        address:address.value,
+        phone:phone.value,
+        category:category.value,
+        note:note.value,
+        rate:rate.value,
+        visitDays:visitDays.value,
+        lat:pos.coords.latitude,
+        lng:pos.coords.longitude
+      })
+    })
     .then(r=>r.json())
     .then(res=>{
-      if(res.status==="success"){
-        msg.textContent="✅ تم الإرسال بنجاح";
-        document.querySelectorAll(
-          "#formBox input,#formBox textarea,#formBox select"
-        ).forEach(e=>{
-          if(!["cityEdit"].includes(e.id)) e.value="";
-        });
-      }else msg.textContent="❌ "+res.message;
+      msg.textContent=res.status==="success"?
+        (lang==="ar"?"✅ تم الإرسال":"✅ ناردرا"):
+        "❌ "+res.message;
     });
-  },()=>msg.textContent="❌ لم يتم تحديد الموقع");
+  });
 }
 </script>
 
