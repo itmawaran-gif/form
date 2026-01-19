@@ -6,61 +6,69 @@
 <title>MAWARAN CO</title>
 
 <style>
-body{font-family:Tahom,aArial;background:#f2f4f7;margin:0}
+body{font-family:tahoma;background:#f2f4f7;margin:0}
 .container{max-width:420px;margin:auto;background:#fff;
 padding:16px;border-radius:12px;box-shadow:0 4px 10px #0002}
-h2{text-align:center;margin:10px 0}
+h2{text-align:center}
 label{display:block;margin-top:10px;font-weight:bold}
 input,select,textarea,button{
 width:100%;padding:10px;margin-top:4px;
 border-radius:8px;border:1px solid #ccc;font-size:16px}
+input.error,select.error,textarea.error{border-color:red;background:#ffecec}
 button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
+#topInfo{background:#eef;padding:10px;border-radius:8px;margin-bottom:10px}
+#msg{text-align:center;margin-top:10px;font-weight:bold}
 .hidden{display:none}
-#msg{margin-top:10px;text-align:center;font-weight:bold}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<!-- ===== شاشة الدخول ===== -->
+<!-- تسجيل الدخول -->
 <div id="login">
   <h2>تسجيل الدخول</h2>
-
-  <label>اسم المندوب الثلاثي *</label>
-  <input id="repName" required>
-
+  <label>اسم المندوب *</label>
+  <input id="repName">
   <label>المدينة *</label>
-  <input id="city" required>
-
+  <input id="city">
   <button onclick="saveLogin()">دخول</button>
 </div>
 
-<!-- ===== الفورم ===== -->
-<div id="form" class="hidden">
+<!-- الفورم -->
+<div id="formBox" class="hidden">
+
+  <div id="topInfo">
+    <div>المندوب: <b id="repShow"></b></div>
+    <div>
+      المدينة:
+      <input id="cityEdit">
+    </div>
+  </div>
+
   <h2>MAWARAN CO</h2>
 
   <label>هل يمتلك زيت ريماكس *</label>
-  <select id="useOil" required>
+  <select id="useOil">
     <option value="">اختر</option>
     <option>نعم</option>
     <option>لا</option>
   </select>
 
   <label>الاسم التجاري *</label>
-  <input id="tradeName" required>
+  <input id="tradeName">
 
   <label>اسم المالك *</label>
-  <input id="ownerName" required>
+  <input id="ownerName">
 
   <label>العنوان *</label>
-  <input id="address" required>
+  <input id="address">
 
   <label>رقم الهاتف *</label>
-  <input id="phone" type="tel" inputmode="numeric" required>
+  <input id="phone" inputmode="numeric">
 
   <label>الفئة *</label>
-  <select id="category" required>
+  <select id="category">
     <option value="">اختر</option>
     <option>كراج</option>
     <option>جملة</option>
@@ -71,16 +79,19 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
   <textarea id="note"></textarea>
 
   <label>التقييم *</label>
-  <select id="rate" required>
+  <select id="rate">
     <option value="">اختر</option>
-    <option>1</option><option>2</option><option>3</option>
-    <option>4</option><option>5</option>
+    <option value="1">⭐</option>
+    <option value="2">⭐⭐</option>
+    <option value="3">⭐⭐⭐</option>
+    <option value="4">⭐⭐⭐⭐</option>
+    <option value="5">⭐⭐⭐⭐⭐</option>
   </select>
 
   <label>كل كم يوم زيارة *</label>
-  <input id="visitDays" type="number" inputmode="numeric" required>
+  <input id="visitDays" inputmode="numeric">
 
-  <!-- حقول اختيارية -->
+  <!-- اختيارية -->
   <label>نوع الزيت</label>
   <input id="oilType">
 
@@ -97,7 +108,7 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
   </select>
 
   <label>سعر اللتر</label>
-  <input id="oilPrice" type="number" inputmode="numeric">
+  <input id="oilPrice" inputmode="numeric">
 
   <button onclick="send()">إرسال</button>
   <div id="msg"></div>
@@ -106,60 +117,70 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbx82nb5QE3kqFNULF-7iWN5Nat9CgJERh0JdHYDUtnYT3VOl1CGLXueRWG5QtmJ25KPJw/exec";
+const URL="https://script.google.com/macros/s/AKfycbwHA7OqlgtK0ozm1Ub4KXm61-qQWM6yPCiLnyt-QKM8mzfnkqKOo2C6RZuX2M2gYG37SA/exec";
 
 if(localStorage.repName){
-  document.getElementById("login").classList.add("hidden");
-  document.getElementById("form").classList.remove("hidden");
+  login.classList.add("hidden");
+  formBox.classList.remove("hidden");
+  repShow.textContent=localStorage.repName;
+  cityEdit.value=localStorage.city;
 }
 
 function saveLogin(){
-  localStorage.repName = repName.value;
-  localStorage.city = city.value;
+  if(!repName.value||!city.value)return;
+  localStorage.repName=repName.value;
+  localStorage.city=city.value;
   location.reload();
 }
 
 function send(){
-  const msg = document.getElementById("msg");
-  msg.textContent = "جاري الإرسال...";
+  const required=[
+    useOil,tradeName,ownerName,address,
+    phone,category,rate,visitDays
+  ];
+  let ok=true;
+  required.forEach(f=>{
+    f.classList.remove("error");
+    if(!f.value){f.classList.add("error");ok=false;}
+  });
+  if(!ok)return;
+
+  msg.textContent="جاري الإرسال...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
-    const data = {
-      repName: localStorage.repName,
-      city: localStorage.city,
-      useOil: useOil.value,
-      tradeName: tradeName.value,
-      ownerName: ownerName.value,
-      address: address.value,
-      phone: phone.value,
-      category: category.value,
-      note: note.value,
-      rate: rate.value,
-      visitDays: visitDays.value,
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
-      oilType: oilType.value,
-      oilGrade: oilGrade.value,
-      oilDistance: oilDistance.value,
-      oilPrice: oilPrice.value
+    localStorage.city=cityEdit.value;
+
+    const data={
+      repName:localStorage.repName,
+      city:cityEdit.value,
+      tradeName:tradeName.value,
+      ownerName:ownerName.value,
+      useOil:useOil.value,
+      address:address.value,
+      phone:phone.value,
+      category:category.value,
+      note:note.value,
+      rate:rate.value,
+      visitDays:visitDays.value,
+      lat:pos.coords.latitude,
+      lng:pos.coords.longitude,
+      oilType:oilType.value,
+      oilGrade:oilGrade.value,
+      oilDistance:oilDistance.value,
+      oilPrice:oilPrice.value
     };
 
-    fetch(URL,{
-      method:"POST",
-      body:JSON.stringify(data)
-    })
+    fetch(URL,{method:"POST",body:JSON.stringify(data)})
     .then(r=>r.json())
     .then(res=>{
       if(res.status==="success"){
         msg.textContent="✅ تم الإرسال بنجاح";
-        document.querySelector("form")?.reset();
-      }else{
-        msg.textContent="❌ "+res.message;
-      }
-    })
-    .catch(()=>msg.textContent="❌ فشل الاتصال");
-
-  },()=>msg.textContent="❌ لم يتم الحصول على الموقع");
+        document.querySelectorAll(
+          "#formBox input,#formBox textarea,#formBox select"
+        ).forEach(e=>{if(e.id!=="cityEdit")e.value=""});
+      }else msg.textContent="❌ "+res.message;
+    });
+  },()=>msg.textContent="❌ لم يتم تحديد الموقع");
 }
 </script>
 
