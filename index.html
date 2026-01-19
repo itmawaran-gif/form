@@ -20,7 +20,7 @@ body{
   border-radius:14px;
   box-shadow:0 4px 15px rgba(0,0,0,.15);
 }
-h2,h3{text-align:center;margin:10px 0}
+h2,h3{text-align:center}
 label{display:block;margin-top:12px;font-weight:bold}
 input,select,textarea,button{
   width:100%;
@@ -28,7 +28,6 @@ input,select,textarea,button{
   margin-top:5px;
   border-radius:8px;
   border:1px solid #ccc;
-  font-size:15px;
 }
 button{
   background:#0b5ed7;
@@ -39,193 +38,134 @@ button{
 button:disabled{background:#999}
 .hidden{display:none}
 .required::after{content:" *";color:red}
-#status{margin-top:10px;font-weight:bold;text-align:center}
+#status{text-align:center;margin-top:10px;font-weight:bold}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<!-- تسجيل أول مرة -->
 <div id="loginBox">
   <h3>تسجيل المندوب</h3>
-
-  <label class="required">اسم المندوب الثلاثي</label>
+  <label class="required">اسم المندوب</label>
   <input id="repName">
-
   <label class="required">المدينة</label>
   <input id="city">
-
   <button onclick="saveRep()">دخول</button>
 </div>
 
-<!-- الفورم الرئيسي -->
 <div id="formBox" class="hidden">
+<h2>MAWARAN co</h2>
 
-  <h2>MAWARAN co</h2>
+<label class="required">هل يمتلك زيت ريماكس</label>
+<select id="useOil"><option value="">اختر</option><option>نعم</option><option>لا</option></select>
 
-  <label class="required">هل يمتلك زيت ريماكس؟</label>
-  <select id="useOil">
-    <option value="">اختر</option>
-    <option>نعم</option>
-    <option>لا</option>
-  </select>
+<label class="required">الاسم التجاري</label>
+<input id="tradeName">
 
-  <label class="required">الاسم التجاري</label>
-  <input id="tradeName">
+<label class="required">اسم المالك</label>
+<input id="ownerName">
 
-  <label class="required">اسم المالك</label>
-  <input id="ownerName">
+<label class="required">العنوان</label>
+<input id="address">
 
-  <label class="required">العنوان</label>
-  <input id="address">
+<label class="required">رقم الهاتف</label>
+<input id="phone" type="number" inputmode="numeric">
 
-  <label class="required">رقم الهاتف</label>
-  <input id="phone" type="number" inputmode="numeric">
+<label class="required">الفئة</label>
+<select id="category"><option value="">اختر</option><option>كراج</option><option>جملة</option><option>مفرد</option></select>
 
-  <label class="required">الفئة</label>
-  <select id="category">
-    <option value="">اختر</option>
-    <option>كراج</option>
-    <option>جملة</option>
-    <option>مفرد</option>
-  </select>
+<label class="required">ملاحظة</label>
+<textarea id="note"></textarea>
 
-  <label class="required">ملاحظة</label>
-  <textarea id="note"></textarea>
+<label class="required">التقييم</label>
+<select id="rate"><option value="">اختر</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
 
-  <label class="required">التقييم</label>
-  <select id="rate">
-    <option value="">اختر</option>
-    <option>1</option><option>2</option><option>3</option>
-    <option>4</option><option>5</option>
-  </select>
+<label class="required">كل كم يوم تتم الزيارة</label>
+<input id="visitDays" type="number">
 
-  <label class="required">كل كم يوم تتم الزيارة</label>
-  <input id="visitDays" type="number" inputmode="numeric">
+<hr>
 
-  <hr>
+<label>نوع الزيت</label><input id="oilType">
+<label>درجة الزيت</label><input id="oilGrade">
+<label>المسافة</label>
+<select id="oilDistance"><option value="">اختر</option><option>3كم</option><option>5كم</option><option>10كم</option><option>15كم</option></select>
+<label>سعر اللتر</label><input id="oilPrice" type="number">
 
-  <label>نوع الزيت</label>
-  <input id="oilType">
+<label class="required">التقاط صورة</label>
+<input id="image" type="file" accept="image/*" capture="environment">
 
-  <label>درجة الزيت</label>
-  <input id="oilGrade">
-
-  <label>كم المسافة التي يقطعها الزيت</label>
-  <select id="oilDistance">
-    <option value="">اختر</option>
-    <option>3كم</option>
-    <option>5كم</option>
-    <option>10كم</option>
-    <option>15كم</option>
-  </select>
-
-  <label>سعر اللتر</label>
-  <input id="oilPrice" type="number">
-
-  <label class="required">التقاط صورة (كاميرا فقط)</label>
-  <input id="image" type="file" accept="image/*" capture="environment">
-
-  <button id="sendBtn" onclick="sendData()">إرسال</button>
-  <div id="status"></div>
-
+<button id="sendBtn" onclick="sendData()">إرسال</button>
+<div id="status"></div>
 </div>
+
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbw5pXhCNbS13H9Fb_kjAPrsF3G0xvYJ4XemfcfzW4mjy7qwUB7CBtyYbejJ-RYcIqhxUw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbz1aZ_zivvlqK8hEIvL1HXukNnRBEBTI6GMgPLAk2cAOYzCsw-0Gyc_m66DEdSIDtNA/exec";
 
 function saveRep(){
-  if(!repName.value || !city.value){
-    alert("يرجى إدخال الاسم والمدينة");
-    return;
-  }
-  localStorage.setItem("repName", repName.value);
-  localStorage.setItem("city", city.value);
-  showForm();
+  localStorage.setItem("repName",repName.value);
+  localStorage.setItem("city",city.value);
+  loginBox.classList.add("hidden");
+  formBox.classList.remove("hidden");
 }
 
-function showForm(){
-  if(localStorage.getItem("repName")){
-    loginBox.classList.add("hidden");
-    formBox.classList.remove("hidden");
-  }
-}
-showForm();
-
-async function sendData(){
-  const status = document.getElementById("status");
-  const btn = document.getElementById("sendBtn");
-
-  if(!image.files.length){
-    status.innerText = "❌ يجب التقاط صورة";
-    return;
-  }
-
-  status.innerText = "📡 تحديد الموقع...";
-  btn.disabled = true;
-
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    try{
-      status.innerText = "📷 تجهيز الصورة...";
-      const base64 = await toBase64(image.files[0]);
-
-      status.innerText = "📤 جاري الإرسال...";
-
-      const payload = {
-        repName: localStorage.getItem("repName"),
-        city: localStorage.getItem("city"),
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-        useOil: useOil.value,
-        tradeName: tradeName.value,
-        ownerName: ownerName.value,
-        address: address.value,
-        phone: phone.value,
-        category: category.value,
-        note: note.value,
-        rate: rate.value,
-        visitDays: visitDays.value,
-        oilType: oilType.value,
-        oilGrade: oilGrade.value,
-        oilDistance: oilDistance.value,
-        oilPrice: oilPrice.value,
-        image: base64
-      };
-
-      const res = await fetch(scriptURL,{
-        method:"POST",
-        body: JSON.stringify(payload)
-      });
-
-      const text = await res.text();
-      if(text !== "ok") throw text;
-
-      status.innerText = "✅ تم الإرسال بنجاح";
-      btn.disabled = false;
-
-    }catch(err){
-      status.innerText = "❌ فشل الإرسال: " + err;
-      btn.disabled = false;
-    }
-
-  },()=>{
-    status.innerText = "❌ لم يتم السماح بتحديد الموقع";
-    btn.disabled = false;
-  });
+if(localStorage.getItem("repName")){
+  loginBox.classList.add("hidden");
+  formBox.classList.remove("hidden");
 }
 
 function toBase64(file){
-  return new Promise((resolve,reject)=>{
-    const r = new FileReader();
-    r.onload = ()=>resolve(r.result);
-    r.onerror = reject;
-    r.readAsDataURL(file);
+  return new Promise(r=>{
+    const f=new FileReader();
+    f.onload=()=>r(f.result);
+    f.readAsDataURL(file);
+  });
+}
+
+function sendData(){
+  const btn=sendBtn;
+  const status=document.getElementById("status");
+  if(!image.files.length){status.innerText="❌ التقط صورة";return;}
+
+  btn.disabled=true;
+  status.innerText="📡 تحديد الموقع...";
+
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    status.innerText="📷 تجهيز الصورة...";
+    const img=await toBase64(image.files[0]);
+
+    status.innerText="📤 جاري الإرسال...";
+    const res=await fetch(scriptURL,{
+      method:"POST",
+      body:JSON.stringify({
+        repName:localStorage.repName,
+        city:localStorage.city,
+        lat:pos.coords.latitude,
+        lng:pos.coords.longitude,
+        useOil:useOil.value,
+        tradeName:tradeName.value,
+        ownerName:ownerName.value,
+        address:address.value,
+        phone:phone.value,
+        category:category.value,
+        note:note.value,
+        rate:rate.value,
+        visitDays:visitDays.value,
+        oilType:oilType.value,
+        oilGrade:oilGrade.value,
+        oilDistance:oilDistance.value,
+        oilPrice:oilPrice.value,
+        image:img
+      })
+    });
+
+    const t=await res.text();
+    status.innerText = t==="ok" ? "✅ تم الإرسال" : "❌ "+t;
+    btn.disabled=false;
   });
 }
 </script>
-
 </body>
 </html>
-
