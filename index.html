@@ -20,7 +20,6 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,.12);
 }
 h2{text-align:center;margin:10px 0}
-
 label{display:block;margin-top:10px;font-weight:bold}
 
 input,select,textarea,button{
@@ -29,8 +28,9 @@ input,select,textarea,button{
   margin-top:4px;
   border-radius:10px;
   border:1px solid #ccc;
-  font-size:15px;
+  font-size:16px;
 }
+
 input.error,select.error,textarea.error{
   border-color:red;
   background:#ffecec;
@@ -54,12 +54,11 @@ button{
   font-size:14px;
 }
 
-/* مندوب + زر لغة */
 .repRow{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:8px;
+  gap:6px;
 }
 
 .langBtn{
@@ -70,6 +69,18 @@ button{
   height:36px;
   font-size:18px;
   cursor:pointer;
+}
+
+#editBtn{
+  background:#666;
+  font-size:13px;
+  padding:6px 10px;
+}
+
+#cityEdit{
+  width:auto;
+  padding:6px;
+  font-size:14px;
 }
 </style>
 </head>
@@ -94,6 +105,8 @@ button{
 <div id="formBox" class="hidden">
 
   <div id="topInfo">
+
+    <!-- المندوب + زر اللغة -->
     <div class="repRow">
       <div>
         <span data-t="rep">المندوب:</span>
@@ -102,10 +115,14 @@ button{
       <button class="langBtn" onclick="toggleLang()">🌐</button>
     </div>
 
+    <!-- المدينة -->
     <div style="margin-top:6px">
       <span data-t="city">المدينة:</span>
-      <b id="cityShow"></b>
+      <span id="cityShow"></span>
+      <input id="cityEdit" class="hidden">
+      <button id="editBtn" onclick="toggleEdit()" data-t="edit">تعديل</button>
     </div>
+
   </div>
 
   <h2>MAWARAN CO</h2>
@@ -127,7 +144,7 @@ button{
   <input id="address">
 
   <label data-t="phone">رقم الهاتف *</label>
-  <input id="phone">
+  <input id="phone" inputmode="numeric">
 
   <label data-t="category">الفئة *</label>
   <select id="category">
@@ -151,24 +168,26 @@ button{
   </select>
 
   <label data-t="visit">كل كم يوم زيارة *</label>
-  <input id="visitDays">
+  <input id="visitDays" inputmode="numeric">
 
+  <!-- الحقول الاختيارية -->
   <label data-t="oilType">نوع الزيت</label>
   <input id="oilType">
 
   <label data-t="oilGrade">درجة الزيت</label>
   <input id="oilGrade">
 
-  <label data-t="oilDistance">المسافة</label>
+  <label data-t="oilDistance">المسافة التي يقطعها الزيت</label>
   <select id="oilDistance">
     <option value=""></option>
     <option>3 كم</option>
     <option>5 كم</option>
     <option>10 كم</option>
+    <option>15 كم</option>
   </select>
 
   <label data-t="oilPrice">سعر اللتر</label>
-  <input id="oilPrice">
+  <input id="oilPrice" inputmode="numeric">
 
   <button onclick="send()" data-t="send">إرسال</button>
   <div id="msg"></div>
@@ -183,27 +202,27 @@ const URL="https://script.google.com/macros/s/AKfycbwbQkYePx5IvYev_Crtcv-6kXV4sT
 const langData={
   ar:{
     login:"تسجيل الدخول",repName:"اسم المندوب *",city:"المدينة *",
-    enter:"دخول",rep:"المندوب:",useOil:"هل يمتلك زيت ريماكس *",
-    yes:"نعم",no:"لا",tradeName:"الاسم التجاري *",
-    ownerName:"اسم المالك *",address:"العنوان *",
-    phone:"رقم الهاتف *",category:"الفئة *",
-    garage:"كراج",wholesale:"جملة",retail:"مفرد",
+    enter:"دخول",rep:"المندوب:",edit:"تعديل",
+    useOil:"هل يمتلك زيت ريماكس *",yes:"نعم",no:"لا",
+    tradeName:"الاسم التجاري *",ownerName:"اسم المالك *",
+    address:"العنوان *",phone:"رقم الهاتف *",
+    category:"الفئة *",garage:"كراج",wholesale:"جملة",retail:"مفرد",
     note:"ملاحظة",rate:"التقييم *",visit:"كل كم يوم زيارة *",
     oilType:"نوع الزيت",oilGrade:"درجة الزيت",
-    oilDistance:"المسافة",oilPrice:"سعر اللتر",send:"إرسال"
+    oilDistance:"المسافة التي يقطعها الزيت",
+    oilPrice:"سعر اللتر",send:"إرسال"
   },
   ku:{
     login:"چوونەژوور",repName:"ناوی نێردراو *",city:"شار *",
-    enter:"چوونەژوور",rep:"نێردراو:",
-    useOil:"ئایا ڕۆنی RYMAX هەیە *",
-    yes:"بەڵێ",no:"نەخێر",tradeName:"ناوی بازرگانی *",
-    ownerName:"ناوی خاوەن *",address:"ناونیشان *",
-    phone:"ژمارەی تەلەفۆن *",category:"جۆر *",
-    garage:"گەراج",wholesale:"کۆمەڵ",retail:"تاك",
-    note:"تێبینی",rate:"هەڵسەنگاندن *",
-    visit:"چەند ڕۆژ جارێک *",
+    enter:"چوونەژوور",rep:"نێردراو:",edit:"گۆڕین",
+    useOil:"ئایا ڕۆنی RYMAX هەیە *",yes:"بەڵێ",no:"نەخێر",
+    tradeName:"ناوی بازرگانی *",ownerName:"ناوی خاوەن *",
+    address:"ناونیشان *",phone:"ژمارەی تەلەفۆن *",
+    category:"جۆر *",garage:"گەراج",wholesale:"کۆمەڵ",retail:"تاك",
+    note:"تێبینی",rate:"هەڵسەنگاندن *",visit:"چەند ڕۆژ جارێک *",
     oilType:"جۆری ڕۆن",oilGrade:"پلەی ڕۆن",
-    oilDistance:"ماوە",oilPrice:"نرخی لیتر",send:"ناردن"
+    oilDistance:"ماوەی ڕۆن",oilPrice:"نرخی لیتر",
+    send:"ناردن"
   }
 };
 
@@ -228,6 +247,7 @@ if(localStorage.repName){
   formBox.classList.remove("hidden");
   repShow.textContent=localStorage.repName;
   cityShow.textContent=localStorage.city;
+  cityEdit.value=localStorage.city;
 }
 
 function saveLogin(){
@@ -237,11 +257,24 @@ function saveLogin(){
   location.reload();
 }
 
+/* تعديل المدينة */
+let edit=false;
+function toggleEdit(){
+  edit=!edit;
+  cityShow.classList.toggle("hidden",edit);
+  cityEdit.classList.toggle("hidden",!edit);
+  editBtn.textContent=edit?"حفظ":"تعديل";
+  if(!edit){
+    localStorage.city=cityEdit.value;
+    cityShow.textContent=cityEdit.value;
+  }
+}
+
 /* ===== send ===== */
 function send(){
-  const required=[useOil,tradeName,ownerName,address,phone,category,rate,visitDays];
+  const req=[useOil,tradeName,ownerName,address,phone,category,rate,visitDays];
   let ok=true;
-  required.forEach(f=>{
+  req.forEach(f=>{
     f.classList.remove("error");
     if(!f.value){f.classList.add("error");ok=false;}
   });
@@ -271,17 +304,18 @@ function send(){
 
   fetch(URL,{
     method:"POST",
-    body:JSON.stringify(data),
-    headers:{"Content-Type":"application/json"}
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(data)
   })
   .then(r=>r.json())
   .then(res=>{
     msg.textContent=res.status==="success"?"✅ تم الإرسال":"❌ "+res.message;
   })
-  .catch(()=>msg.textContent="❌ فشل الاتصال");
+  .catch(()=>{
+    msg.textContent="❌ فشل الاتصال";
+  });
 }
 </script>
 
 </body>
 </html>
-
