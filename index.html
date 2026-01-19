@@ -23,7 +23,6 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:10px;
 }
 .langBtn{
   background:#eee;
@@ -115,7 +114,7 @@ button{
 
   <label data-t="useOil">هل يمتلك زيت ريماكس *</label>
   <select id="useOil">
-    <option value="">---</option>
+    <option value=""></option>
     <option data-t="yes">نعم</option>
     <option data-t="no">لا</option>
   </select>
@@ -134,7 +133,7 @@ button{
 
   <label data-t="category">الفئة *</label>
   <select id="category">
-    <option value="">---</option>
+    <option value=""></option>
     <option data-t="garage">كراج</option>
     <option data-t="wholesale">جملة</option>
     <option data-t="retail">مفرد</option>
@@ -145,7 +144,7 @@ button{
 
   <label data-t="rate">التقييم *</label>
   <select id="rate">
-    <option value="">---</option>
+    <option value=""></option>
     <option value="1">⭐</option>
     <option value="2">⭐⭐</option>
     <option value="3">⭐⭐⭐</option>
@@ -156,6 +155,25 @@ button{
   <label data-t="visit">كل كم يوم زيارة *</label>
   <input id="visitDays" inputmode="numeric">
 
+  <!-- ===== الحقول الاختيارية (تم إرجاعها) ===== -->
+  <label data-t="oilType">نوع الزيت</label>
+  <input id="oilType">
+
+  <label data-t="oilGrade">درجة الزيت</label>
+  <input id="oilGrade">
+
+  <label data-t="oilDistance">المسافة التي يقطعها الزيت</label>
+  <select id="oilDistance">
+    <option value=""></option>
+    <option>3 كم</option>
+    <option>5 كم</option>
+    <option>10 كم</option>
+    <option>15 كم</option>
+  </select>
+
+  <label data-t="oilPrice">سعر اللتر</label>
+  <input id="oilPrice" inputmode="numeric">
+
   <button onclick="send()" data-t="send">إرسال</button>
   <div id="msg"></div>
 </div>
@@ -163,30 +181,32 @@ button{
 </div>
 
 <script>
-const URL="https://script.google.com/macros/s/AKfycbzimo2-GE1OTVhggcbQj6eKYYaKz0DErEHwBDhVwr_t9KW_XwdekKOD8OBQthf3r02ZIg/exec";
+const URL="https://script.google.com/macros/s/AKfycby1pI6tktkCRRycAYh78PYKhF_QBEPttm1QfxnJs7Wqr_W3_qfEidjlYVReCEccw8Uf7g/exec";
 
-/* ===== language ===== */
+/* ===== languages ===== */
 const langData={
   ar:{
     login:"تسجيل الدخول",repName:"اسم المندوب *",city:"المدينة *",
     enter:"دخول",rep:"المندوب:",edit:"تعديل",
-    useOil:"هل يمتلك زيت ريماكس *",
-    yes:"نعم",no:"لا",
+    useOil:"هل يمتلك زيت ريماكس *",yes:"نعم",no:"لا",
     tradeName:"الاسم التجاري *",ownerName:"اسم المالك *",
     address:"العنوان *",phone:"رقم الهاتف *",
     category:"الفئة *",garage:"كراج",wholesale:"جملة",retail:"مفرد",
     note:"ملاحظة",rate:"التقييم *",visit:"كل كم يوم زيارة *",
-    send:"إرسال"
+    oilType:"نوع الزيت",oilGrade:"درجة الزيت",
+    oilDistance:"المسافة التي يقطعها الزيت",
+    oilPrice:"سعر اللتر",send:"إرسال"
   },
   ku:{
     login:"چوونەژوور",repName:"ناوی نێردراو *",city:"شار *",
     enter:"چوونەژوور",rep:"نێردراو:",edit:"گۆڕین",
-    useOil:"ئایا ڕۆنی RYMAX هەیە *",
-    yes:"بەڵێ",no:"نەخێر",
+    useOil:"ئایا ڕۆنی RYMAX هەیە *",yes:"بەڵێ",no:"نەخێر",
     tradeName:"ناوی بازرگانی *",ownerName:"ناوی خاوەن *",
     address:"ناونیشان *",phone:"ژمارەی تەلەفۆن *",
     category:"جۆر *",garage:"گەراج",wholesale:"کۆمەڵ",retail:"تاك",
     note:"تێبینی",rate:"هەڵسەنگاندن *",visit:"چەند ڕۆژ جارێک *",
+    oilType:"جۆری ڕۆن",oilGrade:"پلەی ڕۆن",
+    oilDistance:"ماوەی ڕۆن",oilPrice:"نرخی لیتر",
     send:"ناردن"
   }
 };
@@ -199,9 +219,7 @@ function toggleLang(){
   localStorage.lang=lang;
   applyLang();
 }
-
 function applyLang(){
-  document.documentElement.lang=lang;
   document.querySelectorAll("[data-t]").forEach(e=>{
     e.textContent=langData[lang][e.dataset.t];
   });
@@ -228,7 +246,7 @@ function toggleEdit(){
   edit=!edit;
   cityShow.classList.toggle("hidden",edit);
   cityEdit.classList.toggle("hidden",!edit);
-  editBtn.textContent=edit? (lang==="ar"?"حفظ":"پاشەکەوت") : langData[lang].edit;
+  editBtn.textContent=edit?"حفظ":"تعديل";
   if(!edit){
     localStorage.city=cityEdit.value;
     cityShow.textContent=cityEdit.value;
@@ -245,33 +263,7 @@ function send(){
   });
   if(!ok)return;
 
-  msg.textContent= lang==="ar"?"جاري الإرسال...":"دەنێردرێت...";
-
-  navigator.geolocation.getCurrentPosition(pos=>{
-    fetch(URL,{
-      method:"POST",
-      body:JSON.stringify({
-        repName:localStorage.repName,
-        city:localStorage.city,
-        tradeName:tradeName.value,
-        ownerName:ownerName.value,
-        address:address.value,
-        phone:phone.value,
-        category:category.value,
-        note:note.value,
-        rate:rate.value,
-        visitDays:visitDays.value,
-        lat:pos.coords.latitude,
-        lng:pos.coords.longitude
-      })
-    })
-    .then(r=>r.json())
-    .then(res=>{
-      msg.textContent=res.status==="success"?
-        (lang==="ar"?"✅ تم الإرسال":"✅ ناردرا"):
-        "❌ "+res.message;
-    });
-  });
+  msg.textContent=lang==="ar"?"جاري الإرسال...":"دەنێردرێت...";
 }
 </script>
 
