@@ -7,18 +7,47 @@
 
 <style>
 body{font-family:tahoma;background:#f2f4f7;margin:0}
-.container{max-width:420px;margin:auto;background:#fff;
-padding:16px;border-radius:12px;box-shadow:0 4px 10px #0002}
+.container{
+  max-width:420px;margin:auto;background:#fff;
+  padding:16px;border-radius:12px;
+  box-shadow:0 4px 10px #0002
+}
 h2{text-align:center}
 label{display:block;margin-top:10px;font-weight:bold}
 input,select,textarea,button{
-width:100%;padding:10px;margin-top:4px;
-border-radius:8px;border:1px solid #ccc;font-size:16px}
-input.error,select.error,textarea.error{border-color:red;background:#ffecec}
+  width:100%;padding:10px;margin-top:4px;
+  border-radius:8px;border:1px solid #ccc;font-size:16px
+}
+input.error,select.error,textarea.error{
+  border-color:red;background:#ffecec
+}
 button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
-#topInfo{background:#eef;padding:10px;border-radius:8px;margin-bottom:10px}
 #msg{text-align:center;margin-top:10px;font-weight:bold}
 .hidden{display:none}
+
+/* ===== top info ===== */
+#topInfo{
+  background:#eef;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+#topInfo span{font-weight:bold}
+#editBtn{
+  width:auto;
+  padding:6px 10px;
+  font-size:14px;
+  background:#666;
+}
+#cityEdit{
+  width:auto;
+  padding:6px;
+  font-size:14px;
+}
 </style>
 </head>
 
@@ -28,22 +57,29 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
 <!-- تسجيل الدخول -->
 <div id="login">
   <h2>تسجيل الدخول</h2>
+
   <label>اسم المندوب *</label>
   <input id="repName">
+
   <label>المدينة *</label>
   <input id="city">
+
   <button onclick="saveLogin()">دخول</button>
 </div>
 
 <!-- الفورم -->
 <div id="formBox" class="hidden">
 
+  <!-- اسم المندوب + المدينة -->
   <div id="topInfo">
-    <div>المندوب: <b id="repShow"></b></div>
-    <div>
-      المدينة:
-      <input id="cityEdit">
-    </div>
+    <span>المندوب:</span>
+    <span id="repShow"></span>
+    |
+    <span>المدينة:</span>
+    <span id="cityShow"></span>
+
+    <input id="cityEdit" class="hidden">
+    <button id="editBtn" onclick="toggleEdit()">تعديل</button>
   </div>
 
   <h2>MAWARAN CO</h2>
@@ -122,21 +158,35 @@ const URL="https://script.google.com/macros/s/AKfycbzimo2-GE1OTVhggcbQj6eKYYaKz0
 if(localStorage.repName){
   login.classList.add("hidden");
   formBox.classList.remove("hidden");
-  repShow.textContent=localStorage.repName;
-  cityEdit.value=localStorage.city;
+  repShow.textContent = localStorage.repName;
+  cityShow.textContent = localStorage.city;
+  cityEdit.value = localStorage.city;
 }
 
 function saveLogin(){
-  if(!repName.value||!city.value)return;
-  localStorage.repName=repName.value;
-  localStorage.city=city.value;
+  if(!repName.value||!city.value) return;
+  localStorage.repName = repName.value;
+  localStorage.city = city.value;
   location.reload();
+}
+
+let editMode=false;
+function toggleEdit(){
+  editMode = !editMode;
+  cityShow.classList.toggle("hidden", editMode);
+  cityEdit.classList.toggle("hidden", !editMode);
+  editBtn.textContent = editMode ? "حفظ" : "تعديل";
+
+  if(!editMode){
+    localStorage.city = cityEdit.value;
+    cityShow.textContent = cityEdit.value;
+  }
 }
 
 function send(){
   const required=[
-    useOil,tradeName,ownerName,address,
-    phone,category,rate,visitDays
+    useOil,tradeName,ownerName,
+    address,phone,category,rate,visitDays
   ];
   let ok=true;
   required.forEach(f=>{
@@ -148,11 +198,9 @@ function send(){
   msg.textContent="جاري الإرسال...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
-    localStorage.city=cityEdit.value;
-
     const data={
       repName:localStorage.repName,
-      city:cityEdit.value,
+      city:localStorage.city,
       tradeName:tradeName.value,
       ownerName:ownerName.value,
       useOil:useOil.value,
@@ -177,7 +225,9 @@ function send(){
         msg.textContent="✅ تم الإرسال بنجاح";
         document.querySelectorAll(
           "#formBox input,#formBox textarea,#formBox select"
-        ).forEach(e=>{if(e.id!=="cityEdit")e.value=""});
+        ).forEach(e=>{
+          if(!["cityEdit"].includes(e.id)) e.value="";
+        });
       }else msg.textContent="❌ "+res.message;
     });
   },()=>msg.textContent="❌ لم يتم تحديد الموقع");
@@ -186,4 +236,3 @@ function send(){
 
 </body>
 </html>
-
