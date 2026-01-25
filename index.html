@@ -6,48 +6,21 @@
 <title>MAWARAN CO</title>
 
 <style>
-body{font-family:tahoma;background:#f2f4f7;margin:0}
-.container{
-  max-width:420px;margin:auto;background:#fff;
-  padding:16px;border-radius:12px;
-  box-shadow:0 4px 10px #0002
-}
-h2{text-align:center}
-label{display:block;margin-top:10px;font-weight:bold}
-input,select,textarea,button{
-  width:100%;padding:10px;margin-top:4px;
-  border-radius:8px;border:1px solid #ccc;font-size:16px
-}
-input.error,select.error,textarea.error{
-  border-color:red;background:#ffecec
-}
-button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
-#msg{text-align:center;margin-top:10px;font-weight:bold}
-.hidden{display:none}
+body { font-family:tahoma; background:#f2f4f7; margin:0; }
+.container { max-width:420px; margin:auto; background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 10px #0002; }
+h2 { text-align:center; }
+label { display:block; margin-top:10px; font-weight:bold; }
+input, select, textarea, button { width:100%; padding:10px; margin-top:4px; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+input.error, select.error, textarea.error { border-color:red; background:#ffecec; }
+button { background:#0a7cff; color:#fff; border:0; margin-top:15px; cursor:pointer; }
+#msg { text-align:center; margin-top:10px; font-weight:bold; }
+.hidden { display:none; }
 
 /* ===== top info ===== */
-#topInfo{
-  background:#eef;
-  padding:10px;
-  border-radius:8px;
-  margin-bottom:10px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex-wrap:wrap;
-}
-#topInfo span{font-weight:bold}
-#editBtn{
-  width:auto;
-  padding:6px 10px;
-  font-size:14px;
-  background:#666;
-}
-#cityEdit{
-  width:auto;
-  padding:6px;
-  font-size:14px;
-}
+#topInfo { background:#eef; padding:10px; border-radius:8px; margin-bottom:10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+#topInfo span { font-weight:bold; }
+#editBtn { width:auto; padding:6px 10px; font-size:14px; background:#666; cursor:pointer; }
+#cityEdit { width:auto; padding:6px 10px; font-size:14px; }
 </style>
 </head>
 
@@ -72,11 +45,8 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
 
   <!-- اسم المندوب + المدينة -->
   <div id="topInfo">
-    <span>المندوب:</span>
-    <span id="repShow"></span>
-    |
-    <span>المدينة:</span>
-    <span id="cityShow"></span>
+    <span>المندوب:</span> <span id="repShow"></span> |
+    <span>المدينة:</span> <span id="cityShow"></span>
 
     <input id="cityEdit" class="hidden">
     <button id="editBtn" onclick="toggleEdit()">تعديل</button>
@@ -146,6 +116,10 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
   <label>سعر اللتر - نرخی هەر لیترێک</label>
   <input id="oilPrice" inputmode="numeric">
 
+  <!-- رفع الصورة -->
+  <label>صورة المتجر / الزيت *</label>
+  <input type="file" id="imageInput" accept="image/*" capture="environment">
+
   <button onclick="send()">إرسال</button>
   <div id="msg"></div>
 </div>
@@ -153,8 +127,10 @@ button{background:#0a7cff;color:#fff;border:0;margin-top:15px}
 </div>
 
 <script>
-const URL="https://script.google.com/macros/s/AKfycbwbQkYePx5IvYev_Crtcv-6kXV4sTdGz6VhbSWsbNey7W4Vs3z4Y7kf8xAnH4D3KqXulQ/exec";
+const URL = "https://script.google.com/macros/s/AKfycbx08juomOJk3mDiL6OS5Ro2lxbdoyVoUGqmyS0CZobXIK4vmXPfbLeTXhRp_QEhYlCd/exec"; // ضع رابط Web App هنا
+let uploadedImageData = "";
 
+// عرض بيانات تسجيل الدخول
 if(localStorage.repName){
   login.classList.add("hidden");
   formBox.classList.remove("hidden");
@@ -164,7 +140,7 @@ if(localStorage.repName){
 }
 
 function saveLogin(){
-  if(!repName.value||!city.value) return;
+  if(!repName.value || !city.value) return;
   localStorage.repName = repName.value;
   localStorage.city = city.value;
   location.reload();
@@ -183,56 +159,121 @@ function toggleEdit(){
   }
 }
 
-function send(){
-  const required=[
-    useOil,tradeName,ownerName,
-    address,phone,category,rate,visitDays
-  ];
-  let ok=true;
-  required.forEach(f=>{
-    f.classList.remove("error");
-    if(!f.value){f.classList.add("error");ok=false;}
-  });
-  if(!ok)return;
+// ===== ضغط الصورة قبل الإرسال =====
+function resizeImage(file, maxWidth, maxHeight, callback){
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      let width = img.width;
+      let height = img.height;
 
-  msg.textContent="جاري الإرسال...";
+      if(width > maxWidth){
+        height = height * (maxWidth / width);
+        width = maxWidth;
+      }
+      if(height > maxHeight){
+        width = width * (maxHeight / height);
+        height = maxHeight;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.7); // ضغط الجودة 70%
+      callback(dataUrl);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+imageInput.addEventListener("change", function(){
+  const file = this.files[0];
+  if(!file) return;
+  resizeImage(file, 800, 800, function(resizedData){
+    uploadedImageData = resizedData;
+  });
+});
+
+// ===== إرسال البيانات =====
+function send(){
+  const required = [useOil, tradeName, ownerName, address, phone, category, rate, visitDays];
+  let ok = true;
+
+  // تحقق من الحقول النصية
+  required.forEach(f => {
+    f.classList.remove("error");
+    if(!f.value){ 
+      f.classList.add("error"); 
+      ok=false; 
+    }
+  });
+
+  // تحقق من الصورة
+  if(!uploadedImageData){
+    imageInput.classList.add("error");
+    ok = false;
+  } else {
+    imageInput.classList.remove("error");
+  }
+
+  if(!ok){
+    msg.textContent = "❌ الرجاء ملء جميع الحقول الإجبارية ورفع الصورة";
+    return;
+  }
+
+  msg.textContent = "جاري الإرسال...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
-    const data={
-      repName:localStorage.repName,
-      city:localStorage.city,
-      tradeName:tradeName.value,
-      ownerName:ownerName.value,
-      useOil:useOil.value,
-      address:address.value,
-      phone:phone.value,
-      category:category.value,
-      note:note.value,
-      rate:rate.value,
-      visitDays:visitDays.value,
-      lat:pos.coords.latitude,
-      lng:pos.coords.longitude,
-      oilType:oilType.value,
-      oilGrade:oilGrade.value,
-      oilDistance:oilDistance.value,
-      oilPrice:oilPrice.value
+    const data = {
+      repName: localStorage.repName,
+      city: localStorage.city,
+      tradeName: tradeName.value,
+      ownerName: ownerName.value,
+      useOil: useOil.value,
+      address: address.value,
+      phone: phone.value,
+      category: category.value,
+      note: note.value,
+      rate: rate.value,
+      visitDays: visitDays.value,
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude,
+      oilType: oilType.value,
+      oilGrade: oilGrade.value,
+      oilDistance: oilDistance.value,
+      oilPrice: oilPrice.value,
+      image: uploadedImageData
     };
 
-    fetch(URL,{method:"POST",body:JSON.stringify(data)})
+    fetch(URL,{
+      method:"POST",
+      body:JSON.stringify(data)
+    })
     .then(r=>r.json())
     .then(res=>{
       if(res.status==="success"){
         msg.textContent="✅ تم الإرسال بنجاح";
-        document.querySelectorAll(
-          "#formBox input,#formBox textarea,#formBox select"
-        ).forEach(e=>{
-          if(!["cityEdit"].includes(e.id)) e.value="";
-        });
-      }else msg.textContent="❌ "+res.message;
+
+        // مسح الحقول بعد الإرسال
+        document.querySelectorAll("#formBox input,#formBox textarea,#formBox select")
+          .forEach(e=>{
+            if(!["cityEdit","imageInput"].includes(e.id)) e.value="";
+          });
+        uploadedImageData = "";
+      } else {
+        msg.textContent="❌ "+res.message;
+      }
     });
-  },()=>msg.textContent="❌ لم يتم تحديد الموقع");
+  }, ()=>msg.textContent="❌ لم يتم تحديد الموقع");
 }
 </script>
-
 </body>
 </html>
+
+
+
+
