@@ -13,6 +13,7 @@ label { display:block; margin-top:10px; font-weight:bold; }
 input, select, textarea, button { width:100%; padding:10px; margin-top:4px; border-radius:8px; border:1px solid #ccc; font-size:16px; }
 input.error, select.error, textarea.error { border-color:red; background:#ffecec; }
 button { background:#0a7cff; color:#fff; border:0; margin-top:15px; cursor:pointer; }
+button:disabled { background:#999; cursor:not-allowed; }
 #msg { text-align:center; margin-top:10px; font-weight:bold; }
 .hidden { display:none; }
 
@@ -120,15 +121,17 @@ button { background:#0a7cff; color:#fff; border:0; margin-top:15px; cursor:point
   <label>صورة المتجر *</label>
   <input type="file" id="imageInput" accept="image/*" capture="environment">
 
-  <button onclick="send()">إرسال</button>
+  <!-- تعديل بسيط هنا -->
+  <button id="sendBtn" onclick="send()">إرسال</button>
   <div id="msg"></div>
 </div>
 
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbx08juomOJk3mDiL6OS5Ro2lxbdoyVoUGqmyS0CZobXIK4vmXPfbLeTXhRp_QEhYlCd/exec"; // ضع رابط Web App هنا
+const URL = "https://script.google.com/macros/s/AKfycbx08juomOJk3mDiL6OS5Ro2lxbdoyVoUGqmyS0CZobXIK4vmXPfbLeTXhRp_QEhYlCd/exec";
 let uploadedImageData = "";
+let isSending = false; // 🔹 جديد
 
 // عرض بيانات تسجيل الدخول
 if(localStorage.repName){
@@ -180,10 +183,8 @@ function resizeImage(file, maxWidth, maxHeight, callback){
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, width, height);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.7); // ضغط الجودة 70%
-      callback(dataUrl);
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+      callback(canvas.toDataURL("image/jpeg", 0.7));
     };
     img.src = e.target.result;
   };
@@ -200,10 +201,12 @@ imageInput.addEventListener("change", function(){
 
 // ===== إرسال البيانات =====
 function send(){
+  if(isSending) return; // 🔒 منع الإرسال المتكرر
+
+  const btn = document.getElementById("sendBtn");
   const required = [useOil, tradeName, ownerName, address, phone, category, rate, visitDays];
   let ok = true;
 
-  // تحقق من الحقول النصية
   required.forEach(f => {
     f.classList.remove("error");
     if(!f.value){ 
@@ -212,7 +215,6 @@ function send(){
     }
   });
 
-  // تحقق من الصورة
   if(!uploadedImageData){
     imageInput.classList.add("error");
     ok = false;
@@ -225,6 +227,10 @@ function send(){
     return;
   }
 
+  // 🔒 تعطيل الزر
+  isSending = true;
+  btn.disabled = true;
+  btn.textContent = "جاري الإرسال...";
   msg.textContent = "جاري الإرسال...";
 
   navigator.geolocation.getCurrentPosition(pos=>{
@@ -257,8 +263,6 @@ function send(){
     .then(res=>{
       if(res.status==="success"){
         msg.textContent="✅ تم الإرسال بنجاح";
-
-        // مسح الحقول بعد الإرسال
         document.querySelectorAll("#formBox input,#formBox textarea,#formBox select")
           .forEach(e=>{
             if(!["cityEdit","imageInput"].includes(e.id)) e.value="";
@@ -267,14 +271,20 @@ function send(){
       } else {
         msg.textContent="❌ "+res.message;
       }
+    })
+    .finally(()=>{
+      isSending = false;
+      btn.disabled = false;
+      btn.textContent = "إرسال";
     });
-  }, ()=>msg.textContent="❌ لم يتم تحديد الموقع");
+
+  }, ()=>{
+    msg.textContent="❌ لم يتم تحديد الموقع";
+    isSending = false;
+    btn.disabled = false;
+    btn.textContent = "إرسال";
+  });
 }
 </script>
 </body>
 </html>
-
-
-
-
-
