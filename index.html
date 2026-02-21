@@ -153,8 +153,16 @@
                 <option value="" data-key="choose">اختر</option>
                 <option value="1">⭐</option><option value="2">⭐⭐</option><option value="3">⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="5">⭐⭐⭐⭐⭐</option>
             </select>
-            <label data-key="visit_days_label">كل كم يوم زيارة *</label>
-            <input id="visitDays" inputmode="numeric">
+            <label data-key="visit_days_label">يوم الزيارة *</label>
+<select id="visitDays">
+    <option value="" data-key="choose">اختر</option>
+    <option value="السبت" data-key="sat">السبت</option>
+    <option value="الأحد" data-key="sun">الأحد</option>
+    <option value="الاثنين" data-key="mon">الاثنين</option>
+    <option value="الثلاثاء" data-key="tue">الثلاثاء</option>
+    <option value="الأربعاء" data-key="wed">الأربعاء</option>
+    <option value="الخميس" data-key="thu">الخميس</option>
+</select>
             <hr style="opacity: 0.2; margin: 20px 0;">
             <label data-key="other_oil_label">نوع الزيت ماركة أخرى</label>
             <input id="oilType">
@@ -244,6 +252,7 @@ const translations = {
         alert_fill: "يرجى إدخال البيانات", alert_geo: "يجب تفعيل الموقع لبدء الزيارة", alert_cancel: "سيتم حذف توقيت الزيارة الحالية، هل أنت متأكد؟",
         alert_dist: "المسافة بعيدة جداً", sending: "جاري الإرسال...", wait: "⏳ يرجى الانتظار، يتم رفع البيانات...", success: "✅ تم بنجاح", loading: "جاري تحديد الموقع...",
         history_btn: "📋 عرض سجل الزيارات السابقة", history_title: "سجل الزيارات", details_title: "تفاصيل الزيارة", loading_history: "جاري جلب البيانات...", no_history: "لا توجد زيارات سابقة."
+        sat: "السبت", sun: "الأحد", mon: "الاثنين", tue: "الثلاثاء", wed: "الأربعاء", thu: "الخميس",
     },
     ku: {
         modal_title: "بەیانی باش", modal_body: "ئایا ئامادەی بۆ ڕۆژێکی نوێ؟", modal_btn: "OK",
@@ -260,6 +269,7 @@ const translations = {
         alert_fill: "تکایە زانیارییەکان پڕ بکەرەوە", alert_geo: "دەبێت شوێنێنەکەت چالاک بکەیت", alert_cancel: "کاتی سەردانەکە دەسڕێتەوە، دڵنیایت؟",
         alert_dist: "مەوداکە زۆر دوورە", sending: "خەریکی ناردنە...", wait: "⏳ تکایە چاوەڕێ بکە، زانیارییەکان بەرزدەکرێنەوە...", success: "✅ بە سەرکەوتوویی تەواو بوو", loading: "دیاریکردنی شوێن...",
         history_btn: "📋 بینینی تۆماری سەردانەکانی پێشوو", history_title: "تۆماری سەردانەکان", details_title: "وردەکاری سەردان", loading_history: "هێنانی زانیارییەکان...", no_history: "هیچ سەردانێکی پێشوو نییە."
+    sat: "شەممە", sun: "یەکشەممە", mon: "دووشەممە", tue: "سێشەممە", wed: "چوارشەممە", thu: "پێنجشەممە",
     }
 };
 
@@ -611,6 +621,7 @@ function sendToGoogle(data) {
 </script>
 </body>
 </html>
+
 
 
 
