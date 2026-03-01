@@ -57,7 +57,10 @@
     .oil-filter-row .oil-filter-item { flex: 1; }
     .oil-filter-row .oil-filter-item label { margin-top: 0; }
     .oil-filter-row .oil-filter-item select { margin-top: 4px; width: 100%; font-size: 14px; padding: 9px 6px; }
-
+.field-error {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff5f5 !important;
+}
 </style>
 </head>
 <body>
@@ -870,28 +873,74 @@ function compressImage(file, callback) {
     };
 }
 
+function clearErrors() {
+    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+}
+
+function markError(id) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.classList.add('field-error');
+        el.addEventListener('input', () => el.classList.remove('field-error'), { once: true });
+        el.addEventListener('change', () => el.classList.remove('field-error'), { once: true });
+    }
+}
+
 async function handleSend() {
     if(isSending) return;
     const lang = localStorage.getItem('appLang') || 'ar';
     if(!visitStartTime) return alert(translations[lang].start_visit.replace('<br>', ' '));
 
+    clearErrors();
+    let hasError = false;
+
     if (currentMode === 'new') {
         const reqNew = ['useOil', 'hasUFI', 'tradeName', 'ownerName', 'address', 'phone', 'category', 'rate', 'visitDays'];
         for (let id of reqNew) {
-            if (!document.getElementById(id).value.trim()) return alert(translations[lang].alert_fill);
+            if (!document.getElementById(id).value.trim()) {
+                markError(id);
+                hasError = true;
+            }
         }
-        if (document.getElementById('imageInputNew').files.length === 0) return alert(translations[lang].alert_fill + " (الصورة مطلوبة)");
+        if (document.getElementById('imageInputNew').files.length === 0) {
+            markError('imageInputNew');
+            hasError = true;
+        }
     } else {
-        if (!document.getElementById('reg_clientName').value.trim()) return alert(translations[lang].alert_fill);
+        if (!document.getElementById('reg_clientName').value.trim()) {
+            markError('reg_clientName');
+            hasError = true;
+        }
         const hasOrder = document.getElementById('reg_hasOrder').value;
-        if (hasOrder === 'نعم' && !document.getElementById('reg_orderAmount').value.trim()) return alert(translations[lang].alert_fill);
-        if (hasOrder === 'لا' && !document.getElementById('reg_orderReason').value.trim()) return alert(translations[lang].alert_fill);
+        if (hasOrder === 'نعم' && !document.getElementById('reg_orderAmount').value.trim()) {
+            markError('reg_orderAmount');
+            hasError = true;
+        }
+        if (hasOrder === 'لا' && !document.getElementById('reg_orderReason').value.trim()) {
+            markError('reg_orderReason');
+            hasError = true;
+        }
         const hasPayment = document.getElementById('reg_hasPayment').value;
-        if (hasPayment === 'نعم' && !document.getElementById('reg_payAmount').value.trim()) return alert(translations[lang].alert_fill);
-        if (hasPayment === 'لا' && !document.getElementById('reg_payReason').value.trim()) return alert(translations[lang].alert_fill);
-        if (document.getElementById('imageInputReg').files.length === 0) return alert(translations[lang].alert_fill + " (الصورة مطلوبة)");
+        if (hasPayment === 'نعم' && !document.getElementById('reg_payAmount').value.trim()) {
+            markError('reg_payAmount');
+            hasError = true;
+        }
+        if (hasPayment === 'لا' && !document.getElementById('reg_payReason').value.trim()) {
+            markError('reg_payReason');
+            hasError = true;
+        }
+        if (document.getElementById('imageInputReg').files.length === 0) {
+            markError('imageInputReg');
+            hasError = true;
+        }
     }
 
+    if (hasError) {
+        // تمرير تلقائي لأول حقل خاطئ
+        const firstError = document.querySelector('.field-error');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
     const btn = document.getElementById('sendBtn');
     const msg = document.getElementById('msg');
     isSending = true;
