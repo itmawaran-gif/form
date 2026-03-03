@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -335,7 +336,7 @@
 </div>
     
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwIkQtECEwtMz4tKNDo0nxPJLxRLR913xqvlYFNr2DuH_SwcJifOwetEP-TdAskcBw0/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQ1jsvvp7yiB2shq2p8YhNPVQg6gI42Al8Ss7iMmnICh3J-dSOHLRH1XgBeua5le6_/exec";
 
 let currentMode = 'new';
 let visitStartTime = localStorage.getItem('visitStartTime') ? parseInt(localStorage.getItem('visitStartTime')) : null;
@@ -806,6 +807,18 @@ async function saveWorkData() {
             localStorage.setItem("kmStart", JSON.stringify(data));
             localStorage.setItem("kmDate", getTodayKey());
             kmMsg.innerHTML = "دەستپێکردنی کارکردن پاشەکەوت کراوە✅ تم حفظ بدء الدوام";
+
+// إرسال وقت البدء إلى StartTimes
+fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        action: "saveStartTime",
+        repName: repName,
+        startTime: data.startTime
+    })
+});
         });
         return;
     }
