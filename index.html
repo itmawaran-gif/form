@@ -1031,7 +1031,7 @@ async function handleSend() {
                     data.note = document.getElementById('reg_note').value;
                 }
 
-                data.image = compressedBase64;
+                data.image = compressed;
 
                 fetch(SCRIPT_URL, {
                     method: "POST",
