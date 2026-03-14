@@ -336,7 +336,7 @@
 </div>
     
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQ1jsvvp7yiB2shq2p8YhNPVQg6gI42Al8Ss7iMmnICh3J-dSOHLRH1XgBeua5le6_/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx95ohOxc2v5gDU5sdM0NlEgMWPtid9nM0GnL2IJma1SBGbmLHO4ei5kBn7qjXd4TMp/exec";
 
 let currentMode = 'new';
 let visitStartTime = localStorage.getItem('visitStartTime') ? parseInt(localStorage.getItem('visitStartTime')) : null;
@@ -812,7 +812,7 @@ async function saveWorkData() {
 fetch(SCRIPT_URL, {
     method: "POST",
     mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "text/plain" },
     body: JSON.stringify({
         action: "saveStartTime",
         repName: repName,
@@ -840,7 +840,7 @@ fetch(SCRIPT_URL, {
         fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "text/plain" },
             body: JSON.stringify({
                 action: "saveKM",
                 repName: repName,
@@ -1036,7 +1036,7 @@ async function handleSend() {
                 fetch(SCRIPT_URL, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "text/plain" },
                     body: JSON.stringify(data)
                 }).then(() => {
                     msg.innerText = translations[lang].success;
