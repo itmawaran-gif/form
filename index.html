@@ -1,355 +1,684 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MAWARAN CO</title>
-<style>
-    body { font-family:tahoma; background:#f2f4f7; margin:0; padding: 10px; }
-    .container { max-width:420px; margin:auto; background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 10px #0002; position: relative; }
-    
-    #securityModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f4f7; display: flex; align-items: center; justify-content: center; z-index: 10000; }
-    .security-content { background: #fff; padding: 30px; border-radius: 15px; text-align: center; width: 85%; max-width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MAWARAN CO</title>
+  <style>
+    body {
+      font-family: tahoma;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 10px;
+    }
 
-    #appModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-    .modal-content { background: #fff; padding: 30px; border-radius: 15px; text-align: center; width: 80%; max-width: 300px; }
-    .modal-content h3 { margin-top: 0; color: #333; }
-    .modal-content p { font-size: 14px; color: #666; margin-bottom: 20px; }
-    #openAppBtn { background: #28a745; color: #fff; border: 0; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+    .container {
+      max-width: 420px;
+      margin: auto;
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px #0002;
+      position: relative;
+    }
 
-    .fullscreen-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f4f7; z-index: 9990; overflow-y: auto; display: none; padding-bottom: 20px; }
-    .modal-header { background: #0a7cff; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 9991; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .modal-header h3 { margin: 0; font-size: 18px; }
-    .close-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
-    
-    .details-box { background: white; margin: 15px; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    #securityModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f2f4f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
 
-    .loader { text-align: center; margin-top: 50px; font-weight: bold; color: #555; }
+    .security-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      width: 85%;
+      max-width: 320px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
 
-    .lang-switcher { margin-top: 25px; border-top: 1px solid #eee; padding-top: 15px; text-align: center; }
-    .lang-switcher select { width: auto; padding: 8px 15px; font-size: 14px; cursor: pointer; border-radius: 20px; background: #f8f9fa; border: 1px solid #ddd; }
-    h2 { text-align:center; color: #333; margin-bottom: 20px; }
-    label { display:block; margin-top:10px; font-weight:bold; font-size: 14px; color: #444; }
-    input, select, textarea, button { width:100%; padding:10px; margin-top:4px; border-radius:8px; border:1px solid #ccc; font-size:16px; box-sizing: border-box; }
-    input:disabled, select:disabled, textarea:disabled { background: #e9ecef; color: #666; cursor: not-allowed; }
-    
-    button { background:#0a7cff; color:#fff; border:0; margin-top:15px; cursor:pointer; font-weight: bold; }
-    button:disabled { background:#999 !important; cursor:not-allowed; opacity: 0.6; }
-    #msg { text-align:center; margin-top:10px; font-weight:bold; font-size: 14px; }
-    .hidden { display:none !important; }
-    
-    .visit-controls { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; flex-direction: column; }
-    #startVisitBtn { width: 90px; height: 90px; border-radius: 50%; background: #28a745; color: white; border: none; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: 0.3s; }
-    #startVisitBtn.active { background: #dc3545; animation: pulse 1.5s infinite; }
-    #cancelVisitBtn { width: auto; padding: 6px 12px; background: #6c757d; font-size: 11px; margin-top: 5px; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-    .nav-tabs { display: flex; gap: 5px; margin-bottom: 15px; }
-    .nav-tabs button { margin-top: 0; background: #eee; color: #333; flex: 1; font-size: 14px; border: 1px solid #ddd; }
-    .nav-tabs button.active { background: #0a7cff; color: white; border-color: #0a7cff; }
-    #timerDisplay { text-align: center; font-size: 22px; font-weight: bold; color: #dc3545; font-family: monospace; margin-bottom: 10px; }
+    #appModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
 
-    .client-selection-group { display: flex; gap: 5px; align-items: center; margin-top: 4px; }
-    #reg_daySelect { width: 35%; padding: 10px 5px; font-size: 14px; }
-    #reg_clientName { width: 65%; }
-    #showDetailsBtn { background: #17a2b8; width: auto; padding: 10px 15px; margin-top: 0; font-size: 14px; }
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      width: 80%;
+      max-width: 300px;
+    }
 
-    .oil-filter-row { display: flex; gap: 10px; align-items: flex-end; margin-top: 10px; }
-    .oil-filter-row .oil-filter-item { flex: 1; }
-    .oil-filter-row .oil-filter-item label { margin-top: 0; }
-    .oil-filter-row .oil-filter-item select { margin-top: 4px; width: 100%; font-size: 14px; padding: 9px 6px; }
-.field-error {
-    border: 2px solid #dc3545 !important;
-    background-color: #fff5f5 !important;
-}
-</style>
+    .modal-content h3 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    .modal-content p {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    #openAppBtn {
+      background: #28a745;
+      color: #fff;
+      border: 0;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .fullscreen-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f2f4f7;
+      z-index: 9990;
+      overflow-y: auto;
+      display: none;
+      padding-bottom: 20px;
+    }
+
+    .modal-header {
+      background: #0a7cff;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 9991;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .details-box {
+      background: white;
+      margin: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .loader {
+      text-align: center;
+      margin-top: 50px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .lang-switcher {
+      margin-top: 25px;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      text-align: center;
+    }
+
+    .lang-switcher select {
+      width: auto;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 20px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #444;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+      background: #e9ecef;
+      color: #666;
+      cursor: not-allowed;
+    }
+
+    button {
+      background: #0a7cff;
+      color: #fff;
+      border: 0;
+      margin-top: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      background: #999 !important;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    #msg {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .visit-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      margin: 15px 0;
+      flex-direction: column;
+    }
+
+    #startVisitBtn {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: #28a745;
+      color: white;
+      border: none;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+    }
+
+    #startVisitBtn.active {
+      background: #dc3545;
+      animation: pulse 1.5s infinite;
+    }
+
+    #cancelVisitBtn {
+      width: auto;
+      padding: 6px 12px;
+      background: #6c757d;
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 15px;
+    }
+
+    .nav-tabs button {
+      margin-top: 0;
+      background: #eee;
+      color: #333;
+      flex: 1;
+      font-size: 14px;
+      border: 1px solid #ddd;
+    }
+
+    .nav-tabs button.active {
+      background: #0a7cff;
+      color: white;
+      border-color: #0a7cff;
+    }
+
+    #timerDisplay {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #dc3545;
+      font-family: monospace;
+      margin-bottom: 10px;
+    }
+
+    .client-selection-group {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    #reg_daySelect {
+      width: 35%;
+      padding: 10px 5px;
+      font-size: 14px;
+    }
+
+    #reg_clientName {
+      width: 65%;
+    }
+
+    #showDetailsBtn {
+      background: #17a2b8;
+      width: auto;
+      padding: 10px 15px;
+      margin-top: 0;
+      font-size: 14px;
+    }
+
+    .oil-filter-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      margin-top: 10px;
+    }
+
+    .oil-filter-row .oil-filter-item {
+      flex: 1;
+    }
+
+    .oil-filter-row .oil-filter-item label {
+      margin-top: 0;
+    }
+
+    .oil-filter-row .oil-filter-item select {
+      margin-top: 4px;
+      width: 100%;
+      font-size: 14px;
+      padding: 9px 6px;
+    }
+
+    .field-error {
+      border: 2px solid #dc3545 !important;
+      background-color: #fff5f5 !important;
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="securityModal">
+  <div id="securityModal">
     <div class="security-content">
-        <h3>نظام MAWARAN</h3>
-        <p style="font-size: 13px; color: #666;">يرجى إدخال رمز الوصول للمتابعة</p>
-        <input type="password" id="accessCode" placeholder="الرمز السري" style="text-align: center;">
-        <button onclick="verifyAccessCode()">تحقق من الرمز</button>
-        <p id="errorCode" style="color: red; font-size: 12px; margin-top: 10px; display: none;">الرمز غير صحيح!</p>
+      <h3>نظام MAWARAN</h3>
+      <p style="font-size: 13px; color: #666;">يرجى إدخال رمز الوصول للمتابعة</p>
+      <input type="password" id="accessCode" placeholder="الرمز السري" style="text-align: center;">
+      <button onclick="verifyAccessCode()">تحقق من الرمز</button>
+      <p id="errorCode" style="color: red; font-size: 12px; margin-top: 10px; display: none;">الرمز غير صحيح!</p>
     </div>
-</div>
+  </div>
 
-<div id="appModal" class="hidden">
+  <div id="appModal" class="hidden">
     <div class="modal-content">
-        <h3 id="modalTitle">بەیانی باش - صباح الخير</h3>
-        <p id="modalBody">هل انت مستعد ليوم جديد - ئامادەی بۆ ڕۆژێکی نوێ</p>
-        <button id="openAppBtn" onclick="triggerAppOpening()">OK</button>
+      <h3 id="modalTitle">بەیانی باش - صباح الخير</h3>
+      <p id="modalBody">هل انت مستعد ليوم جديد - ئامادەی بۆ ڕۆژێکی نوێ</p>
+      <button id="openAppBtn" onclick="triggerAppOpening()">OK</button>
     </div>
-</div>
+  </div>
 
-<div id="clientDetailsModal" class="fullscreen-modal" style="z-index: 9992;">
+  <div id="clientDetailsModal" class="fullscreen-modal" style="z-index: 9992;">
     <div class="modal-header">
-        <h3 data-key="details_title">تفاصيل وتعديل العميل</h3>
-        <button class="close-btn" onclick="closeModal('clientDetailsModal')">&times;</button>
+      <h3 data-key="details_title">تفاصيل وتعديل العميل</h3>
+      <button class="close-btn" onclick="closeModal('clientDetailsModal')">&times;</button>
     </div>
     <div class="details-box">
+      <label data-key="trade_name_label">الاسم التجاري *</label>
+      <input id="edit_tradeName" disabled>
+
+      <label data-key="owner_name_label">اسم المالك *</label>
+      <input id="edit_ownerName" disabled>
+
+      <label data-key="address_label">العنوان *</label>
+      <input id="edit_address" disabled>
+
+      <label data-key="phone_label">رقم الهاتف *</label>
+      <input id="edit_phone" inputmode="numeric" disabled>
+
+      <label data-key="category_label">الفئة *</label>
+      <select id="edit_category" disabled>
+        <option value="كراج" data-key="garage"></option>
+        <option value="جملة" data-key="wholesale"></option>
+        <option value="مفرد" data-key="retail"></option>
+
+        <option value="مصفى" data-key="refinery"></option>
+        <option value="مستشفى" data-key="hospital"></option>
+        <option value="معمل" data-key="factory"></option>
+        <option value="مقاول" data-key="contractor"></option>
+        <option value="عقارات" data-key="realestate"></option>
+        <option value="ميكانيكي" data-key="mechanic"></option>
+        <option value="مدارس" data-key="schools"></option>
+      </select>
+
+      <label data-key="note_label">الملاحظة</label>
+      <textarea id="edit_note" disabled></textarea>
+
+      <label data-key="rate_label">التقييم *</label>
+      <select id="edit_rate" disabled>
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+      </select>
+
+      <label data-key="visit_days_label">يوم الزيارة *</label>
+      <select id="edit_visitDays" disabled>
+        <option value="السبت" data-key="sat">السبت</option>
+        <option value="الأحد" data-key="sun">الأحد</option>
+        <option value="الاثنين" data-key="mon">الاثنين</option>
+        <option value="الثلاثاء" data-key="tue">الثلاثاء</option>
+        <option value="الأربعاء" data-key="wed">الأربعاء</option>
+        <option value="الخميس" data-key="thu">الخميس</option>
+        <option value="الجمعه" data-key="fri">الجمعه</option>
+      </select>
+
+      <div class="oil-filter-row">
+        <div class="oil-filter-item">
+          <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
+          <select id="edit_useOil" disabled>
+            <option value="نعم" data-key="yes">نعم</option>
+            <option value="لا" data-key="no">لا</option>
+          </select>
+        </div>
+        <div class="oil-filter-item">
+          <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
+          <select id="edit_hasUFI" disabled>
+            <option value="نعم" data-key="yes">نعم</option>
+            <option value="لا" data-key="no">لا</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="enableEditBtn" onclick="enableClientEdit()" style="background:#ffc107; color:#000; margin-top:0;"
+          data-key="edit_data">تعديل البيانات</button>
+        <button id="saveEditBtn" class="hidden" onclick="saveClientEdit()" style="background:#28a745; margin-top:0;"
+          data-key="save_edits">حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="login">
+      <h2 data-key="login_title">تسجيل الدخول</h2>
+      <label data-key="rep_name_label">اسم المندوب *</label>
+      <input id="repName">
+      <label data-key="city_label">المدينة *</label>
+      <input id="city">
+      <button onclick="saveLogin()" data-key="login_btn">دخول للنظام</button>
+    </div>
+
+    <div id="formBox" class="hidden">
+      <button id="workBtn" onclick="openWorkModal()" style="background:#6f42c1;margin-bottom:10px;" data-key="work_btn">
+        بدء الدوام
+      </button>
+
+      <div class="nav-tabs">
+        <button id="tabNew" class="active" onclick="switchForm('new')" data-key="tab_new">عميل جديد</button>
+        <button id="tabRegular" onclick="switchForm('regular')" data-key="tab_regular">عميل دائمي</button>
+      </div>
+
+      <div id="timerDisplay" class="hidden">00:00:00</div>
+      <div class="visit-controls">
+        <button id="startVisitBtn" onclick="toggleVisit()" data-key="start_visit">بدء<br>الزيارة</button>
+        <button id="cancelVisitBtn" class="hidden" onclick="cancelVisit()" data-key="cancel_visit">إلغاء الزيارة
+          ✖</button>
+      </div>
+
+      <div id="newClientForm">
+        <div class="oil-filter-row">
+          <div class="oil-filter-item">
+            <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
+            <select id="useOil">
+              <option value="" data-key="choose"></option>
+              <option value="نعم" data-key="yes">نعم</option>
+              <option value="لا" data-key="no">لا</option>
+            </select>
+          </div>
+          <div class="oil-filter-item">
+            <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
+            <select id="hasUFI">
+              <option value="" data-key="choose"></option>
+              <option value="نعم" data-key="yes">نعم</option>
+              <option value="لا" data-key="no">لا</option>
+            </select>
+          </div>
+        </div>
+
         <label data-key="trade_name_label">الاسم التجاري *</label>
-        <input id="edit_tradeName" disabled>
-        
+        <input id="tradeName">
         <label data-key="owner_name_label">اسم المالك *</label>
-        <input id="edit_ownerName" disabled>
-        
+        <input id="ownerName">
         <label data-key="address_label">العنوان *</label>
-        <input id="edit_address" disabled>
-        
+        <input id="address">
         <label data-key="phone_label">رقم الهاتف *</label>
-        <input id="edit_phone" inputmode="numeric" disabled>
-        
+        <input id="phone" inputmode="numeric">
         <label data-key="category_label">الفئة *</label>
-        <select id="edit_category" disabled>
-            <option value="كراج" data-key="garage">كراج</option>
-            <option value="جملة" data-key="wholesale">جملة</option>
-            <option value="مفرد" data-key="retail">مفرد</option>
+        <select id="category">
+          <option value="" data-key="choose"></option>
+
+          <option value="كراج" data-key="garage"></option>
+          <option value="جملة" data-key="wholesale"></option>
+          <option value="مفرد" data-key="retail"></option>
+
+          <option value="مصفى" data-key="refinery"></option>
+          <option value="مستشفى" data-key="hospital"></option>
+          <option value="معمل" data-key="factory"></option>
+          <option value="مقاول" data-key="contractor"></option>
+          <option value="عقارات" data-key="realestate"></option>
+          <option value="ميكانيكي" data-key="mechanic"></option>
+          <option value="مدارس" data-key="schools"></option>
         </select>
-        
-        <label data-key="note_label">الملاحظة</label>
-        <textarea id="edit_note" disabled></textarea>
-        
+        <label data-key="note_label">ملاحظة</label>
+        <textarea id="note"></textarea>
         <label data-key="rate_label">التقييم *</label>
-        <select id="edit_rate" disabled>
-            <option value="1">⭐</option><option value="2">⭐⭐</option><option value="3">⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="5">⭐⭐⭐⭐⭐</option>
+        <select id="rate">
+          <option value="" data-key="choose"></option>
+          <option value="1">⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="5">⭐⭐⭐⭐⭐</option>
         </select>
-        
         <label data-key="visit_days_label">يوم الزيارة *</label>
-        <select id="edit_visitDays" disabled>
+        <select id="visitDays">
+          <option value="" data-key="choose"></option>
+          <option value="السبت" data-key="sat">السبت</option>
+          <option value="الأحد" data-key="sun">الأحد</option>
+          <option value="الاثنين" data-key="mon">الاثنين</option>
+          <option value="الثلاثاء" data-key="tue">الثلاثاء</option>
+          <option value="الأربعاء" data-key="wed">الأربعاء</option>
+          <option value="الخميس" data-key="thu">الخميس</option>
+          <option value="الجمعه" data-key="fri">الجمعه</option>
+        </select>
+        <hr style="opacity: 0.2; margin: 20px 0;">
+        <label data-key="other_oil_label">نوع الزيت ماركة أخرى</label>
+        <input id="oilType">
+        <label data-key="oil_grade_label">درجة الزيت</label>
+        <input id="oilGrade">
+        <label data-key="distance_label">المسافة</label>
+        <select id="oilDistance">
+          <option value="" data-key="choose">اختر</option>
+          <option>3K كم</option>
+          <option>5K كم</option>
+          <option>10K كم</option>
+          <option>15K كم</option>
+        </select>
+        <label data-key="liter_price_label">سعر اللتر</label>
+        <input id="oilPrice" inputmode="numeric">
+        <label data-key="store_img_label">صورة المتجر *</label>
+        <input type="file" id="imageInputNew" accept="image/*" capture="environment">
+      </div>
+
+      <div id="regularClientForm" class="hidden">
+        <label data-key="client_name_label">اسم العميل *</label>
+
+        <div class="client-selection-group">
+          <select id="reg_daySelect" onchange="filterClientsByDay()">
             <option value="السبت" data-key="sat">السبت</option>
             <option value="الأحد" data-key="sun">الأحد</option>
             <option value="الاثنين" data-key="mon">الاثنين</option>
             <option value="الثلاثاء" data-key="tue">الثلاثاء</option>
             <option value="الأربعاء" data-key="wed">الأربعاء</option>
             <option value="الخميس" data-key="thu">الخميس</option>
-            <option value="الجمعه" data-key="fri">الجمعه</option>            
+            <option value="الجمعه" data-key="fri">الجمعه</option>
+          </select>
+          <select id="reg_clientName" onchange="toggleDetailsBtn()">
+            <option value="">اختر العميل-کڕیار هەڵبژێرە</option>
+          </select>
+          <button id="showDetailsBtn" class="hidden" onclick="showClientDetails()"
+            data-key="details_btn">تفاصيل</button>
+        </div>
+
+
+        <label data-key="has_order_label">هل تم عمل طلبية؟</label>
+        <select id="reg_hasOrder" onchange="toggleOrderFields()">
+          <option value="لا" data-key="no">لا</option>
+          <option value="نعم" data-key="yes">نعم</option>
         </select>
-
-        <div class="oil-filter-row">
-            <div class="oil-filter-item">
-                <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
-                <select id="edit_useOil" disabled>
-                    <option value="نعم" data-key="yes">نعم</option>
-                    <option value="لا" data-key="no">لا</option>
-                </select>
-            </div>
-            <div class="oil-filter-item">
-                <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
-                <select id="edit_hasUFI" disabled>
-                    <option value="نعم" data-key="yes">نعم</option>
-                    <option value="لا" data-key="no">لا</option>
-                </select>
-            </div>
+        <div id="orderAmountBox" class="hidden">
+          <label data-key="order_amount_label">مبلغ الطلبية *</label>
+          <input id="reg_orderAmount" type="number">
         </div>
-
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button id="enableEditBtn" onclick="enableClientEdit()" style="background:#ffc107; color:#000; margin-top:0;" data-key="edit_data">تعديل البيانات</button>
-            <button id="saveEditBtn" class="hidden" onclick="saveClientEdit()" style="background:#28a745; margin-top:0;" data-key="save_edits">حفظ التعديلات</button>
+        <div id="orderReasonBox">
+          <label data-key="no_order_reason">سبب عدم إنشاء طلبية *</label>
+          <input id="reg_orderReason">
         </div>
-    </div>
-</div>
-
-<div class="container">
-    <div id="login">
-        <h2 data-key="login_title">تسجيل الدخول</h2>
-        <label data-key="rep_name_label">اسم المندوب *</label>
-        <input id="repName">
-        <label data-key="city_label">المدينة *</label>
-        <input id="city">
-        <button onclick="saveLogin()" data-key="login_btn">دخول للنظام</button>
-    </div>
-
-    <div id="formBox" class="hidden">
-        <button id="workBtn" onclick="openWorkModal()" 
-        style="background:#6f42c1;margin-bottom:10px;" data-key="work_btn">
-        بدء الدوام
-        </button>
-        
-        <div class="nav-tabs">
-            <button id="tabNew" class="active" onclick="switchForm('new')" data-key="tab_new">عميل جديد</button>
-            <button id="tabRegular" onclick="switchForm('regular')" data-key="tab_regular">عميل دائمي</button>
+        <label data-key="has_payment_label">هل تم قبض مبلغ؟</label>
+        <select id="reg_hasPayment" onchange="togglePaymentFields()">
+          <option value="لا" data-key="no">لا</option>
+          <option value="نعم" data-key="yes">نعم</option>
+        </select>
+        <div id="payAmountBox" class="hidden">
+          <label data-key="pay_amount_label">مبلغ القبض *</label>
+          <input id="reg_payAmount" type="number">
         </div>
-
-        <div id="timerDisplay" class="hidden">00:00:00</div>
-        <div class="visit-controls">
-            <button id="startVisitBtn" onclick="toggleVisit()" data-key="start_visit">بدء<br>الزيارة</button>
-            <button id="cancelVisitBtn" class="hidden" onclick="cancelVisit()" data-key="cancel_visit">إلغاء الزيارة ✖</button>
+        <div id="payReasonBox">
+          <label data-key="no_pay_reason">سبب عدم القبض *</label>
+          <input id="reg_payReason">
         </div>
+        <label data-key="note_label">الملاحظة</label>
+        <textarea id="reg_note"></textarea>
+        <label data-key="take_photo_label">التقاط صورة *</label>
+        <input type="file" id="imageInputReg" accept="image/*" capture="environment">
+      </div>
 
-        <div id="newClientForm">
-            <div class="oil-filter-row">
-                <div class="oil-filter-item">
-                    <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
-                    <select id="useOil">
-                        <option value="" data-key="choose"></option>
-                        <option value="نعم" data-key="yes">نعم</option>
-                        <option value="لا" data-key="no">لا</option>
-                    </select>
-                </div>
-                <div class="oil-filter-item">
-                    <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
-                    <select id="hasUFI">
-                        <option value="" data-key="choose"></option>
-                        <option value="نعم" data-key="yes">نعم</option>
-                        <option value="لا" data-key="no">لا</option>
-                    </select>
-                </div>
-            </div>
-
-            <label data-key="trade_name_label">الاسم التجاري *</label>
-            <input id="tradeName">
-            <label data-key="owner_name_label">اسم المالك *</label>
-            <input id="ownerName">
-            <label data-key="address_label">العنوان *</label>
-            <input id="address">
-            <label data-key="phone_label">رقم الهاتف *</label>
-            <input id="phone" inputmode="numeric">
-            <label data-key="category_label">الفئة *</label>
-            <select id="category">
-                <option value="" data-key="choose"></option>
-                <option value="كراج" data-key="garage">كراج</option>
-                <option value="جملة" data-key="wholesale">جملة</option>
-                <option value="مفرد" data-key="retail">مفرد</option>
-            </select>
-            <label data-key="note_label">ملاحظة</label>
-            <textarea id="note"></textarea>
-            <label data-key="rate_label">التقييم *</label>
-            <select id="rate">
-                <option value="" data-key="choose"></option>
-                <option value="1">⭐</option><option value="2">⭐⭐</option><option value="3">⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="5">⭐⭐⭐⭐⭐</option>
-            </select>
-            <label data-key="visit_days_label">يوم الزيارة *</label>
-            <select id="visitDays">
-                <option value="" data-key="choose"></option>
-                <option value="السبت" data-key="sat">السبت</option>
-                <option value="الأحد" data-key="sun">الأحد</option>
-                <option value="الاثنين" data-key="mon">الاثنين</option>
-                <option value="الثلاثاء" data-key="tue">الثلاثاء</option>
-                <option value="الأربعاء" data-key="wed">الأربعاء</option>
-                <option value="الخميس" data-key="thu">الخميس</option>
-                <option value="الجمعه" data-key="fri">الجمعه</option>
-            </select>
-            <hr style="opacity: 0.2; margin: 20px 0;">
-            <label data-key="other_oil_label">نوع الزيت ماركة أخرى</label>
-            <input id="oilType">
-            <label data-key="oil_grade_label">درجة الزيت</label>
-            <input id="oilGrade">
-            <label data-key="distance_label">المسافة</label>
-            <select id="oilDistance">
-                <option value="" data-key="choose">اختر</option>
-                <option>3K كم</option><option>5K كم</option><option>10K كم</option><option>15K كم</option>
-            </select>
-            <label data-key="liter_price_label">سعر اللتر</label>
-            <input id="oilPrice" inputmode="numeric">
-            <label data-key="store_img_label">صورة المتجر *</label>
-            <input type="file" id="imageInputNew" accept="image/*" capture="environment">
-        </div>
-
-        <div id="regularClientForm" class="hidden">
-            <label data-key="client_name_label">اسم العميل *</label>
-            
-            <div class="client-selection-group">
-                <select id="reg_daySelect" onchange="filterClientsByDay()">
-                    <option value="السبت" data-key="sat">السبت</option>
-                    <option value="الأحد" data-key="sun">الأحد</option>
-                    <option value="الاثنين" data-key="mon">الاثنين</option>
-                    <option value="الثلاثاء" data-key="tue">الثلاثاء</option>
-                    <option value="الأربعاء" data-key="wed">الأربعاء</option>
-                    <option value="الخميس" data-key="thu">الخميس</option>
-                    <option value="الجمعه" data-key="fri">الجمعه</option>
-                </select>
-                <select id="reg_clientName" onchange="toggleDetailsBtn()">
-                    <option value="">اختر العميل-کڕیار هەڵبژێرە</option>
-                </select>
-                <button id="showDetailsBtn" class="hidden" onclick="showClientDetails()" data-key="details_btn">تفاصيل</button>
-            </div>
-
-            
-            <label data-key="has_order_label">هل تم عمل طلبية؟</label>
-            <select id="reg_hasOrder" onchange="toggleOrderFields()">
-                <option value="لا" data-key="no">لا</option><option value="نعم" data-key="yes">نعم</option>
-            </select>
-            <div id="orderAmountBox" class="hidden">
-                <label data-key="order_amount_label">مبلغ الطلبية *</label>
-                <input id="reg_orderAmount" type="number">
-            </div>
-            <div id="orderReasonBox">
-                <label data-key="no_order_reason">سبب عدم إنشاء طلبية *</label>
-                <input id="reg_orderReason">
-            </div>
-            <label data-key="has_payment_label">هل تم قبض مبلغ؟</label>
-            <select id="reg_hasPayment" onchange="togglePaymentFields()">
-                <option value="لا" data-key="no">لا</option><option value="نعم" data-key="yes">نعم</option>
-            </select>
-            <div id="payAmountBox" class="hidden">
-                <label data-key="pay_amount_label">مبلغ القبض *</label>
-                <input id="reg_payAmount" type="number">
-            </div>
-            <div id="payReasonBox">
-                <label data-key="no_pay_reason">سبب عدم القبض *</label>
-                <input id="reg_payReason">
-            </div>
-            <label data-key="note_label">الملاحظة</label>
-            <textarea id="reg_note"></textarea>
-            <label data-key="take_photo_label">التقاط صورة *</label>
-            <input type="file" id="imageInputReg" accept="image/*" capture="environment">
-        </div>
-
-        <button id="sendBtn" onclick="handleSend()" data-key="send_data_btn">إرسال البيانات</button>
-        <div id="msg"></div>
+      <button id="sendBtn" onclick="handleSend()" data-key="send_data_btn">إرسال البيانات</button>
+      <div id="msg"></div>
     </div>
 
     <div class="lang-switcher">
-        <select id="langSelect" onchange="changeLanguage(this.value)">
-            <option value="ar">العربية (Arabic)</option>
-            <option value="ku">کوردی (Soranî)</option>
-        </select>
+      <select id="langSelect" onchange="changeLanguage(this.value)">
+        <option value="ar">العربية (Arabic)</option>
+        <option value="ku">کوردی (Soranî)</option>
+      </select>
     </div>
-</div>
+  </div>
 
-<div id="workModal" class="fullscreen-modal">
+  <div id="workModal" class="fullscreen-modal">
     <div class="modal-header">
-        <h3 data-key="daily_work_title">الدوام اليومي</h3>
-        <button class="close-btn" onclick="closeModal('workModal')">&times;</button>
+      <h3 data-key="daily_work_title">الدوام اليومي</h3>
+      <button class="close-btn" onclick="closeModal('workModal')">&times;</button>
     </div>
     <div class="details-box">
-        <h4 data-key="start_work">بدء الدوام</h4>
-        <label data-key="current_km">الكيلومتر الحالي *</label>
-        <input type="number" inputmode="numeric" id="startKM">
-        <label data-key="meter_img">صورة العداد *</label>
-        <input type="file" accept="image/*" capture="environment" id="startKMImg">
-        <hr>
-        <h4 data-key="end_work">إنهاء الدوام</h4>
-        <label data-key="final_km">الكيلومتر النهائي *</label>
-        <input type="number" inputmode="numeric" id="endKM">
-        <label data-key="meter_img">صورة العداد *</label>
-        <input type="file" accept="image/*" capture="environment" id="endKMImg">
-        <button id="saveWorkBtn" onclick="saveWorkData()" style="background:#28a745; position: relative; overflow: hidden;">
-            <span class="btn-text" data-key="save_send">حفظ وإرسال</span>
-            <div class="spinner"></div>
-        </button>
-        <div id="kmMsg"></div>
+      <h4 data-key="start_work">بدء الدوام</h4>
+      <label data-key="current_km">الكيلومتر الحالي *</label>
+      <input type="number" inputmode="numeric" id="startKM">
+      <label data-key="meter_img">صورة العداد *</label>
+      <input type="file" accept="image/*" capture="environment" id="startKMImg">
+      <hr>
+      <h4 data-key="end_work">إنهاء الدوام</h4>
+      <label data-key="final_km">الكيلومتر النهائي *</label>
+      <input type="number" inputmode="numeric" id="endKM">
+      <label data-key="meter_img">صورة العداد *</label>
+      <input type="file" accept="image/*" capture="environment" id="endKMImg">
+      <button id="saveWorkBtn" onclick="saveWorkData()"
+        style="background:#28a745; position: relative; overflow: hidden;">
+        <span class="btn-text" data-key="save_send">حفظ وإرسال</span>
+        <div class="spinner"></div>
+      </button>
+      <div id="kmMsg"></div>
     </div>
-</div>
-    
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUhcFLO7dwzF7VyudQOFiL30uHjJjZEhGXKzwud8ro-Vc3oDlIyPY-ZKv3toBDkXNq/exec";
+  </div>
 
-let currentMode = 'new';
-let visitStartTime = localStorage.getItem('visitStartTime') ? parseInt(localStorage.getItem('visitStartTime')) : null;
-let startCoords = localStorage.getItem('startCoords') ? JSON.parse(localStorage.getItem('startCoords')) : null;
-let timerInterval;
-let isSending = false;
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUhcFLO7dwzF7VyudQOFiL30uHjJjZEhGXKzwud8ro-Vc3oDlIyPY-ZKv3toBDkXNq/exec";
 
-let allClients = [];
+    let currentMode = 'new';
+    let visitStartTime = localStorage.getItem('visitStartTime') ? parseInt(localStorage.getItem('visitStartTime')) : null;
+    let startCoords = localStorage.getItem('startCoords') ? JSON.parse(localStorage.getItem('startCoords')) : null;
+    let timerInterval;
+    let isSending = false;
 
-const translations = {
-    ar: {
+    let allClients = [];
+
+    const translations = {
+      ar: {
         modal_title: "صباح الخير", modal_body: "هل انت مستعد ليوم جديد", modal_btn: "OK",
         login_title: "تسجيل الدخول", rep_name_label: "اسم المندوب *", city_label: "المدينة *", login_btn: "دخول للنظام",
-        tab_new: "عميل جديد", tab_regular: "عميل دائمي", start_visit: "بدء<br>الزيارة", active_visit: "زيارة<br>جارية", 
+        tab_new: "عميل جديد", tab_regular: "عميل دائمي", start_visit: "بدء<br>الزيارة", active_visit: "زيارة<br>جارية",
         cancel_visit: "إلغاء الزيارة ✖", has_oil_label: "يمتلك زيت ريماكس؟*", choose: "", yes: "نعم", no: "لا",
         ufi_label: "هل يمتلك فلتر UFI؟ *",
         trade_name_label: "الاسم التجاري *", owner_name_label: "اسم المالك *", address_label: "العنوان *", phone_label: "رقم الهاتف *",
@@ -362,12 +691,13 @@ const translations = {
         alert_fill: "يرجى إدخال البيانات المطلوبة", alert_geo: "يجب تفعيل الموقع لبدء الزيارة", alert_cancel: "سيتم حذف توقيت الزيارة الحالية، هل أنت متأكد؟",
         alert_dist: "المسافة بعيدة جداً", sending: "جاري الإرسال...", wait: "⏳ يرجى الانتظار، يتم رفع البيانات...", success: "✅ تم بنجاح", loading: "جاري تحديد الموقع...",
         sat: "السبت", sun: "الأحد", mon: "الاثنين", tue: "الثلاثاء", wed: "الأربعاء", thu: "الخميس", fri: "الجمعه",
-        work_btn: "بدء الدوام", details_btn: "تفاصيل", details_title: "تفاصيل وتعديل العميل", 
+        work_btn: "بدء الدوام", details_btn: "تفاصيل", details_title: "تفاصيل وتعديل العميل",
         edit_data: "تعديل البيانات", save_edits: "حفظ التعديلات", daily_work_title: "الدوام اليومي",
         start_work: "بدء الدوام", current_km: "الكيلومتر الحالي *", meter_img: "صورة العداد *",
-        end_work: "إنهاء الدوام", final_km: "الكيلومتر النهائي *", save_send: "حفظ وإرسال"
-    },
-    ku: {
+        end_work: "إنهاء الدوام", final_km: "الكيلومتر النهائي *", save_send: "حفظ وإرسال", refinery: "مصفى", hospital: "مستشفى", factory: "معمل", contractor: "مقاول",
+        realestate: "عقارات", mechanic: "ميكانيكي", schools: "مدارس"
+      },
+      ku: {
         modal_title: "بەیانی باش", modal_body: "ئایا ئامادەی بۆ ڕۆژێکی نوێ؟", modal_btn: "OK",
         login_title: "چوونە ژوورەوە", rep_name_label: "ناوی نوێنەر *", city_label: "شار *", login_btn: "چوونە ناو سیستم",
         tab_new: "کڕیاری نوێ", tab_regular: "کڕیاری هەمیشەیی", start_visit: "دەستپێکی<br>سەردان", active_visit: "سەردان<br>بەردەوامە",
@@ -383,259 +713,260 @@ const translations = {
         alert_fill: "تکایە زانیارییەکان پڕ بکەرەوە", alert_geo: "دەبێت شوێنێنەکەت چالاک بکەیت", alert_cancel: "کاتی سەردانەکە دەسڕێتەوە، دڵنیایت؟",
         alert_dist: "مەوداکە زۆر دوورە", sending: "خەریکی ناردنە...", wait: "⏳ تکایە چاوەڕێ بکە، زانیارییەکان بەرزدەکرێنەوە...", success: "✅ بە سەرکەوتوویی تەواو بوو", loading: "دیاریکردنی شوێن...",
         sat: "شەممە", sun: "یەکشەممە", mon: "دووشەممە", tue: "سێشەممە", wed: "چوارشەممە", thu: "پێنجشەممە", fri: "هەینی",
-        work_btn: "دەستپێکردنی کار", details_btn: "وردەکارییەکان", details_title: "وردەکاری و دەستکاری کڕیار", 
+        work_btn: "دەستپێکردنی کار", details_btn: "وردەکارییەکان", details_title: "وردەکاری و دەستکاری کڕیار",
         edit_data: "دەستکاری زانیارییەکان", save_edits: "پاشەکەوتکردنی گۆڕانکارییەکان", daily_work_title: "دەوامی ڕۆژانە",
         start_work: "دەستپێکی دەوام", current_km: "کیلۆمەتری ئێستا *", meter_img: "وێنەی پێوەر *",
-        end_work: "کۆتایی دەوام", final_km: "کیلۆمەتری کۆتایی *", save_send: "پاشەکەوتکردن و ناردن"
-    }
-};
+        end_work: "کۆتایی دەوام", final_km: "کیلۆمەتری کۆتایی *", save_send: "پاشەکەوتکردن و ناردن", refinery: "پاڵاوگەی نەوت", hospital: "نەخۆشخانە", factory: "کارگە",
+        contractor: "خاوەنی ئامێری قورس", realestate: "خانووبەرە", mechanic: "وەستا", schools: "قوتابخانە"
+      }
+    };
 
-// =============================================
+    // =============================================
 
-function verifyAccessCode() {
-    const input = document.getElementById('accessCode').value;
-    const correctCode = "Mm19941994Mm";
-    if(input === correctCode) {
+    function verifyAccessCode() {
+      const input = document.getElementById('accessCode').value;
+      const correctCode = "Mm19941994Mm";
+      if (input === correctCode) {
         localStorage.setItem('isVerified', 'true');
         document.getElementById('securityModal').classList.add('hidden');
-    } else {
+      } else {
         document.getElementById('errorCode').style.display = 'block';
+      }
     }
-}
 
-function checkDailyAppModal() {
-    const today = new Date().toLocaleDateString();
-    const lastOpen = localStorage.getItem('lastTraccarOpenDate');
-    const lang = localStorage.getItem('appLang') || 'ar';
-    if (lastOpen !== today) {
+    function checkDailyAppModal() {
+      const today = new Date().toLocaleDateString();
+      const lastOpen = localStorage.getItem('lastTraccarOpenDate');
+      const lang = localStorage.getItem('appLang') || 'ar';
+      if (lastOpen !== today) {
         const modal = document.getElementById('appModal');
         modal.classList.remove('hidden');
         document.getElementById('modalTitle').innerText = translations[lang].modal_title;
         document.getElementById('modalBody').innerText = translations[lang].modal_body;
         document.getElementById('openAppBtn').innerText = translations[lang].modal_btn;
+      }
     }
-}
 
-function triggerAppOpening() {
-    const today = new Date().toLocaleDateString();
-    const appPackage = "org.traccar.client";
-    window.location.href = "intent://#Intent;scheme=org.traccar.client;package=" + appPackage + ";end";
-    document.getElementById('appModal').classList.add('hidden');
-    localStorage.setItem('lastTraccarOpenDate', today);
-}
+    function triggerAppOpening() {
+      const today = new Date().toLocaleDateString();
+      const appPackage = "org.traccar.client";
+      window.location.href = "intent://#Intent;scheme=org.traccar.client;package=" + appPackage + ";end";
+      document.getElementById('appModal').classList.add('hidden');
+      localStorage.setItem('lastTraccarOpenDate', today);
+    }
 
-window.onload = () => {
-    if(localStorage.getItem('isVerified') === 'true') {
+    window.onload = () => {
+      if (localStorage.getItem('isVerified') === 'true') {
         document.getElementById('securityModal').classList.add('hidden');
-    }
-    checkDailyAppModal();
-    const savedLang = localStorage.getItem('appLang') || 'ar';
-    document.getElementById('langSelect').value = savedLang;
-    changeLanguage(savedLang);
-    if(localStorage.repName) {
+      }
+      checkDailyAppModal();
+      const savedLang = localStorage.getItem('appLang') || 'ar';
+      document.getElementById('langSelect').value = savedLang;
+      changeLanguage(savedLang);
+      if (localStorage.repName) {
         document.getElementById('login').classList.add('hidden');
         document.getElementById('formBox').classList.remove('hidden');
-        if(visitStartTime) resumeVisit();
-        
+        if (visitStartTime) resumeVisit();
+
         // الترتيب المهم: setCurrentDay أولاً ثم fetchClientsData
         setCurrentDay();
         fetchClientsData();
-    }
-};
+      }
+    };
 
-function changeLanguage(lang) {
-    localStorage.setItem('appLang', lang);
-    document.documentElement.lang = lang;
-    document.documentElement.dir = "rtl"; 
-    
-    document.querySelectorAll('[data-key]').forEach(el => {
+    function changeLanguage(lang) {
+      localStorage.setItem('appLang', lang);
+      document.documentElement.lang = lang;
+      document.documentElement.dir = "rtl";
+
+      document.querySelectorAll('[data-key]').forEach(el => {
         const key = el.getAttribute('data-key');
         if (translations[lang][key]) {
-            if (el.id === 'startVisitBtn' && visitStartTime) {
-                el.innerHTML = translations[lang]['active_visit'];
-            } else {
-                el.innerHTML = translations[lang][key];
-            }
+          if (el.id === 'startVisitBtn' && visitStartTime) {
+            el.innerHTML = translations[lang]['active_visit'];
+          } else {
+            el.innerHTML = translations[lang][key];
+          }
         }
-    });
+      });
 
-    const clientSelect = document.getElementById('reg_clientName');
-    if (clientSelect && clientSelect.options[0] && clientSelect.options[0].value === "") {
+      const clientSelect = document.getElementById('reg_clientName');
+      if (clientSelect && clientSelect.options[0] && clientSelect.options[0].value === "") {
         clientSelect.options[0].text = (lang === 'ku') ? "کڕیار هەڵبژێرە..." : "اختر العميل...";
+      }
     }
-}
 
-function saveLogin() {
-    const lang = localStorage.getItem('appLang') || 'ar';
-    const r = document.getElementById('repName').value.trim();
-    const c = document.getElementById('city').value.trim();
-    if(!r || !c) return alert(translations[lang].alert_fill);
-    localStorage.repName = r; localStorage.city = c;
-    location.reload();
-}
+    function saveLogin() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const r = document.getElementById('repName').value.trim();
+      const c = document.getElementById('city').value.trim();
+      if (!r || !c) return alert(translations[lang].alert_fill);
+      localStorage.repName = r; localStorage.city = c;
+      location.reload();
+    }
 
-function switchForm(mode) {
-    currentMode = mode;
-    document.getElementById('newClientForm').classList.toggle('hidden', mode !== 'new');
-    document.getElementById('regularClientForm').classList.toggle('hidden', mode !== 'regular');
-    document.getElementById('tabNew').classList.toggle('active', mode === 'new');
-    document.getElementById('tabRegular').classList.toggle('active', mode === 'regular');
-}
+    function switchForm(mode) {
+      currentMode = mode;
+      document.getElementById('newClientForm').classList.toggle('hidden', mode !== 'new');
+      document.getElementById('regularClientForm').classList.toggle('hidden', mode !== 'regular');
+      document.getElementById('tabNew').classList.toggle('active', mode === 'new');
+      document.getElementById('tabRegular').classList.toggle('active', mode === 'regular');
+    }
 
-// --------- وظائف جلب وتصفية العملاء ---------
+    // --------- وظائف جلب وتصفية العملاء ---------
 
-function setCurrentDay() {
-    const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعه", "السبت"];
-    const today = days[new Date().getDay()];
-    document.getElementById('reg_daySelect').value = today || "السبت";
-}
+    function setCurrentDay() {
+      const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعه", "السبت"];
+      const today = days[new Date().getDay()];
+      document.getElementById('reg_daySelect').value = today || "السبت";
+    }
 
-function fetchClientsData() {
-    const repName = localStorage.repName;
-    console.log("جلب عملاء المندوب:", repName);
-    document.getElementById('reg_clientName').innerHTML = '<option value="">جاري جلب العملاء...</option>';
-    
-    fetch(`${SCRIPT_URL}?action=getClients&repName=${encodeURIComponent(repName)}`)
-    .then(res => res.json())
-    .then(data => {
-        console.log("البيانات المستلمة:", data);
-        
-        let clientList = [];
-        
-        // حالة 1: الخادم يرجع array مباشرة (النسخة القديمة من السكريبت)
-        if (Array.isArray(data)) {
+    function fetchClientsData() {
+      const repName = localStorage.repName;
+      console.log("جلب عملاء المندوب:", repName);
+      document.getElementById('reg_clientName').innerHTML = '<option value="">جاري جلب العملاء...</option>';
+
+      fetch(`${SCRIPT_URL}?action=getClients&repName=${encodeURIComponent(repName)}`)
+        .then(res => res.json())
+        .then(data => {
+          console.log("البيانات المستلمة:", data);
+
+          let clientList = [];
+
+          // حالة 1: الخادم يرجع array مباشرة (النسخة القديمة من السكريبت)
+          if (Array.isArray(data)) {
             console.log("تم استلام array - سيتم الفلترة محلياً");
             // فلترة حسب اسم المندوب محلياً
             clientList = data.filter(item => {
-                const itemRep = (item.Salesman || item.repName || "").toString().trim();
-                return itemRep === repName.trim();
+              const itemRep = (item.Salesman || item.repName || "").toString().trim();
+              return itemRep === repName.trim();
             }).map((item, idx) => ({
-                id: idx + 1,
-                tradeName: item["Trade Name"] || item.tradeName || "",
-                ownerName: item.Owner || item.ownerName || "",
-                address: item.Address || item.address || "",
-                phone: (item.Phone || item.phone || "").toString(),
-                category: item.Category || item.category || "",
-                note: item.Note || item.note || "",
-                rate: item.Rating || item.rate || "",
-                visitDays: (item["Visit Days"] || item.visitDays || "").toString().trim(),
-                useOil: item.Rymax || item.useOil || "",
-                hasUFI: item[""] || item.hasUFI || ""
+              id: idx + 1,
+              tradeName: item["Trade Name"] || item.tradeName || "",
+              ownerName: item.Owner || item.ownerName || "",
+              address: item.Address || item.address || "",
+              phone: (item.Phone || item.phone || "").toString(),
+              category: item.Category || item.category || "",
+              note: item.Note || item.note || "",
+              rate: item.Rating || item.rate || "",
+              visitDays: (item["Visit Days"] || item.visitDays || "").toString().trim(),
+              useOil: item.Rymax || item.useOil || "",
+              hasUFI: item[""] || item.hasUFI || ""
             }));
-        }
-        // حالة 2: الخادم يرجع {status, data} (النسخة الجديدة)
-        else if (data.status === 'success') {
+          }
+          // حالة 2: الخادم يرجع {status, data} (النسخة الجديدة)
+          else if (data.status === 'success') {
             clientList = data.data;
-        }
-        else {
+          }
+          else {
             console.error("استجابة غير متوقعة:", data);
             document.getElementById('reg_clientName').innerHTML = '<option value="">لم يتم العثور على عملاء</option>';
             return;
-        }
-        
-        // إزالة التكرارات (نفس الاسم + نفس اليوم)
-        const seen = {};
-        allClients = clientList.filter(c => {
+          }
+
+          // إزالة التكرارات (نفس الاسم + نفس اليوم)
+          const seen = {};
+          allClients = clientList.filter(c => {
             if (!c.tradeName || !c.visitDays) return false;
             const key = c.tradeName.trim() + "||" + c.visitDays.trim();
             if (seen[key]) return false;
             seen[key] = true;
             return true;
+          });
+
+          console.log("العملاء بعد الفلترة والتنظيف:", allClients.length);
+          filterClientsByDay();
+        })
+        .catch(err => {
+          console.error("خطأ في جلب العملاء:", err);
+          document.getElementById('reg_clientName').innerHTML = '<option value="">خطأ في الاتصال</option>';
         });
-        
-        console.log("العملاء بعد الفلترة والتنظيف:", allClients.length);
-        filterClientsByDay();
-    })
-    .catch(err => {
-        console.error("خطأ في جلب العملاء:", err);
-        document.getElementById('reg_clientName').innerHTML = '<option value="">خطأ في الاتصال</option>';
-    });
-}
+    }
 
-function filterClientsByDay() {
-    const selectedDay = document.getElementById('reg_daySelect').value;
-    const selectElem = document.getElementById('reg_clientName');
-    selectElem.innerHTML = '<option value="">اختر العميل-کڕیار هەڵبژێرە</option>';
-    
-    const filtered = allClients.filter(c => 
+    function filterClientsByDay() {
+      const selectedDay = document.getElementById('reg_daySelect').value;
+      const selectElem = document.getElementById('reg_clientName');
+      selectElem.innerHTML = '<option value="">اختر العميل-کڕیار هەڵبژێرە</option>';
+
+      const filtered = allClients.filter(c =>
         c.visitDays && c.visitDays.toString().trim() === selectedDay.trim()
-    );
+      );
 
-    console.log("اليوم المحدد:", selectedDay);
-    console.log("العملاء بعد الفلترة:", filtered.length);
+      console.log("اليوم المحدد:", selectedDay);
+      console.log("العملاء بعد الفلترة:", filtered.length);
 
-    if (filtered.length === 0) {
+      if (filtered.length === 0) {
         console.warn("لا يوجد عملاء لهذا اليوم:", selectedDay);
         console.warn("كل الأيام المتاحة:", [...new Set(allClients.map(c => c.visitDays))]);
-    }
-    
-    filtered.forEach(client => {
+      }
+
+      filtered.forEach(client => {
         const option = document.createElement('option');
-        option.value = client.id || client.tradeName; 
+        option.value = client.id || client.tradeName;
         option.text = client.tradeName;
         selectElem.appendChild(option);
-    });
-    
-    toggleDetailsBtn();
-}
+      });
 
-function toggleDetailsBtn() {
-    const val = document.getElementById('reg_clientName').value;
-    document.getElementById('showDetailsBtn').classList.toggle('hidden', !val);
-}
+      toggleDetailsBtn();
+    }
 
-// --------- وظائف تفاصيل العميل وتعديله ---------
+    function toggleDetailsBtn() {
+      const val = document.getElementById('reg_clientName').value;
+      document.getElementById('showDetailsBtn').classList.toggle('hidden', !val);
+    }
 
-function showClientDetails() {
-    const selectedValue = document.getElementById('reg_clientName').value;
-    const client = allClients.find(c => (c.id == selectedValue || c.tradeName === selectedValue));
-    
-    if(!client) return;
+    // --------- وظائف تفاصيل العميل وتعديله ---------
 
-    document.getElementById('edit_tradeName').value = client.tradeName || '';
-    document.getElementById('edit_ownerName').value = client.ownerName || '';
-    document.getElementById('edit_address').value = client.address || '';
-    document.getElementById('edit_phone').value = client.phone || '';
-    document.getElementById('edit_category').value = client.category || '';
-    document.getElementById('edit_note').value = client.note || '';
-    document.getElementById('edit_rate').value = client.rate || '';
-    document.getElementById('edit_visitDays').value = client.visitDays || '';
-    document.getElementById('edit_useOil').value = client.useOil || '';
-    document.getElementById('edit_hasUFI').value = client.hasUFI || '';
+    function showClientDetails() {
+      const selectedValue = document.getElementById('reg_clientName').value;
+      const client = allClients.find(c => (c.id == selectedValue || c.tradeName === selectedValue));
 
-    // ← احفظ الاسم الأصلي في زر الحفظ
-    document.getElementById('saveEditBtn').setAttribute('data-original-name', client.tradeName);
+      if (!client) return;
 
-    const fields = ['edit_tradeName','edit_ownerName','edit_address','edit_phone',
-                    'edit_category','edit_note','edit_rate','edit_visitDays','edit_useOil','edit_hasUFI'];
-    fields.forEach(id => document.getElementById(id).disabled = true);
-    
-    document.getElementById('enableEditBtn').classList.remove('hidden');
-    document.getElementById('saveEditBtn').classList.add('hidden');
-    document.getElementById('clientDetailsModal').style.display = 'block';
-}
+      document.getElementById('edit_tradeName').value = client.tradeName || '';
+      document.getElementById('edit_ownerName').value = client.ownerName || '';
+      document.getElementById('edit_address').value = client.address || '';
+      document.getElementById('edit_phone').value = client.phone || '';
+      document.getElementById('edit_category').value = client.category || '';
+      document.getElementById('edit_note').value = client.note || '';
+      document.getElementById('edit_rate').value = client.rate || '';
+      document.getElementById('edit_visitDays').value = client.visitDays || '';
+      document.getElementById('edit_useOil').value = client.useOil || '';
+      document.getElementById('edit_hasUFI').value = client.hasUFI || '';
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-}
+      // ← احفظ الاسم الأصلي في زر الحفظ
+      document.getElementById('saveEditBtn').setAttribute('data-original-name', client.tradeName);
 
-function enableClientEdit() {
-    const fields = ['edit_tradeName', 'edit_ownerName', 'edit_address', 'edit_phone', 'edit_category', 'edit_note', 'edit_rate', 'edit_visitDays', 'edit_useOil', 'edit_hasUFI'];
-    fields.forEach(id => document.getElementById(id).disabled = false);
-    
-    document.getElementById('enableEditBtn').classList.add('hidden');
-    document.getElementById('saveEditBtn').classList.remove('hidden');
-}
+      const fields = ['edit_tradeName', 'edit_ownerName', 'edit_address', 'edit_phone',
+        'edit_category', 'edit_note', 'edit_rate', 'edit_visitDays', 'edit_useOil', 'edit_hasUFI'];
+      fields.forEach(id => document.getElementById(id).disabled = true);
 
-function saveClientEdit() {
-    const btn = document.getElementById('saveEditBtn');
-    btn.disabled = true;
-    btn.innerText = "جاري الحفظ...";
+      document.getElementById('enableEditBtn').classList.remove('hidden');
+      document.getElementById('saveEditBtn').classList.add('hidden');
+      document.getElementById('clientDetailsModal').style.display = 'block';
+    }
 
-    // الاسم الأصلي قبل التعديل (نحتاجه للبحث)
-    const originalTradeName = btn.getAttribute('data-original-name');
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
 
-    const updatedData = {
+    function enableClientEdit() {
+      const fields = ['edit_tradeName', 'edit_ownerName', 'edit_address', 'edit_phone', 'edit_category', 'edit_note', 'edit_rate', 'edit_visitDays', 'edit_useOil', 'edit_hasUFI'];
+      fields.forEach(id => document.getElementById(id).disabled = false);
+
+      document.getElementById('enableEditBtn').classList.add('hidden');
+      document.getElementById('saveEditBtn').classList.remove('hidden');
+    }
+
+    function saveClientEdit() {
+      const btn = document.getElementById('saveEditBtn');
+      btn.disabled = true;
+      btn.innerText = "جاري الحفظ...";
+
+      // الاسم الأصلي قبل التعديل (نحتاجه للبحث)
+      const originalTradeName = btn.getAttribute('data-original-name');
+
+      const updatedData = {
         action: 'updateClient',
         repName: localStorage.repName,         // ← أضفنا اسم المندوب
         tradeName: originalTradeName,          // ← الاسم الأصلي للبحث
@@ -649,74 +980,74 @@ function saveClientEdit() {
         visitDays: document.getElementById('edit_visitDays').value,
         useOil: document.getElementById('edit_useOil').value,
         hasUFI: document.getElementById('edit_hasUFI').value,
-    };
+      };
 
-    fetch(SCRIPT_URL, {
+      fetch(SCRIPT_URL, {
         method: "POST",
         body: JSON.stringify(updatedData)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'success') {
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
             btn.innerText = "تم الحفظ ✓";
             setTimeout(() => {
-                closeModal('clientDetailsModal');
-                fetchClientsData();
+              closeModal('clientDetailsModal');
+              fetchClientsData();
             }, 1500);
-        } else {
+          } else {
             alert("خطأ: " + data.message);
             btn.disabled = false;
             btn.innerText = "حفظ التعديلات";
-        }
-    })
-    .catch(err => {
-        alert("حدث خطأ أثناء الحفظ");
-        btn.disabled = false;
-        btn.innerText = "حفظ التعديلات";
-    });
-}
+          }
+        })
+        .catch(err => {
+          alert("حدث خطأ أثناء الحفظ");
+          btn.disabled = false;
+          btn.innerText = "حفظ التعديلات";
+        });
+    }
 
-function toggleVisit() {
-    const lang = localStorage.getItem('appLang') || 'ar';
-    const btn = document.getElementById('startVisitBtn');
-    if(!visitStartTime) {
+    function toggleVisit() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const btn = document.getElementById('startVisitBtn');
+      if (!visitStartTime) {
         btn.disabled = true;
         btn.innerHTML = translations[lang].loading;
         navigator.geolocation.getCurrentPosition(pos => {
-            visitStartTime = Date.now();
-            startCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-            localStorage.setItem('visitStartTime', visitStartTime);
-            localStorage.setItem('startCoords', JSON.stringify(startCoords));
-            resumeVisit();
+          visitStartTime = Date.now();
+          startCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          localStorage.setItem('visitStartTime', visitStartTime);
+          localStorage.setItem('startCoords', JSON.stringify(startCoords));
+          resumeVisit();
         }, () => {
-            alert(translations[lang].alert_geo);
-            btn.disabled = false;
-            btn.innerHTML = translations[lang].start_visit;
+          alert(translations[lang].alert_geo);
+          btn.disabled = false;
+          btn.innerHTML = translations[lang].start_visit;
         }, { enableHighAccuracy: true });
+      }
     }
-}
 
-function resumeVisit() {
-    const lang = localStorage.getItem('appLang') || 'ar';
-    document.getElementById('timerDisplay').classList.remove('hidden');
-    document.getElementById('cancelVisitBtn').classList.remove('hidden');
-    const btn = document.getElementById('startVisitBtn');
-    btn.classList.add('active');
-    btn.innerHTML = translations[lang].active_visit;
-    btn.disabled = true;
-    if(timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
+    function resumeVisit() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      document.getElementById('timerDisplay').classList.remove('hidden');
+      document.getElementById('cancelVisitBtn').classList.remove('hidden');
+      const btn = document.getElementById('startVisitBtn');
+      btn.classList.add('active');
+      btn.innerHTML = translations[lang].active_visit;
+      btn.disabled = true;
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
         const diff = Date.now() - visitStartTime;
-        const h = Math.floor(diff/3600000).toString().padStart(2,'0');
-        const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
-        const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+        const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
         document.getElementById('timerDisplay').innerText = `${h}:${m}:${s}`;
-    }, 1000);
-}
+      }, 1000);
+    }
 
-function cancelVisit() {
-    const lang = localStorage.getItem('appLang') || 'ar';
-    if(confirm(translations[lang].alert_cancel)) {
+    function cancelVisit() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      if (confirm(translations[lang].alert_cancel)) {
         clearInterval(timerInterval);
         localStorage.removeItem('visitStartTime');
         localStorage.removeItem('startCoords');
@@ -728,256 +1059,256 @@ function cancelVisit() {
         btn.innerHTML = translations[lang].start_visit;
         document.getElementById('timerDisplay').classList.add('hidden');
         document.getElementById('cancelVisitBtn').classList.add('hidden');
+      }
     }
-}
 
-function toggleOrderFields() {
-    const val = document.getElementById('reg_hasOrder').value;
-    document.getElementById('orderAmountBox').classList.toggle('hidden', val === 'لا');
-    document.getElementById('orderReasonBox').classList.toggle('hidden', val === 'نعم');
-}
+    function toggleOrderFields() {
+      const val = document.getElementById('reg_hasOrder').value;
+      document.getElementById('orderAmountBox').classList.toggle('hidden', val === 'لا');
+      document.getElementById('orderReasonBox').classList.toggle('hidden', val === 'نعم');
+    }
 
-function togglePaymentFields() {
-    const val = document.getElementById('reg_hasPayment').value;
-    document.getElementById('payAmountBox').classList.toggle('hidden', val === 'لا');
-    document.getElementById('payReasonBox').classList.toggle('hidden', val === 'نعم');
-}
+    function togglePaymentFields() {
+      const val = document.getElementById('reg_hasPayment').value;
+      document.getElementById('payAmountBox').classList.toggle('hidden', val === 'لا');
+      document.getElementById('payReasonBox').classList.toggle('hidden', val === 'نعم');
+    }
 
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371e3;
-    const φ1 = lat1 * Math.PI/180; const φ2 = lat2 * Math.PI/180;
-    const Δφ = (lat2-lat1) * Math.PI/180; const Δλ = (lon2-lon1) * Math.PI/180;
-    const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2);
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const φ1 = lat1 * Math.PI / 180; const φ2 = lat2 * Math.PI / 180;
+      const Δφ = (lat2 - lat1) * Math.PI / 180; const Δλ = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
 
-function getTodayKey(){
-    const d = new Date();
-    return d.getFullYear() + "-" + 
-           String(d.getMonth()+1).padStart(2,'0') + "-" +
-           String(d.getDate()).padStart(2,'0');
-}
+    function getTodayKey() {
+      const d = new Date();
+      return d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, '0') + "-" +
+        String(d.getDate()).padStart(2, '0');
+    }
 
-function checkOldKM() {
-    const today = getTodayKey();
-    const savedDate = localStorage.getItem("kmDate");
-    if (savedDate && savedDate !== today) {
+    function checkOldKM() {
+      const today = getTodayKey();
+      const savedDate = localStorage.getItem("kmDate");
+      if (savedDate && savedDate !== today) {
         localStorage.removeItem("kmStart");
         localStorage.removeItem("kmDate");
+      }
     }
-}
 
-checkOldKM();
-    
-function openWorkModal() {
-    document.getElementById("workModal").style.display = "block";
-    const saved = localStorage.getItem("kmStart");
-    if (saved) {
+    checkOldKM();
+
+    function openWorkModal() {
+      document.getElementById("workModal").style.display = "block";
+      const saved = localStorage.getItem("kmStart");
+      if (saved) {
         const data = JSON.parse(saved);
         document.getElementById("startKM").value = data.km;
-    }
-}
-
-async function saveWorkData() {
-    const btn = document.getElementById('saveWorkBtn');
-    const btnText = btn.querySelector('.btn-text');
-    const spinner = btn.querySelector('.spinner');
-
-    if(btn.classList.contains('sending')) return;
-
-    btn.classList.add('sending');
-    btn.disabled = true;
-    btnText.innerText = "جاري الإرسال...";
-
-    const repName = localStorage.repName;
-    const startKM = document.getElementById("startKM").value;
-    const endKM = document.getElementById("endKM").value;
-    const startImgFile = document.getElementById("startKMImg").files[0];
-    const endImgFile = document.getElementById("endKMImg").files[0];
-    const kmMsg = document.getElementById("kmMsg");
-
-    if (startKM && startImgFile && !endKM) {
-        compressImage(startImgFile, function(base64){
-            const data = {
-                km: startKM,
-                image: base64,
-                startTime: new Date().toISOString()
-            };
-            localStorage.setItem("kmStart", JSON.stringify(data));
-            localStorage.setItem("kmDate", getTodayKey());
-            kmMsg.innerHTML = "دەستپێکردنی کارکردن پاشەکەوت کراوە✅ تم حفظ بدء الدوام";
-
-// إرسال وقت البدء إلى StartTimes
-fetch(SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-        action: "saveStartTime",
-        repName: repName,
-        startTime: data.startTime
-    })
-});
-        });
-        return;
+      }
     }
 
-    if (!localStorage.getItem("kmStart")) {
-        alert("يجب تسجيل بدء الدوام أولاً");
-        return;
-    }
+    async function saveWorkData() {
+      const btn = document.getElementById('saveWorkBtn');
+      const btnText = btn.querySelector('.btn-text');
+      const spinner = btn.querySelector('.spinner');
 
-    if (!endKM || !endImgFile) {
-        alert("أدخل بيانات الإنهاء");
-        return;
-    }
+      if (btn.classList.contains('sending')) return;
 
-    const startData = JSON.parse(localStorage.getItem("kmStart"));
-    const distance = endKM - startData.km;
+      btn.classList.add('sending');
+      btn.disabled = true;
+      btnText.innerText = "جاري الإرسال...";
 
-    compressImage(endImgFile, function(endBase64){
-        fetch(SCRIPT_URL, {
+      const repName = localStorage.repName;
+      const startKM = document.getElementById("startKM").value;
+      const endKM = document.getElementById("endKM").value;
+      const startImgFile = document.getElementById("startKMImg").files[0];
+      const endImgFile = document.getElementById("endKMImg").files[0];
+      const kmMsg = document.getElementById("kmMsg");
+
+      if (startKM && startImgFile && !endKM) {
+        compressImage(startImgFile, function (base64) {
+          const data = {
+            km: startKM,
+            image: base64,
+            startTime: new Date().toISOString()
+          };
+          localStorage.setItem("kmStart", JSON.stringify(data));
+          localStorage.setItem("kmDate", getTodayKey());
+          kmMsg.innerHTML = "دەستپێکردنی کارکردن پاشەکەوت کراوە✅ تم حفظ بدء الدوام";
+
+          // إرسال وقت البدء إلى StartTimes
+          fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                action: "saveKM",
-                repName: repName,
-                startKM: startData.km,
-                startTime: startData.startTime,
-                startImage: startData.image,
-                endKM: endKM,
-                endTime: new Date().toISOString(),
-                endImage: endBase64,
-                distance: distance
+              action: "saveStartTime",
+              repName: repName,
+              startTime: data.startTime
             })
-        }).then(() => {
-            localStorage.removeItem("kmStart");
-            localStorage.removeItem("kmDate");
-            kmMsg.innerHTML = "✅ تم إرسال الدوام بنجاح";
-            setTimeout(()=>location.reload(),1500);
+          });
         });
-    });
-}
-    
-function compressImage(file, callback) {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function(event) {
+        return;
+      }
+
+      if (!localStorage.getItem("kmStart")) {
+        alert("يجب تسجيل بدء الدوام أولاً");
+        return;
+      }
+
+      if (!endKM || !endImgFile) {
+        alert("أدخل بيانات الإنهاء");
+        return;
+      }
+
+      const startData = JSON.parse(localStorage.getItem("kmStart"));
+      const distance = endKM - startData.km;
+
+      compressImage(endImgFile, function (endBase64) {
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "saveKM",
+            repName: repName,
+            startKM: startData.km,
+            startTime: startData.startTime,
+            startImage: startData.image,
+            endKM: endKM,
+            endTime: new Date().toISOString(),
+            endImage: endBase64,
+            distance: distance
+          })
+        }).then(() => {
+          localStorage.removeItem("kmStart");
+          localStorage.removeItem("kmDate");
+          kmMsg.innerHTML = "✅ تم إرسال الدوام بنجاح";
+          setTimeout(() => location.reload(), 1500);
+        });
+      });
+    }
+
+    function compressImage(file, callback) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = function (event) {
         const img = new Image();
         img.src = event.target.result;
-        img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 800;
-            let width = img.width;
-            let height = img.height;
-            if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            const compressed = canvas.toDataURL('image/jpeg', 0.7);
-            callback(compressed);
+        img.onload = function () {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800;
+          let width = img.width;
+          let height = img.height;
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressed = canvas.toDataURL('image/jpeg', 0.7);
+          callback(compressed);
         };
-    };
-}
+      };
+    }
 
-function clearErrors() {
-    document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-}
+    function clearErrors() {
+      document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+    }
 
-function markError(id) {
-    const el = document.getElementById(id);
-    if (el) {
+    function markError(id) {
+      const el = document.getElementById(id);
+      if (el) {
         el.classList.add('field-error');
         el.addEventListener('input', () => el.classList.remove('field-error'), { once: true });
         el.addEventListener('change', () => el.classList.remove('field-error'), { once: true });
+      }
     }
-}
 
-async function handleSend() {
-    if(isSending) return;
-    const lang = localStorage.getItem('appLang') || 'ar';
-    if(!visitStartTime) return alert(translations[lang].start_visit.replace('<br>', ' '));
+    async function handleSend() {
+      if (isSending) return;
+      const lang = localStorage.getItem('appLang') || 'ar';
+      if (!visitStartTime) return alert(translations[lang].start_visit.replace('<br>', ' '));
 
-    clearErrors();
-    let hasError = false;
+      clearErrors();
+      let hasError = false;
 
-    if (currentMode === 'new') {
+      if (currentMode === 'new') {
         const reqNew = ['useOil', 'hasUFI', 'tradeName', 'ownerName', 'address', 'phone', 'category', 'rate', 'visitDays'];
         for (let id of reqNew) {
-            if (!document.getElementById(id).value.trim()) {
-                markError(id);
-                hasError = true;
-            }
+          if (!document.getElementById(id).value.trim()) {
+            markError(id);
+            hasError = true;
+          }
         }
         if (document.getElementById('imageInputNew').files.length === 0) {
-            markError('imageInputNew');
-            hasError = true;
+          markError('imageInputNew');
+          hasError = true;
         }
-    } else {
+      } else {
         if (!document.getElementById('reg_clientName').value.trim()) {
-            markError('reg_clientName');
-            hasError = true;
+          markError('reg_clientName');
+          hasError = true;
         }
         const hasOrder = document.getElementById('reg_hasOrder').value;
         if (hasOrder === 'نعم' && !document.getElementById('reg_orderAmount').value.trim()) {
-            markError('reg_orderAmount');
-            hasError = true;
+          markError('reg_orderAmount');
+          hasError = true;
         }
         if (hasOrder === 'لا' && !document.getElementById('reg_orderReason').value.trim()) {
-            markError('reg_orderReason');
-            hasError = true;
+          markError('reg_orderReason');
+          hasError = true;
         }
         const hasPayment = document.getElementById('reg_hasPayment').value;
         if (hasPayment === 'نعم' && !document.getElementById('reg_payAmount').value.trim()) {
-            markError('reg_payAmount');
-            hasError = true;
+          markError('reg_payAmount');
+          hasError = true;
         }
         if (hasPayment === 'لا' && !document.getElementById('reg_payReason').value.trim()) {
-            markError('reg_payReason');
-            hasError = true;
+          markError('reg_payReason');
+          hasError = true;
         }
         if (document.getElementById('imageInputReg').files.length === 0) {
-            markError('imageInputReg');
-            hasError = true;
+          markError('imageInputReg');
+          hasError = true;
         }
-    }
+      }
 
-    if (hasError) {
+      if (hasError) {
         // تمرير تلقائي لأول حقل خاطئ
         const firstError = document.querySelector('.field-error');
         if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
-    }
-    const btn = document.getElementById('sendBtn');
-    const msg = document.getElementById('msg');
-    isSending = true;
-    btn.disabled = true;
-    btn.innerText = translations[lang].loading;
+      }
+      const btn = document.getElementById('sendBtn');
+      const msg = document.getElementById('msg');
+      isSending = true;
+      btn.disabled = true;
+      btn.innerText = translations[lang].loading;
 
-    navigator.geolocation.getCurrentPosition(async pos => {
+      navigator.geolocation.getCurrentPosition(async pos => {
         const dist = getDistance(startCoords.lat, startCoords.lng, pos.coords.latitude, pos.coords.longitude);
-        if(dist > 2000) { 
-            alert(`${translations[lang].alert_dist} (${Math.round(dist)}m).`); 
-            isSending = false; btn.disabled = false; btn.innerText = translations[lang].send_data_btn;
-            return; 
+        if (dist > 2000) {
+          alert(`${translations[lang].alert_dist} (${Math.round(dist)}m).`);
+          isSending = false; btn.disabled = false; btn.innerText = translations[lang].send_data_btn;
+          return;
         }
 
         btn.innerText = translations[lang].sending;
         msg.innerText = translations[lang].wait;
         const durationMin = Math.floor((Date.now() - visitStartTime) / 60000) + " min";
-        
-        let data = { 
-            sheetName: currentMode === 'new' ? 'data' : 'Clients', 
-            repName: localStorage.repName, 
-            city: localStorage.city, 
-            duration: durationMin, 
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude
+
+        let data = {
+          sheetName: currentMode === 'new' ? 'data' : 'Clients',
+          repName: localStorage.repName,
+          city: localStorage.city,
+          duration: durationMin,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
         };
 
         const fileInput = currentMode === 'new' ? document.getElementById('imageInputNew') : document.getElementById('imageInputReg');
@@ -986,73 +1317,74 @@ async function handleSend() {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 800;
-                let width = img.width;
-                let height = img.height;
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                
-                if(currentMode === 'new') {
-                    data.tradeName = document.getElementById('tradeName').value;
-                    data.ownerName = document.getElementById('ownerName').value;
-                    data.useOil = document.getElementById('useOil').value;
-                    data.hasUFI = document.getElementById('hasUFI').value;
-                    data.address = document.getElementById('address').value;
-                    data.phone = document.getElementById('phone').value;
-                    data.category = document.getElementById('category').value;
-                    data.note = document.getElementById('note').value;
-                    data.rate = document.getElementById('rate').value;
-                    data.visitDays = document.getElementById('visitDays').value;
-                    data.oilType = document.getElementById('oilType').value;
-                    data.oilGrade = document.getElementById('oilGrade').value;
-                    data.oilDistance = document.getElementById('oilDistance').value;
-                    data.oilPrice = document.getElementById('oilPrice').value;
-                } else {
-                    const select = document.getElementById('reg_clientName');
-                    data.clientName = select.options[select.selectedIndex].text;
-                    data.hasOrder = document.getElementById('reg_hasOrder').value;
-                    data.orderAmount = document.getElementById('reg_orderAmount').value;
-                    data.orderReason = document.getElementById('reg_orderReason').value;
-                    data.hasPayment = document.getElementById('reg_hasPayment').value;
-                    data.payAmount = document.getElementById('reg_payAmount').value;
-                    data.payReason = document.getElementById('reg_payReason').value;
-                    data.note = document.getElementById('reg_note').value;
-                }
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800;
+            let width = img.width;
+            let height = img.height;
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
-                data.image = compressedBase64;
+            if (currentMode === 'new') {
+              data.tradeName = document.getElementById('tradeName').value;
+              data.ownerName = document.getElementById('ownerName').value;
+              data.useOil = document.getElementById('useOil').value;
+              data.hasUFI = document.getElementById('hasUFI').value;
+              data.address = document.getElementById('address').value;
+              data.phone = document.getElementById('phone').value;
+              data.category = document.getElementById('category').value;
+              data.note = document.getElementById('note').value;
+              data.rate = document.getElementById('rate').value;
+              data.visitDays = document.getElementById('visitDays').value;
+              data.oilType = document.getElementById('oilType').value;
+              data.oilGrade = document.getElementById('oilGrade').value;
+              data.oilDistance = document.getElementById('oilDistance').value;
+              data.oilPrice = document.getElementById('oilPrice').value;
+            } else {
+              const select = document.getElementById('reg_clientName');
+              data.clientName = select.options[select.selectedIndex].text;
+              data.hasOrder = document.getElementById('reg_hasOrder').value;
+              data.orderAmount = document.getElementById('reg_orderAmount').value;
+              data.orderReason = document.getElementById('reg_orderReason').value;
+              data.hasPayment = document.getElementById('reg_hasPayment').value;
+              data.payAmount = document.getElementById('reg_payAmount').value;
+              data.payReason = document.getElementById('reg_payReason').value;
+              data.note = document.getElementById('reg_note').value;
+            }
 
-                fetch(SCRIPT_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                }).then(() => {
-                    msg.innerText = translations[lang].success;
-                    localStorage.removeItem('visitStartTime');
-                    localStorage.removeItem('startCoords');
-                    setTimeout(() => location.reload(), 2000);
-                }).catch(err => {
-                    alert("خطأ في الاتصال، حاول مرة أخرى");
-                    isSending = false; btn.disabled = false;
-                });
-            };
+            data.image = compressedBase64;
+
+            fetch(SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data)
+            }).then(() => {
+              msg.innerText = translations[lang].success;
+              localStorage.removeItem('visitStartTime');
+              localStorage.removeItem('startCoords');
+              setTimeout(() => location.reload(), 2000);
+            }).catch(err => {
+              alert("خطأ في الاتصال، حاول مرة أخرى");
+              isSending = false; btn.disabled = false;
+            });
+          };
         };
-    }, () => {
+      }, () => {
         alert(translations[lang].alert_geo);
         isSending = false; btn.disabled = false;
-    }, { enableHighAccuracy: true });
-}
-</script>
+      }, { enableHighAccuracy: true });
+    }
+  </script>
 </body>
+
 </html>
