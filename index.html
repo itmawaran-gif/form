@@ -169,6 +169,21 @@
       margin-bottom: 20px;
     }
 
+    /* ===== label-row: يضم الليبل وزر المساعدة ===== */
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .label-row label {
+      margin-top: 0 !important;
+      flex: 1;
+    }
+    .oil-filter-item .label-row {
+      margin-top: 0;
+    }
+
     label {
       display: block;
       margin-top: 10px;
@@ -261,17 +276,9 @@
     }
 
     @keyframes pulse {
-      0% {
-        transform: scale(1);
-      }
-
-      50% {
-        transform: scale(1.05);
-      }
-
-      100% {
-        transform: scale(1);
-      }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
 
     .nav-tabs {
@@ -309,24 +316,117 @@
       gap: 5px;
       align-items: center;
       margin-top: 4px;
+      flex-wrap: nowrap;
     }
 
     #reg_daySelect {
-      width: 35%;
+      width: 32%;
+      min-width: 0;
       padding: 10px 5px;
       font-size: 14px;
+      flex-shrink: 0;
     }
 
     #reg_clientName {
-      width: 65%;
+      flex: 1;
+      min-width: 0;
     }
 
     #showDetailsBtn {
       background: #17a2b8;
       width: auto;
-      padding: 10px 15px;
+      padding: 10px 12px;
       margin-top: 0;
+      font-size: 13px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    /* ===== زر تبديل البحث ===== */
+    #searchToggleBtn {
+      background: #e8f0fe;
+      color: #0a7cff;
+      border: 1.5px solid #0a7cff;
+      width: 38px;
+      min-width: 38px;
+      height: 42px;
+      border-radius: 8px;
+      font-size: 17px;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, color 0.2s;
+    }
+    #searchToggleBtn.active {
+      background: #0a7cff;
+      color: #fff;
+    }
+
+    /* ===== حاوية البحث والاقتراحات ===== */
+    #clientSearchContainer {
+      position: relative;
+      margin-top: 8px;
+    }
+    #clientSearchInput {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 2px solid #0a7cff;
+      font-size: 15px;
+      box-sizing: border-box;
+      margin-top: 0;
+    }
+    #searchSuggestions {
+      position: absolute;
+      top: calc(100% + 3px);
+      right: 0;
+      left: 0;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      max-height: 210px;
+      overflow-y: auto;
+      z-index: 600;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.13);
+    }
+    .suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
       font-size: 14px;
+      border-bottom: 1px solid #f2f2f2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    .suggestion-item:hover,
+    .suggestion-item:active {
+      background: #e8f0fe;
+    }
+    .suggestion-item .s-name {
+      font-weight: bold;
+      color: #222;
+    }
+    .suggestion-item .s-day {
+      font-size: 11px;
+      color: #888;
+      background: #f0f0f0;
+      padding: 2px 7px;
+      border-radius: 10px;
+      margin-right: 6px;
+    }
+    .suggestion-no-result {
+      padding: 12px 14px;
+      color: #888;
+      font-size: 14px;
+      text-align: center;
     }
 
     .oil-filter-row {
@@ -355,10 +455,101 @@
       border: 2px solid #dc3545 !important;
       background-color: #fff5f5 !important;
     }
+
+    /* ===== زر المساعدة ؟ ===== */
+    .help-icon {
+      width: 22px;
+      min-width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      color: #0a7cff;
+      border: 1.5px solid #0a7cff;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      margin-right: 6px;
+      line-height: 1;
+      text-align: center;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .help-icon:hover {
+      background: #0a7cff;
+      color: #fff;
+    }
+
+    /* ===== نافذة المساعدة المنبثقة ===== */
+    #helpModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .help-modal-box {
+      background: #fff;
+      padding: 24px 18px 18px;
+      border-radius: 14px;
+      width: 82%;
+      max-width: 310px;
+      position: relative;
+      text-align: right;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .help-modal-box h4 {
+      margin: 0 0 12px;
+      color: #0a7cff;
+      font-size: 16px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .help-modal-box p {
+     margin: 0;
+      font-size: 14px;
+     color: #444;
+     line-height: 1.7;
+      min-height: 30px;
+      /* إضافة السطر أدناه هو الحل */
+      white-space: pre-line; 
+    }
+    .help-close-btn {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+    }
+    .help-close-btn:hover {
+      color: #333;
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- ===== نافذة المساعدة ===== -->
+  <div id="helpModal" class="hidden">
+    <div class="help-modal-box">
+      <button class="help-close-btn" type="button" onclick="closeHelp()">&#x2715;</button>
+      <h4 id="helpTitle"></h4>
+      <p id="helpBody"></p>
+    </div>
+  </div>
 
   <div id="securityModal">
     <div class="security-content">
@@ -384,24 +575,38 @@
       <button class="close-btn" onclick="closeModal('clientDetailsModal')">&times;</button>
     </div>
     <div class="details-box">
-      <label data-key="trade_name_label">الاسم التجاري *</label>
+      <div class="label-row">
+        <label data-key="trade_name_label">الاسم التجاري *</label>
+        <button class="help-icon" type="button" onclick="showHelp('trade_name')">?</button>
+      </div>
       <input id="edit_tradeName" disabled>
 
-      <label data-key="owner_name_label">اسم المالك *</label>
+      <div class="label-row">
+        <label data-key="owner_name_label">اسم المالك *</label>
+        <button class="help-icon" type="button" onclick="showHelp('owner_name')">?</button>
+      </div>
       <input id="edit_ownerName" disabled>
 
-      <label data-key="address_label">العنوان *</label>
+      <div class="label-row">
+        <label data-key="address_label">العنوان *</label>
+        <button class="help-icon" type="button" onclick="showHelp('address')">?</button>
+      </div>
       <input id="edit_address" disabled>
 
-      <label data-key="phone_label">رقم الهاتف *</label>
+      <div class="label-row">
+        <label data-key="phone_label">رقم الهاتف *</label>
+        <button class="help-icon" type="button" onclick="showHelp('phone')">?</button>
+      </div>
       <input id="edit_phone" inputmode="numeric" disabled>
 
-      <label data-key="category_label">الفئة *</label>
+      <div class="label-row">
+        <label data-key="category_label">الفئة *</label>
+        <button class="help-icon" type="button" onclick="showHelp('category')">?</button>
+      </div>
       <select id="edit_category" disabled>
         <option value="كراج" data-key="garage"></option>
         <option value="جملة" data-key="wholesale"></option>
         <option value="مفرد" data-key="retail"></option>
-
         <option value="مصفى" data-key="refinery"></option>
         <option value="مستشفى" data-key="hospital"></option>
         <option value="معمل" data-key="factory"></option>
@@ -411,10 +616,16 @@
         <option value="مدارس" data-key="schools"></option>
       </select>
 
-      <label data-key="note_label">الملاحظة</label>
+      <div class="label-row">
+        <label data-key="note_label">الملاحظة</label>
+        <button class="help-icon" type="button" onclick="showHelp('note')">?</button>
+      </div>
       <textarea id="edit_note" disabled></textarea>
 
-      <label data-key="rate_label">التقييم *</label>
+      <div class="label-row">
+        <label data-key="rate_label">التقييم *</label>
+        <button class="help-icon" type="button" onclick="showHelp('rate')">?</button>
+      </div>
       <select id="edit_rate" disabled>
         <option value="1">⭐</option>
         <option value="2">⭐⭐</option>
@@ -423,7 +634,10 @@
         <option value="5">⭐⭐⭐⭐⭐</option>
       </select>
 
-      <label data-key="visit_days_label">يوم الزيارة *</label>
+      <div class="label-row">
+        <label data-key="visit_days_label">يوم الزيارة *</label>
+        <button class="help-icon" type="button" onclick="showHelp('visit_days')">?</button>
+      </div>
       <select id="edit_visitDays" disabled>
         <option value="السبت" data-key="sat">السبت</option>
         <option value="الأحد" data-key="sun">الأحد</option>
@@ -436,14 +650,20 @@
 
       <div class="oil-filter-row">
         <div class="oil-filter-item">
-          <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
+          <div class="label-row">
+            <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
+            <button class="help-icon" type="button" onclick="showHelp('has_oil')">?</button>
+          </div>
           <select id="edit_useOil" disabled>
             <option value="نعم" data-key="yes">نعم</option>
             <option value="لا" data-key="no">لا</option>
           </select>
         </div>
         <div class="oil-filter-item">
-          <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
+          <div class="label-row">
+            <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
+            <button class="help-icon" type="button" onclick="showHelp('ufi')">?</button>
+          </div>
           <select id="edit_hasUFI" disabled>
             <option value="نعم" data-key="yes">نعم</option>
             <option value="لا" data-key="no">لا</option>
@@ -463,9 +683,15 @@
   <div class="container">
     <div id="login">
       <h2 data-key="login_title">تسجيل الدخول</h2>
-      <label data-key="rep_name_label">اسم المندوب *</label>
+      <div class="label-row">
+        <label data-key="rep_name_label">اسم المندوب *</label>
+        <button class="help-icon" type="button" onclick="showHelp('rep_name')">?</button>
+      </div>
       <input id="repName">
-      <label data-key="city_label">المدينة *</label>
+      <div class="label-row">
+        <label data-key="city_label">المدينة *</label>
+        <button class="help-icon" type="button" onclick="showHelp('city')">?</button>
+      </div>
       <input id="city">
       <button onclick="saveLogin()" data-key="login_btn">دخول للنظام</button>
     </div>
@@ -483,14 +709,17 @@
       <div id="timerDisplay" class="hidden">00:00:00</div>
       <div class="visit-controls">
         <button id="startVisitBtn" onclick="toggleVisit()" data-key="start_visit">بدء<br>الزيارة</button>
-        <button id="cancelVisitBtn" class="hidden" onclick="cancelVisit()" data-key="cancel_visit">إلغاء الزيارة
-          ✖</button>
+        <button id="cancelVisitBtn" class="hidden" onclick="cancelVisit()" data-key="cancel_visit">إلغاء الزيارة ✖</button>
       </div>
 
+      <!-- ===== نموذج عميل جديد ===== -->
       <div id="newClientForm">
         <div class="oil-filter-row">
           <div class="oil-filter-item">
-            <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
+            <div class="label-row">
+              <label data-key="has_oil_label">يمتلك زيت ريماكس؟*</label>
+              <button class="help-icon" type="button" onclick="showHelp('has_oil')">?</button>
+            </div>
             <select id="useOil">
               <option value="" data-key="choose"></option>
               <option value="نعم" data-key="yes">نعم</option>
@@ -498,7 +727,10 @@
             </select>
           </div>
           <div class="oil-filter-item">
-            <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
+            <div class="label-row">
+              <label data-key="ufi_label">هل يمتلك فلتر UFI؟ *</label>
+              <button class="help-icon" type="button" onclick="showHelp('ufi')">?</button>
+            </div>
             <select id="hasUFI">
               <option value="" data-key="choose"></option>
               <option value="نعم" data-key="yes">نعم</option>
@@ -507,22 +739,39 @@
           </div>
         </div>
 
-        <label data-key="trade_name_label">الاسم التجاري *</label>
+        <div class="label-row">
+          <label data-key="trade_name_label">الاسم التجاري *</label>
+          <button class="help-icon" type="button" onclick="showHelp('trade_name')">?</button>
+        </div>
         <input id="tradeName">
-        <label data-key="owner_name_label">اسم المالك *</label>
+
+        <div class="label-row">
+          <label data-key="owner_name_label">اسم المالك *</label>
+          <button class="help-icon" type="button" onclick="showHelp('owner_name')">?</button>
+        </div>
         <input id="ownerName">
-        <label data-key="address_label">العنوان *</label>
+
+        <div class="label-row">
+          <label data-key="address_label">العنوان *</label>
+          <button class="help-icon" type="button" onclick="showHelp('address')">?</button>
+        </div>
         <input id="address">
-        <label data-key="phone_label">رقم الهاتف *</label>
+
+        <div class="label-row">
+          <label data-key="phone_label">رقم الهاتف *</label>
+          <button class="help-icon" type="button" onclick="showHelp('phone')">?</button>
+        </div>
         <input id="phone" inputmode="numeric">
-        <label data-key="category_label">الفئة *</label>
+
+        <div class="label-row">
+          <label data-key="category_label">الفئة *</label>
+          <button class="help-icon" type="button" onclick="showHelp('category')">?</button>
+        </div>
         <select id="category">
           <option value="" data-key="choose"></option>
-
           <option value="كراج" data-key="garage"></option>
           <option value="جملة" data-key="wholesale"></option>
           <option value="مفرد" data-key="retail"></option>
-
           <option value="مصفى" data-key="refinery"></option>
           <option value="مستشفى" data-key="hospital"></option>
           <option value="معمل" data-key="factory"></option>
@@ -531,9 +780,17 @@
           <option value="ميكانيكي" data-key="mechanic"></option>
           <option value="مدارس" data-key="schools"></option>
         </select>
-        <label data-key="note_label">ملاحظة</label>
+
+        <div class="label-row">
+          <label data-key="note_label">ملاحظة</label>
+          <button class="help-icon" type="button" onclick="showHelp('note')">?</button>
+        </div>
         <textarea id="note"></textarea>
-        <label data-key="rate_label">التقييم *</label>
+
+        <div class="label-row">
+          <label data-key="rate_label">التقييم *</label>
+          <button class="help-icon" type="button" onclick="showHelp('rate')">?</button>
+        </div>
         <select id="rate">
           <option value="" data-key="choose"></option>
           <option value="1">⭐</option>
@@ -542,7 +799,11 @@
           <option value="4">⭐⭐⭐⭐</option>
           <option value="5">⭐⭐⭐⭐⭐</option>
         </select>
-        <label data-key="visit_days_label">يوم الزيارة *</label>
+
+        <div class="label-row">
+          <label data-key="visit_days_label">يوم الزيارة *</label>
+          <button class="help-icon" type="button" onclick="showHelp('visit_days')">?</button>
+        </div>
         <select id="visitDays">
           <option value="" data-key="choose"></option>
           <option value="السبت" data-key="sat">السبت</option>
@@ -553,12 +814,25 @@
           <option value="الخميس" data-key="thu">الخميس</option>
           <option value="الجمعه" data-key="fri">الجمعه</option>
         </select>
+
         <hr style="opacity: 0.2; margin: 20px 0;">
-        <label data-key="other_oil_label">نوع الزيت ماركة أخرى</label>
+
+        <div class="label-row">
+          <label data-key="other_oil_label">نوع الزيت ماركة أخرى</label>
+          <button class="help-icon" type="button" onclick="showHelp('other_oil')">?</button>
+        </div>
         <input id="oilType">
-        <label data-key="oil_grade_label">درجة الزيت</label>
+
+        <div class="label-row">
+          <label data-key="oil_grade_label">درجة الزيت</label>
+          <button class="help-icon" type="button" onclick="showHelp('oil_grade')">?</button>
+        </div>
         <input id="oilGrade">
-        <label data-key="distance_label">المسافة</label>
+
+        <div class="label-row">
+          <label data-key="distance_label">المسافة</label>
+          <button class="help-icon" type="button" onclick="showHelp('distance')">?</button>
+        </div>
         <select id="oilDistance">
           <option value="" data-key="choose">اختر</option>
           <option>3K كم</option>
@@ -566,14 +840,26 @@
           <option>10K كم</option>
           <option>15K كم</option>
         </select>
-        <label data-key="liter_price_label">سعر اللتر</label>
+
+        <div class="label-row">
+          <label data-key="liter_price_label">سعر اللتر</label>
+          <button class="help-icon" type="button" onclick="showHelp('liter_price')">?</button>
+        </div>
         <input id="oilPrice" inputmode="numeric">
-        <label data-key="store_img_label">صورة المتجر *</label>
+
+        <div class="label-row">
+          <label data-key="store_img_label">صورة المتجر *</label>
+          <button class="help-icon" type="button" onclick="showHelp('store_img')">?</button>
+        </div>
         <input type="file" id="imageInputNew" accept="image/*" capture="environment">
       </div>
 
+      <!-- ===== نموذج عميل دائمي ===== -->
       <div id="regularClientForm" class="hidden">
-        <label data-key="client_name_label">اسم العميل *</label>
+        <div class="label-row">
+          <label data-key="client_name_label">اسم العميل *</label>
+          <button class="help-icon" type="button" onclick="showHelp('client_name')">?</button>
+        </div>
 
         <div class="client-selection-group">
           <select id="reg_daySelect" onchange="filterClientsByDay()">
@@ -585,6 +871,10 @@
             <option value="الخميس" data-key="thu">الخميس</option>
             <option value="الجمعه" data-key="fri">الجمعه</option>
           </select>
+
+          <!-- ===== زر البحث ===== -->
+          <button id="searchToggleBtn" type="button" onclick="toggleClientSearch()" title="بحث عن عميل">🔍</button>
+
           <select id="reg_clientName" onchange="toggleDetailsBtn()">
             <option value="">اختر العميل-کڕیار هەڵبژێرە</option>
           </select>
@@ -592,36 +882,78 @@
             data-key="details_btn">تفاصيل</button>
         </div>
 
+        <!-- ===== حاوية شريط البحث والاقتراحات ===== -->
+        <div id="clientSearchContainer" class="hidden">
+          <input
+            id="clientSearchInput"
+            type="text"
+            placeholder="ابحث عن عميل..."
+            oninput="searchClients(this.value)"
+            autocomplete="off"
+          >
+          <div id="searchSuggestions"></div>
+        </div>
 
-        <label data-key="has_order_label">هل تم عمل طلبية؟</label>
+        <div class="label-row">
+          <label data-key="has_order_label">هل تم عمل طلبية؟</label>
+          <button class="help-icon" type="button" onclick="showHelp('has_order')">?</button>
+        </div>
         <select id="reg_hasOrder" onchange="toggleOrderFields()">
           <option value="لا" data-key="no">لا</option>
           <option value="نعم" data-key="yes">نعم</option>
         </select>
+
         <div id="orderAmountBox" class="hidden">
-          <label data-key="order_amount_label">مبلغ الطلبية *</label>
+          <div class="label-row">
+            <label data-key="order_amount_label">مبلغ الطلبية *</label>
+            <button class="help-icon" type="button" onclick="showHelp('order_amount')">?</button>
+          </div>
           <input id="reg_orderAmount" type="number">
         </div>
+
         <div id="orderReasonBox">
-          <label data-key="no_order_reason">سبب عدم إنشاء طلبية *</label>
+          <div class="label-row">
+            <label data-key="no_order_reason">سبب عدم إنشاء طلبية *</label>
+            <button class="help-icon" type="button" onclick="showHelp('no_order_reason')">?</button>
+          </div>
           <input id="reg_orderReason">
         </div>
-        <label data-key="has_payment_label">هل تم قبض مبلغ؟</label>
+
+        <div class="label-row">
+          <label data-key="has_payment_label">هل تم قبض مبلغ؟</label>
+          <button class="help-icon" type="button" onclick="showHelp('has_payment')">?</button>
+        </div>
         <select id="reg_hasPayment" onchange="togglePaymentFields()">
           <option value="لا" data-key="no">لا</option>
           <option value="نعم" data-key="yes">نعم</option>
         </select>
+
         <div id="payAmountBox" class="hidden">
-          <label data-key="pay_amount_label">مبلغ القبض *</label>
+          <div class="label-row">
+            <label data-key="pay_amount_label">مبلغ القبض *</label>
+            <button class="help-icon" type="button" onclick="showHelp('pay_amount')">?</button>
+          </div>
           <input id="reg_payAmount" type="number">
         </div>
+
         <div id="payReasonBox">
-          <label data-key="no_pay_reason">سبب عدم القبض *</label>
+          <div class="label-row">
+            <label data-key="no_pay_reason">سبب عدم القبض *</label>
+            <button class="help-icon" type="button" onclick="showHelp('no_pay_reason')">?</button>
+          </div>
           <input id="reg_payReason">
         </div>
-        <label data-key="note_label">الملاحظة</label>
+
+        <div class="label-row">
+          <label data-key="note_label">الملاحظة</label>
+          <button class="help-icon" type="button" onclick="showHelp('note')">?</button>
+        </div>
         <textarea id="reg_note"></textarea>
-        <label data-key="take_photo_label">التقاط صورة *</label>
+
+        <div class="label-row">
+          <label data-key="take_photo_label">التقاط صورة *</label>
+          <button class="help-icon" type="button" onclick="showHelp('take_photo')">?</button>
+        </div>
         <input type="file" id="imageInputReg" accept="image/*" capture="environment">
       </div>
 
@@ -644,16 +976,32 @@
     </div>
     <div class="details-box">
       <h4 data-key="start_work">بدء الدوام</h4>
-      <label data-key="current_km">الكيلومتر الحالي *</label>
+      <div class="label-row">
+        <label data-key="current_km">الكيلومتر الحالي *</label>
+        <button class="help-icon" type="button" onclick="showHelp('current_km')">?</button>
+      </div>
       <input type="number" inputmode="numeric" id="startKM">
-      <label data-key="meter_img">صورة العداد *</label>
+
+      <div class="label-row">
+        <label data-key="meter_img">صورة العداد *</label>
+        <button class="help-icon" type="button" onclick="showHelp('meter_img')">?</button>
+      </div>
       <input type="file" accept="image/*" capture="environment" id="startKMImg">
+
       <hr>
       <h4 data-key="end_work">إنهاء الدوام</h4>
-      <label data-key="final_km">الكيلومتر النهائي *</label>
+      <div class="label-row">
+        <label data-key="final_km">الكيلومتر النهائي *</label>
+        <button class="help-icon" type="button" onclick="showHelp('final_km')">?</button>
+      </div>
       <input type="number" inputmode="numeric" id="endKM">
-      <label data-key="meter_img">صورة العداد *</label>
+
+      <div class="label-row">
+        <label data-key="meter_img">صورة العداد *</label>
+        <button class="help-icon" type="button" onclick="showHelp('meter_img')">?</button>
+      </div>
       <input type="file" accept="image/*" capture="environment" id="endKMImg">
+
       <button id="saveWorkBtn" onclick="saveWorkData()"
         style="background:#28a745; position: relative; overflow: hidden;">
         <span class="btn-text" data-key="save_send">حفظ وإرسال</span>
@@ -671,9 +1019,12 @@
     let startCoords = localStorage.getItem('startCoords') ? JSON.parse(localStorage.getItem('startCoords')) : null;
     let timerInterval;
     let isSending = false;
-
     let allClients = [];
+    let searchOpen = false;
 
+    // ============================================================
+    // ترجمات الواجهة
+    // ============================================================
     const translations = {
       ar: {
         modal_title: "صباح الخير", modal_body: "هل انت مستعد ليوم جديد", modal_btn: "OK",
@@ -694,8 +1045,11 @@
         work_btn: "بدء الدوام", details_btn: "تفاصيل", details_title: "تفاصيل وتعديل العميل",
         edit_data: "تعديل البيانات", save_edits: "حفظ التعديلات", daily_work_title: "الدوام اليومي",
         start_work: "بدء الدوام", current_km: "الكيلومتر الحالي *", meter_img: "صورة العداد *",
-        end_work: "إنهاء الدوام", final_km: "الكيلومتر النهائي *", save_send: "حفظ وإرسال", refinery: "مصفى", hospital: "مستشفى", factory: "معمل", contractor: "مقاول",
-        realestate: "عقارات", mechanic: "ميكانيكي", schools: "مدارس"
+        end_work: "إنهاء الدوام", final_km: "الكيلومتر النهائي *", save_send: "حفظ وإرسال",
+        refinery: "مصفى", hospital: "مستشفى", factory: "معمل", contractor: "مقاول",
+        realestate: "عقارات", mechanic: "ميكانيكي", schools: "مدارس",
+        search_placeholder: "ابحث عن عميل...",
+        search_no_result: "لا توجد نتائج"
       },
       ku: {
         modal_title: "بەیانی باش", modal_body: "ئایا ئامادەی بۆ ڕۆژێکی نوێ؟", modal_btn: "OK",
@@ -716,13 +1070,384 @@
         work_btn: "دەستپێکردنی کار", details_btn: "وردەکارییەکان", details_title: "وردەکاری و دەستکاری کڕیار",
         edit_data: "دەستکاری زانیارییەکان", save_edits: "پاشەکەوتکردنی گۆڕانکارییەکان", daily_work_title: "دەوامی ڕۆژانە",
         start_work: "دەستپێکی دەوام", current_km: "کیلۆمەتری ئێستا *", meter_img: "وێنەی پێوەر *",
-        end_work: "کۆتایی دەوام", final_km: "کیلۆمەتری کۆتایی *", save_send: "پاشەکەوتکردن و ناردن", refinery: "پاڵاوگەی نەوت", hospital: "نەخۆشخانە", factory: "کارگە",
-        contractor: "خاوەنی ئامێری قورس", realestate: "خانووبەرە", mechanic: "وەستا", schools: "قوتابخانە"
+        end_work: "کۆتایی دەوام", final_km: "کیلۆمەتری کۆتایی *", save_send: "پاشەکەوتکردن و ناردن",
+        refinery: "پاڵاوگەی نەوت", hospital: "نەخۆشخانە", factory: "کارگە",
+        contractor: "خاوەنی ئامێری قورس", realestate: "خانووبەرە", mechanic: "وەستا", schools: "قوتابخانە",
+        search_placeholder: "کڕیار بگەڕێ...",
+        search_no_result: "ئەنجامێک نەدۆزرایەوە"
       }
     };
 
-    // =============================================
+    // ============================================================
+    // ===== نصوص المساعدة لكل حقل =====
+    // تعليمات: أضف النصوص في body بالعربية والكوردية
+    // الهيكل: { title: "عنوان الحقل", body: "وصف الحقل" }
+    // ============================================================
+    const helpTexts = {
+      ar: {
+        // ─────────────────────────────────────────────
+        // أضف هنا نصوص المساعدة بالعربية
+        // ─────────────────────────────────────────────
+rep_name: {
+      title: "اسم المندوب",
+      body: "اكتب الاسم باللغة الانكليزية"
+    },
+    city: {
+      title: "المدينة",
+      body: "اكتب اسم المدينة باللغة الانكليزية"
+    },
+    has_oil: {
+      title: "زيت ريماكس",
+      body: "هل لديه زيت Rymax حالياً في الورشة؟"
+    },
+    ufi: {
+      title: "فلتر UFI",
+      body: "هل لديه فلاتر UFI حالياً؟"
+    },
+    trade_name: {
+      title: "الاسم التجاري",
+      body: "الاسم الظاهر على واجهة المحل أو المعروف به"
+    },
+    owner_name: {
+      title: "اسم المالك",
+      body: "اسم صاحب أو مدير الورشة"
+    },
+    address: {
+      title: "العنوان",
+      body: "اكتب العنوان الكامل بالتفصيل"
+    },
+    phone: {
+      title: "رقم الهاتف",
+      body: "رقم يحتوي على واتساب"
+    },
+    category: {
+      title: "الفئة",
+      body: "اختر نوع النشاط (ورشة، محل زيوت، جمله...)"
+    },
+    note: {
+      title: "الملاحظة",
+      body: "أي ملاحظة مهمة عن العميل أو الزيارة"
+    },
+rate: {
+  title: "التقييم",
+  body: "يمكنك منح إجمالي 5 نجوم لكل محل، بحيث يتم توزيعها على النحو التالي:\n\n\
+1. الموقع والمساحة (⭐): إذا كان الموقع استراتيجياً والمساحة مناسبة.\n\
+2. نوع البضاعة والإضاءة (⭐): حسب جودة المنتجات وجمال الديكور والإضاءة.\n\
+3. سمعة الشخص (⭐): إذا كان معروفاً ويحظى بثقة الناس.\n\
+4. النظافة والترتيب (⭐): حسب نظافة وتنظيم المحل.\n\
+5. التعامل والأسلوب (⭐): حسب طريقة البيع والتعامل."
+},
+    visit_days: {
+      title: "يوم الزيارة",
+      body: "حدد اليوم المناسبة للزيارة"
+    },
+    other_oil: {
+      title: "نوع الزيت (ماركة أخرى)",
+      body: "اذكر الماركات الأخرى الموجودة"
+    },
+    oil_grade: {
+      title: "درجة الزيت",
+      body: "مثال: 10W40 أو 5W30"
+    },
+    distance: {
+      title: "المسافة (كم تغيير الزيت)",
+      body: "كم يمشي قبل تغيير الزيت"
+    },
+    liter_price: {
+      title: "سعر اللتر",
+      body: "اكتب سعر البيع للزيوت الاخره"
+    },
+    store_img: {
+      title: "صورة المتجر",
+      body: "التقط صورة واضحة لواجهة المحل"
+    },
+    client_name: {
+      title: "اسم العميل",
+      body: "الاسم التجاري حسب ما تم ادخاله سابقاً"
+    },
+    has_order: {
+      title: "الطلبية",
+      body: "هل تم تسجيل طلبية؟"
+    },
+    order_amount: {
+      title: "مبلغ الطلبية",
+      body: "اكتب القيمة بالدولار"
+    },
+    no_order_reason: {
+      title: "سبب عدم الطلبية",
+      body: "اذكر السبب لعدم انشاء طلبية (سعر، منافس...)"
+    },
+    has_payment: {
+      title: "قبض المبلغ",
+      body: "هل تم استلام مبلغ؟"
+    },
+    pay_amount: {
+      title: "مبلغ القبض",
+      body: "المبلغ المستلم بالدولار"
+    },
+    no_pay_reason: {
+      title: "سبب عدم القبض",
+      body: "اذكر سبب عدم قبض مبلغ"
+    },
+    take_photo: {
+      title: "التقاط صورة",
+      body: "التقط صورة للورشة من الداخل او الخارج أو المنتجات"
+    },
+    current_km: {
+      title: "الكيلومتر الحالي",
+      body: "الكيلومتر في عداد السيارة اثناء بدء الدوام"
+    },
+    final_km: {
+      title: "الكيلومتر النهائي",
+      body: "الكيلومتر في عداد السيارة اثناء انهاء الدوام"
+    },
+    meter_img: {
+      title: "صورة العداد",
+      body: "التقط صورة واضحة يظهر فيه رقم العداد"
+    }
+  }, 
 
+  ku: {
+rep_name: {
+    title: "ناوی نوێنەر",
+    body: "ناو بە زمانی ئینگلیزی بنووسە"
+  },
+  city: {
+    title: "شار",
+    body: "ناوی شار بە زمانی ئینگلیزی بنووسە"
+  },
+  has_oil: {
+    title: "ڕۆنی ڕایماکس",
+    body: "ئایا ئێستا ڕۆنی Rymaxی هەیە لە  شوێنەکە؟"
+  },
+  ufi: {
+    title: "فلتەری UFI",
+    body: "ئایا ئێستا فلتەری UFI هەیە؟"
+  },
+  trade_name: {
+    title: "ناوی بازرگانی",
+    body: "ئەو ناوەی لەسەر تابلۆی دوکانەکە نووسراوە یان پێی ناسراوە"
+  },
+  owner_name: {
+    title: "ناوی خاوەن",
+    body: "ناوی خاوەن یان بەڕێوەبەری  شوێنەکە"
+  },
+  address: {
+    title: "ناونیشان",
+    body: "ناونیشانی تەواو بە وردەکارییەوە بنووسە"
+  },
+  phone: {
+    title: "ژمارەی تەلەفۆن",
+    body: "ژمارەیەک کە وەتسئەپی هەبێت"
+  },
+  category: {
+    title: "پۆلێن",
+    body: "جۆری چالاکییەکە هەڵبژێرە (وۆرک شۆپ، دوکانی ڕۆن، جوملە...)"
+  },
+  note: {
+    title: "تێبینی",
+    body: "هەر تێبینییەکی گرنگ دەربارەی کڕیار یان سەردانەکە"
+  },
+rate: {
+  title: "هەڵسەنگاندن",
+  body: "دەتوانیت بۆ هەر دوکانێک کۆی ٥ ئەستێرە بدەیت، بەم شێوەیە:\n\n\
+1. شوێن و ڕووبەر (⭐): ئەگەر شوێنەکە باش و گونجاو بێت.\n\
+2. جۆری کاڵا و ڕووناکی (⭐): بەپێی کوالێتی و ڕێکخستن.\n\
+3. ناوبانگ (⭐): ئەگەر ناسراو و متمانەپێکراو بێت.\n\
+4. پاکی و ڕێکخستن (⭐): بەپێی پاکی شوێن.\n\
+5. مامەڵە و هەڵسوکەوت (⭐): بەپێی شێوازی مامەڵە."
+},
+  visit_days: {
+    title: "ڕۆژی سەردان",
+    body: "ڕۆژی گونجاو بۆ سەردان دیاری بکە"
+  },
+  other_oil: {
+    title: "جۆری ڕۆن (مارکەیەکی تر)",
+    body: "مارکەکانی تری بەردەست بنووسە"
+  },
+  oil_grade: {
+    title: "پلەی ڕۆن",
+    body: "نموونە: 10W40 یان 5W30"
+  },
+  distance: {
+    title: "مەودا (کم بۆ گۆڕینی ڕۆن)",
+    body: "چەند دەڕوات پێش ئەوەی ڕۆنەکە بگۆڕێت"
+  },
+  liter_price: {
+    title: "نرخی لیتر",
+    body: "نرخی فرۆشتنی ڕۆنەکانی تر بنووسە"
+  },
+  store_img: {
+    title: "وێنەی دوکان",
+    body: "وێنەیەکی ڕوونی ڕووکاری دەرەوەی دوکانەکە بگرە"
+  },
+  client_name: {
+    title: "ناوی کڕیار",
+    body: "ناوی بازرگانی بەپێی ئەوەی پێشتر داخڵ کراوە"
+  },
+  has_order: {
+    title: "داواکاری",
+    body: "ئایا داواکاری تۆمارکراوە؟"
+  },
+  order_amount: {
+    title: "بڕی پارەی داواکاری",
+    body: "بڕەکەی بە دۆلار بنووسە"
+  },
+  no_order_reason: {
+    title: "هۆکاری نەکردنی داواکاری",
+    body: "هۆکاری تۆمارنەکردنی داواکاری بنووسە (نرخ، ڕکابەر...)"
+  },
+  has_payment: {
+    title: "وەرگرتنی پارە",
+    body: "ئایا هیچ بڕە پارەیەک وەرگیراوە؟"
+  },
+  pay_amount: {
+    title: "بڕی وەرگیراو",
+    body: "ئەو بڕەی وەرگیراوە بە دۆلار"
+  },
+  no_pay_reason: {
+    title: "هۆکاری وەرنەگرتنی پارە",
+    body: "هۆکاری وەرنەگرتنی پارە بنووسە"
+  },
+  take_photo: {
+    title: "وێنەگرتن",
+    body: "وێنەی شوێنەکە لە ناوەوە یان دەرەوە یان بەرهەمەکان بگرە"
+  },
+  current_km: {
+    title: "کیلۆمەتری ئێستا",
+    body: "کیلۆمەتری ناو گێچی ئۆتۆمبێل لە کاتی دەستپێکردنی دەوام"
+  },
+  final_km: {
+    title: "کیلۆمەتری کۆتایی",
+    body: "کیلۆمەتری ناو گێچی ئۆتۆمبێل لە کاتی کۆتاییهاتنی دەوام"
+  },
+  meter_img: {
+    title: "وێنەی گێچ (عداد)",
+    body: "وێنەیەکی ڕوون بگرە کە ژمارەی گێچەکەی تێدا دەربکەوێت"
+  }
+  }
+};
+
+    // ============================================================
+    // وظائف نافذة المساعدة
+    // ============================================================
+    function showHelp(key) {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const data = (helpTexts[lang] && helpTexts[lang][key]) || {};
+      document.getElementById('helpTitle').textContent = data.title || key;
+      document.getElementById('helpBody').innerHTML  = data.body  || '';
+      document.getElementById('helpModal').classList.remove('hidden');
+    }
+
+    function closeHelp() {
+      document.getElementById('helpModal').classList.add('hidden');
+    }
+
+    // إغلاق نافذة المساعدة عند النقر خارجها
+    document.getElementById('helpModal').addEventListener('click', function(e) {
+      if (e.target === this) closeHelp();
+    });
+
+    // ============================================================
+    // وظائف البحث عن العملاء
+    // ============================================================
+    function toggleClientSearch() {
+      searchOpen = !searchOpen;
+      const container = document.getElementById('clientSearchContainer');
+      const btn = document.getElementById('searchToggleBtn');
+      const lang = localStorage.getItem('appLang') || 'ar';
+
+      if (searchOpen) {
+        container.classList.remove('hidden');
+        btn.classList.add('active');
+        const input = document.getElementById('clientSearchInput');
+        input.placeholder = translations[lang].search_placeholder || 'ابحث...';
+        input.value = '';
+        document.getElementById('searchSuggestions').innerHTML = '';
+        input.focus();
+      } else {
+        container.classList.add('hidden');
+        btn.classList.remove('active');
+        document.getElementById('searchSuggestions').innerHTML = '';
+      }
+    }
+
+    function searchClients(query) {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const suggestionsBox = document.getElementById('searchSuggestions');
+      suggestionsBox.innerHTML = '';
+
+      const q = query.trim();
+      if (!q) return;
+
+      // البحث في جميع العملاء بغض النظر عن اليوم
+      const results = allClients.filter(c =>
+        c.tradeName && c.tradeName.includes(q)
+      );
+
+      if (results.length === 0) {
+        suggestionsBox.innerHTML =
+          `<div class="suggestion-no-result">${translations[lang].search_no_result || 'لا توجد نتائج'}</div>`;
+        return;
+      }
+
+      results.forEach(client => {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 's-name';
+        nameSpan.textContent = client.tradeName;
+
+        const daySpan = document.createElement('span');
+        daySpan.className = 's-day';
+        daySpan.textContent = client.visitDays || '';
+
+        item.appendChild(nameSpan);
+        item.appendChild(daySpan);
+
+        item.addEventListener('click', () => selectSearchResult(client));
+        suggestionsBox.appendChild(item);
+      });
+    }
+
+    function selectSearchResult(client) {
+      // تحديث فلتر اليوم ليطابق يوم العميل
+      if (client.visitDays) {
+        document.getElementById('reg_daySelect').value = client.visitDays;
+        filterClientsByDay();
+      }
+
+      // تحديد العميل في القائمة المنسدلة
+      const select = document.getElementById('reg_clientName');
+      for (let i = 0; i < select.options.length; i++) {
+        if (select.options[i].text === client.tradeName ||
+            select.options[i].value == client.id ||
+            select.options[i].value === client.tradeName) {
+          select.selectedIndex = i;
+          break;
+        }
+      }
+
+      toggleDetailsBtn();
+
+      // إغلاق البحث بعد الاختيار
+      document.getElementById('searchSuggestions').innerHTML = '';
+      document.getElementById('clientSearchInput').value = client.tradeName;
+    }
+
+    // إغلاق الاقتراحات عند النقر خارج الحاوية
+    document.addEventListener('click', function(e) {
+      const container = document.getElementById('clientSearchContainer');
+      if (container && !container.contains(e.target) &&
+          e.target.id !== 'searchToggleBtn') {
+        document.getElementById('searchSuggestions').innerHTML = '';
+      }
+    });
+
+    // ============================================================
+    // وظائف التحقق من الرمز
+    // ============================================================
     function verifyAccessCode() {
       const input = document.getElementById('accessCode').value;
       const correctCode = "Mm19941994Mm";
@@ -767,8 +1492,6 @@
         document.getElementById('login').classList.add('hidden');
         document.getElementById('formBox').classList.remove('hidden');
         if (visitStartTime) resumeVisit();
-
-        // الترتيب المهم: setCurrentDay أولاً ثم fetchClientsData
         setCurrentDay();
         fetchClientsData();
       }
@@ -794,6 +1517,12 @@
       if (clientSelect && clientSelect.options[0] && clientSelect.options[0].value === "") {
         clientSelect.options[0].text = (lang === 'ku') ? "کڕیار هەڵبژێرە..." : "اختر العميل...";
       }
+
+      // تحديث placeholder شريط البحث إذا كان مفتوحاً
+      const searchInput = document.getElementById('clientSearchInput');
+      if (searchInput) {
+        searchInput.placeholder = translations[lang].search_placeholder || 'ابحث...';
+      }
     }
 
     function saveLogin() {
@@ -813,7 +1542,7 @@
       document.getElementById('tabRegular').classList.toggle('active', mode === 'regular');
     }
 
-    // --------- وظائف جلب وتصفية العملاء ---------
+    // ─── جلب وتصفية العملاء ───────────────────────────────────
 
     function setCurrentDay() {
       const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعه", "السبت"];
@@ -823,20 +1552,14 @@
 
     function fetchClientsData() {
       const repName = localStorage.repName;
-      console.log("جلب عملاء المندوب:", repName);
       document.getElementById('reg_clientName').innerHTML = '<option value="">جاري جلب العملاء...</option>';
 
       fetch(`${SCRIPT_URL}?action=getClients&repName=${encodeURIComponent(repName)}`)
         .then(res => res.json())
         .then(data => {
-          console.log("البيانات المستلمة:", data);
-
           let clientList = [];
 
-          // حالة 1: الخادم يرجع array مباشرة (النسخة القديمة من السكريبت)
           if (Array.isArray(data)) {
-            console.log("تم استلام array - سيتم الفلترة محلياً");
-            // فلترة حسب اسم المندوب محلياً
             clientList = data.filter(item => {
               const itemRep = (item.Salesman || item.repName || "").toString().trim();
               return itemRep === repName.trim();
@@ -853,18 +1576,13 @@
               useOil: item.Rymax || item.useOil || "",
               hasUFI: item[""] || item.hasUFI || ""
             }));
-          }
-          // حالة 2: الخادم يرجع {status, data} (النسخة الجديدة)
-          else if (data.status === 'success') {
+          } else if (data.status === 'success') {
             clientList = data.data;
-          }
-          else {
-            console.error("استجابة غير متوقعة:", data);
+          } else {
             document.getElementById('reg_clientName').innerHTML = '<option value="">لم يتم العثور على عملاء</option>';
             return;
           }
 
-          // إزالة التكرارات (نفس الاسم + نفس اليوم)
           const seen = {};
           allClients = clientList.filter(c => {
             if (!c.tradeName || !c.visitDays) return false;
@@ -874,11 +1592,9 @@
             return true;
           });
 
-          console.log("العملاء بعد الفلترة والتنظيف:", allClients.length);
           filterClientsByDay();
         })
         .catch(err => {
-          console.error("خطأ في جلب العملاء:", err);
           document.getElementById('reg_clientName').innerHTML = '<option value="">خطأ في الاتصال</option>';
         });
     }
@@ -891,14 +1607,6 @@
       const filtered = allClients.filter(c =>
         c.visitDays && c.visitDays.toString().trim() === selectedDay.trim()
       );
-
-      console.log("اليوم المحدد:", selectedDay);
-      console.log("العملاء بعد الفلترة:", filtered.length);
-
-      if (filtered.length === 0) {
-        console.warn("لا يوجد عملاء لهذا اليوم:", selectedDay);
-        console.warn("كل الأيام المتاحة:", [...new Set(allClients.map(c => c.visitDays))]);
-      }
 
       filtered.forEach(client => {
         const option = document.createElement('option');
@@ -915,30 +1623,28 @@
       document.getElementById('showDetailsBtn').classList.toggle('hidden', !val);
     }
 
-    // --------- وظائف تفاصيل العميل وتعديله ---------
+    // ─── تفاصيل العميل وتعديله ───────────────────────────────
 
     function showClientDetails() {
       const selectedValue = document.getElementById('reg_clientName').value;
       const client = allClients.find(c => (c.id == selectedValue || c.tradeName === selectedValue));
-
       if (!client) return;
 
-      document.getElementById('edit_tradeName').value = client.tradeName || '';
-      document.getElementById('edit_ownerName').value = client.ownerName || '';
-      document.getElementById('edit_address').value = client.address || '';
-      document.getElementById('edit_phone').value = client.phone || '';
-      document.getElementById('edit_category').value = client.category || '';
-      document.getElementById('edit_note').value = client.note || '';
-      document.getElementById('edit_rate').value = client.rate || '';
-      document.getElementById('edit_visitDays').value = client.visitDays || '';
-      document.getElementById('edit_useOil').value = client.useOil || '';
-      document.getElementById('edit_hasUFI').value = client.hasUFI || '';
+      document.getElementById('edit_tradeName').value  = client.tradeName  || '';
+      document.getElementById('edit_ownerName').value  = client.ownerName  || '';
+      document.getElementById('edit_address').value    = client.address    || '';
+      document.getElementById('edit_phone').value      = client.phone      || '';
+      document.getElementById('edit_category').value   = client.category   || '';
+      document.getElementById('edit_note').value       = client.note       || '';
+      document.getElementById('edit_rate').value       = client.rate       || '';
+      document.getElementById('edit_visitDays').value  = client.visitDays  || '';
+      document.getElementById('edit_useOil').value     = client.useOil     || '';
+      document.getElementById('edit_hasUFI').value     = client.hasUFI     || '';
 
-      // ← احفظ الاسم الأصلي في زر الحفظ
       document.getElementById('saveEditBtn').setAttribute('data-original-name', client.tradeName);
 
-      const fields = ['edit_tradeName', 'edit_ownerName', 'edit_address', 'edit_phone',
-        'edit_category', 'edit_note', 'edit_rate', 'edit_visitDays', 'edit_useOil', 'edit_hasUFI'];
+      const fields = ['edit_tradeName','edit_ownerName','edit_address','edit_phone',
+        'edit_category','edit_note','edit_rate','edit_visitDays','edit_useOil','edit_hasUFI'];
       fields.forEach(id => document.getElementById(id).disabled = true);
 
       document.getElementById('enableEditBtn').classList.remove('hidden');
@@ -951,9 +1657,9 @@
     }
 
     function enableClientEdit() {
-      const fields = ['edit_tradeName', 'edit_ownerName', 'edit_address', 'edit_phone', 'edit_category', 'edit_note', 'edit_rate', 'edit_visitDays', 'edit_useOil', 'edit_hasUFI'];
+      const fields = ['edit_tradeName','edit_ownerName','edit_address','edit_phone',
+        'edit_category','edit_note','edit_rate','edit_visitDays','edit_useOil','edit_hasUFI'];
       fields.forEach(id => document.getElementById(id).disabled = false);
-
       document.getElementById('enableEditBtn').classList.add('hidden');
       document.getElementById('saveEditBtn').classList.remove('hidden');
     }
@@ -963,13 +1669,11 @@
       btn.disabled = true;
       btn.innerText = "جاري الحفظ...";
 
-      // الاسم الأصلي قبل التعديل (نحتاجه للبحث)
       const originalTradeName = btn.getAttribute('data-original-name');
-
       const updatedData = {
         action: 'updateClient',
-        repName: localStorage.repName,         // ← أضفنا اسم المندوب
-        tradeName: originalTradeName,          // ← الاسم الأصلي للبحث
+        repName: localStorage.repName,
+        tradeName: originalTradeName,
         newTradeName: document.getElementById('edit_tradeName').value,
         ownerName: document.getElementById('edit_ownerName').value,
         address: document.getElementById('edit_address').value,
@@ -982,30 +1686,26 @@
         hasUFI: document.getElementById('edit_hasUFI').value,
       };
 
-      fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(updatedData)
-      })
+      fetch(SCRIPT_URL, { method: "POST", body: JSON.stringify(updatedData) })
         .then(res => res.json())
         .then(data => {
           if (data.status === 'success') {
             btn.innerText = "تم الحفظ ✓";
-            setTimeout(() => {
-              closeModal('clientDetailsModal');
-              fetchClientsData();
-            }, 1500);
+            setTimeout(() => { closeModal('clientDetailsModal'); fetchClientsData(); }, 1500);
           } else {
             alert("خطأ: " + data.message);
             btn.disabled = false;
             btn.innerText = "حفظ التعديلات";
           }
         })
-        .catch(err => {
+        .catch(() => {
           alert("حدث خطأ أثناء الحفظ");
           btn.disabled = false;
           btn.innerText = "حفظ التعديلات";
         });
     }
+
+    // ─── الزيارة ─────────────────────────────────────────────
 
     function toggleVisit() {
       const lang = localStorage.getItem('appLang') || 'ar';
@@ -1097,7 +1797,6 @@
         localStorage.removeItem("kmDate");
       }
     }
-
     checkOldKM();
 
     function openWorkModal() {
@@ -1112,10 +1811,7 @@
     async function saveWorkData() {
       const btn = document.getElementById('saveWorkBtn');
       const btnText = btn.querySelector('.btn-text');
-      const spinner = btn.querySelector('.spinner');
-
       if (btn.classList.contains('sending')) return;
-
       btn.classList.add('sending');
       btn.disabled = true;
       btnText.innerText = "جاري الإرسال...";
@@ -1129,62 +1825,36 @@
 
       if (startKM && startImgFile && !endKM) {
         compressImage(startImgFile, function (base64) {
-          const data = {
-            km: startKM,
-            image: base64,
-            startTime: new Date().toISOString()
-          };
+          const data = { km: startKM, image: base64, startTime: new Date().toISOString() };
           localStorage.setItem("kmStart", JSON.stringify(data));
           localStorage.setItem("kmDate", getTodayKey());
           kmMsg.innerHTML = "دەستپێکردنی کارکردن پاشەکەوت کراوە✅ تم حفظ بدء الدوام";
-
-          // إرسال وقت البدء إلى StartTimes
           fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
+            method: "POST", mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "saveStartTime",
-              repName: repName,
-              startTime: data.startTime
-            })
+            body: JSON.stringify({ action: "saveStartTime", repName: repName, startTime: data.startTime })
           });
         });
         return;
       }
 
-      if (!localStorage.getItem("kmStart")) {
-        alert("يجب تسجيل بدء الدوام أولاً");
-        return;
-      }
-
-      if (!endKM || !endImgFile) {
-        alert("أدخل بيانات الإنهاء");
-        return;
-      }
+      if (!localStorage.getItem("kmStart")) { alert("يجب تسجيل بدء الدوام أولاً"); return; }
+      if (!endKM || !endImgFile) { alert("أدخل بيانات الإنهاء"); return; }
 
       const startData = JSON.parse(localStorage.getItem("kmStart"));
       const distance = endKM - startData.km;
 
       compressImage(endImgFile, function (endBase64) {
         fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
+          method: "POST", mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            action: "saveKM",
-            repName: repName,
-            startKM: startData.km,
-            startTime: startData.startTime,
-            startImage: startData.image,
-            endKM: endKM,
-            endTime: new Date().toISOString(),
-            endImage: endBase64,
-            distance: distance
+            action: "saveKM", repName, startKM: startData.km,
+            startTime: startData.startTime, startImage: startData.image,
+            endKM, endTime: new Date().toISOString(), endImage: endBase64, distance
           })
         }).then(() => {
-          localStorage.removeItem("kmStart");
-          localStorage.removeItem("kmDate");
+          localStorage.removeItem("kmStart"); localStorage.removeItem("kmDate");
           kmMsg.innerHTML = "✅ تم إرسال الدوام بنجاح";
           setTimeout(() => location.reload(), 1500);
         });
@@ -1200,18 +1870,11 @@
         img.onload = function () {
           const canvas = document.createElement('canvas');
           const MAX_WIDTH = 800;
-          let width = img.width;
-          let height = img.height;
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressed = canvas.toDataURL('image/jpeg', 0.7);
-          callback(compressed);
+          let width = img.width; let height = img.height;
+          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+          canvas.width = width; canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL('image/jpeg', 0.7));
         };
       };
     }
@@ -1224,7 +1887,7 @@
       const el = document.getElementById(id);
       if (el) {
         el.classList.add('field-error');
-        el.addEventListener('input', () => el.classList.remove('field-error'), { once: true });
+        el.addEventListener('input',  () => el.classList.remove('field-error'), { once: true });
         el.addEventListener('change', () => el.classList.remove('field-error'), { once: true });
       }
     }
@@ -1238,52 +1901,28 @@
       let hasError = false;
 
       if (currentMode === 'new') {
-        const reqNew = ['useOil', 'hasUFI', 'tradeName', 'ownerName', 'address', 'phone', 'category', 'rate', 'visitDays'];
+        const reqNew = ['useOil','hasUFI','tradeName','ownerName','address','phone','category','rate','visitDays'];
         for (let id of reqNew) {
-          if (!document.getElementById(id).value.trim()) {
-            markError(id);
-            hasError = true;
-          }
+          if (!document.getElementById(id).value.trim()) { markError(id); hasError = true; }
         }
-        if (document.getElementById('imageInputNew').files.length === 0) {
-          markError('imageInputNew');
-          hasError = true;
-        }
+        if (document.getElementById('imageInputNew').files.length === 0) { markError('imageInputNew'); hasError = true; }
       } else {
-        if (!document.getElementById('reg_clientName').value.trim()) {
-          markError('reg_clientName');
-          hasError = true;
-        }
+        if (!document.getElementById('reg_clientName').value.trim()) { markError('reg_clientName'); hasError = true; }
         const hasOrder = document.getElementById('reg_hasOrder').value;
-        if (hasOrder === 'نعم' && !document.getElementById('reg_orderAmount').value.trim()) {
-          markError('reg_orderAmount');
-          hasError = true;
-        }
-        if (hasOrder === 'لا' && !document.getElementById('reg_orderReason').value.trim()) {
-          markError('reg_orderReason');
-          hasError = true;
-        }
+        if (hasOrder === 'نعم' && !document.getElementById('reg_orderAmount').value.trim()) { markError('reg_orderAmount'); hasError = true; }
+        if (hasOrder === 'لا'  && !document.getElementById('reg_orderReason').value.trim()) { markError('reg_orderReason'); hasError = true; }
         const hasPayment = document.getElementById('reg_hasPayment').value;
-        if (hasPayment === 'نعم' && !document.getElementById('reg_payAmount').value.trim()) {
-          markError('reg_payAmount');
-          hasError = true;
-        }
-        if (hasPayment === 'لا' && !document.getElementById('reg_payReason').value.trim()) {
-          markError('reg_payReason');
-          hasError = true;
-        }
-        if (document.getElementById('imageInputReg').files.length === 0) {
-          markError('imageInputReg');
-          hasError = true;
-        }
+        if (hasPayment === 'نعم' && !document.getElementById('reg_payAmount').value.trim()) { markError('reg_payAmount'); hasError = true; }
+        if (hasPayment === 'لا'  && !document.getElementById('reg_payReason').value.trim()) { markError('reg_payReason'); hasError = true; }
+        if (document.getElementById('imageInputReg').files.length === 0) { markError('imageInputReg'); hasError = true; }
       }
 
       if (hasError) {
-        // تمرير تلقائي لأول حقل خاطئ
         const firstError = document.querySelector('.field-error');
         if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
+
       const btn = document.getElementById('sendBtn');
       const msg = document.getElementById('msg');
       isSending = true;
@@ -1304,14 +1943,13 @@
 
         let data = {
           sheetName: currentMode === 'new' ? 'data' : 'Clients',
-          repName: localStorage.repName,
-          city: localStorage.city,
-          duration: durationMin,
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude
+          repName: localStorage.repName, city: localStorage.city,
+          duration: durationMin, lat: pos.coords.latitude, lng: pos.coords.longitude
         };
 
-        const fileInput = currentMode === 'new' ? document.getElementById('imageInputNew') : document.getElementById('imageInputReg');
+        const fileInput = currentMode === 'new'
+          ? document.getElementById('imageInputNew')
+          : document.getElementById('imageInputReg');
         const file = fileInput.files[0];
 
         const reader = new FileReader();
@@ -1322,50 +1960,43 @@
           img.onload = () => {
             const canvas = document.createElement('canvas');
             const MAX_WIDTH = 800;
-            let width = img.width;
-            let height = img.height;
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
+            let width = img.width; let height = img.height;
+            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+            canvas.width = width; canvas.height = height;
+            canvas.getContext('2d').drawImage(img, 0, 0, width, height);
             const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
 
             if (currentMode === 'new') {
               data.tradeName = document.getElementById('tradeName').value;
               data.ownerName = document.getElementById('ownerName').value;
-              data.useOil = document.getElementById('useOil').value;
-              data.hasUFI = document.getElementById('hasUFI').value;
-              data.address = document.getElementById('address').value;
-              data.phone = document.getElementById('phone').value;
-              data.category = document.getElementById('category').value;
-              data.note = document.getElementById('note').value;
-              data.rate = document.getElementById('rate').value;
+              data.useOil    = document.getElementById('useOil').value;
+              data.hasUFI    = document.getElementById('hasUFI').value;
+              data.address   = document.getElementById('address').value;
+              data.phone     = document.getElementById('phone').value;
+              data.category  = document.getElementById('category').value;
+              data.note      = document.getElementById('note').value;
+              data.rate      = document.getElementById('rate').value;
               data.visitDays = document.getElementById('visitDays').value;
-              data.oilType = document.getElementById('oilType').value;
-              data.oilGrade = document.getElementById('oilGrade').value;
+              data.oilType   = document.getElementById('oilType').value;
+              data.oilGrade  = document.getElementById('oilGrade').value;
               data.oilDistance = document.getElementById('oilDistance').value;
-              data.oilPrice = document.getElementById('oilPrice').value;
+              data.oilPrice  = document.getElementById('oilPrice').value;
             } else {
               const select = document.getElementById('reg_clientName');
-              data.clientName = select.options[select.selectedIndex].text;
-              data.hasOrder = document.getElementById('reg_hasOrder').value;
+              data.clientName  = select.options[select.selectedIndex].text;
+              data.hasOrder    = document.getElementById('reg_hasOrder').value;
               data.orderAmount = document.getElementById('reg_orderAmount').value;
               data.orderReason = document.getElementById('reg_orderReason').value;
-              data.hasPayment = document.getElementById('reg_hasPayment').value;
-              data.payAmount = document.getElementById('reg_payAmount').value;
-              data.payReason = document.getElementById('reg_payReason').value;
-              data.note = document.getElementById('reg_note').value;
+              data.hasPayment  = document.getElementById('reg_hasPayment').value;
+              data.payAmount   = document.getElementById('reg_payAmount').value;
+              data.payReason   = document.getElementById('reg_payReason').value;
+              data.note        = document.getElementById('reg_note').value;
             }
 
             data.image = compressedBase64;
 
             fetch(SCRIPT_URL, {
-              method: "POST",
-              mode: "no-cors",
+              method: "POST", mode: "no-cors",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(data)
             }).then(() => {
@@ -1373,7 +2004,7 @@
               localStorage.removeItem('visitStartTime');
               localStorage.removeItem('startCoords');
               setTimeout(() => location.reload(), 2000);
-            }).catch(err => {
+            }).catch(() => {
               alert("خطأ في الاتصال، حاول مرة أخرى");
               isSending = false; btn.disabled = false;
             });
@@ -1386,5 +2017,4 @@
     }
   </script>
 </body>
-
 </html>
