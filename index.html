@@ -537,6 +537,47 @@
     .help-close-btn:hover {
       color: #333;
     }
+    /* ===== شريط التقدم اليومي ===== */
+#dailyProgress {
+  background: #fff;
+  border: 1px solid #e0e7ff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 4px rgba(10,124,255,0.07);
+}
+#dailyProgress .dp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+#dailyProgress .dp-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #444;
+}
+#dailyProgress .dp-count {
+  font-size: 13px;
+  font-weight: bold;
+  color: #0a7cff;
+}
+#dailyProgress .dp-track {
+  background: #e8f0fe;
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+#dailyProgress .dp-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0a7cff, #28a745);
+  transition: width 0.5s ease;
+  width: 0%;
+}
+#dailyProgress.dp-done .dp-fill {
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
   </style>
 </head>
 
@@ -700,6 +741,16 @@
       <button id="workBtn" onclick="openWorkModal()" style="background:#6f42c1;margin-bottom:10px;" data-key="work_btn">
         بدء الدوام
       </button>
+      <!-- ===== شريط التقدم اليومي ===== -->
+       <div id="dailyProgress">
+       <div class="dp-header">
+       <span class="dp-label" id="dpLabel">زيارات اليوم</span>
+       <span class="dp-count" id="dpCount">⏳</span>
+       </div>
+       <div class="dp-track">
+       <div class="dp-fill" id="dpFill"></div>
+       </div>
+       </div>
 
       <div class="nav-tabs">
         <button id="tabNew" class="active" onclick="switchForm('new')" data-key="tab_new">عميل جديد</button>
@@ -1012,7 +1063,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUhcFLO7dwzF7VyudQOFiL30uHjJjZEhGXKzwud8ro-Vc3oDlIyPY-ZKv3toBDkXNq/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuARPmJ4YRcK-8hSfe2iDaj4CmCn3-jeRYyzUBhaRuwa_Ei46BPWXZcDfQW4BCpPEq/exec";
 
     let currentMode = 'new';
     let visitStartTime = localStorage.getItem('visitStartTime') ? parseInt(localStorage.getItem('visitStartTime')) : null;
@@ -1049,7 +1100,7 @@
         refinery: "مصفى", hospital: "مستشفى", factory: "معمل", contractor: "مقاول",
         realestate: "عقارات", mechanic: "ميكانيكي", schools: "مدارس",
         search_placeholder: "ابحث عن عميل...",
-        search_no_result: "لا توجد نتائج"
+        search_no_result: "لا توجد نتائج", dp_label: "زيارات اليوم"
       },
       ku: {
         modal_title: "بەیانی باش", modal_body: "ئایا ئامادەی بۆ ڕۆژێکی نوێ؟", modal_btn: "OK",
@@ -1074,7 +1125,7 @@
         refinery: "پاڵاوگەی نەوت", hospital: "نەخۆشخانە", factory: "کارگە",
         contractor: "خاوەنی ئامێری قورس", realestate: "خانووبەرە", mechanic: "وەستا", schools: "قوتابخانە",
         search_placeholder: "کڕیار بگەڕێ...",
-        search_no_result: "ئەنجامێک نەدۆزرایەوە"
+        search_no_result: "ئەنجامێک نەدۆزرایەوە", dp_label: "سەردانەکانی ئەمڕۆ"
       }
     };
 
@@ -1494,6 +1545,7 @@ rate: {
         if (visitStartTime) resumeVisit();
         setCurrentDay();
         fetchClientsData();
+        fetchDailyProgress();
       }
     };
 
@@ -1523,6 +1575,7 @@ rate: {
       if (searchInput) {
         searchInput.placeholder = translations[lang].search_placeholder || 'ابحث...';
       }
+      renderDailyProgress();
     }
 
     function saveLogin() {
@@ -1598,6 +1651,39 @@ rate: {
           document.getElementById('reg_clientName').innerHTML = '<option value="">خطأ في الاتصال</option>';
         });
     }
+    // ─── شريط التقدم اليومي ────────────────────────────────────
+let _dpCount = 0, _dpTarget = 0; // لحفظ القيم عند تغيير اللغة
+
+function fetchDailyProgress() {
+  const repName = localStorage.repName;
+  if (!repName) return;
+
+  // أيقونة التحميل
+  document.getElementById('dpCount').textContent = '⏳';
+  document.getElementById('dpFill').style.width = '0%';
+
+  fetch(`${SCRIPT_URL}?action=getDailyProgress&repName=${encodeURIComponent(repName)}`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.status !== 'success') return;
+      _dpCount  = data.count  || 0;
+      _dpTarget = data.target || 0;
+      renderDailyProgress();
+    })
+    .catch(() => {});
+}
+
+function renderDailyProgress() {
+  const lang = localStorage.getItem('appLang') || 'ar';
+  document.getElementById('dpLabel').textContent =
+    translations[lang].dp_label || 'زيارات اليوم';
+  document.getElementById('dpCount').textContent =
+    _dpTarget > 0 ? `${_dpCount} / ${_dpTarget}` : _dpCount;
+  const pct = _dpTarget > 0 ? Math.min((_dpCount / _dpTarget) * 100, 100) : 0;
+  document.getElementById('dpFill').style.width = pct + '%';
+  document.getElementById('dailyProgress')
+    .classList.toggle('dp-done', _dpCount >= _dpTarget && _dpTarget > 0);
+}
 
     function filterClientsByDay() {
       const selectedDay = document.getElementById('reg_daySelect').value;
