@@ -150,7 +150,10 @@
       margin-top: 25px;
       border-top: 1px solid #eee;
       padding-top: 15px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
     }
 
     .lang-switcher select {
@@ -161,7 +164,131 @@
       border-radius: 20px;
       background: #f8f9fa;
       border: 1px solid #ddd;
+      margin-top: 0;
     }
+
+    /* ===== زر تعديل الملف الشخصي ===== */
+    #profileEditBtn {
+      width: 36px;
+      min-width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      color: #555;
+      border: 1.5px solid #ccc;
+      font-size: 17px;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    #profileEditBtn:hover {
+      background: #0a7cff;
+      color: #fff;
+      border-color: #0a7cff;
+    }
+
+    /* ===== نافذة تعديل الملف الشخصي ===== */
+    #profileModal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 100001;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .profile-modal-box {
+      background: #fff;
+      padding: 24px 20px 20px;
+      border-radius: 16px;
+      width: 88%;
+      max-width: 340px;
+      position: relative;
+      text-align: right;
+      box-shadow: 0 10px 35px rgba(0,0,0,0.25);
+    }
+    .profile-modal-box h4 {
+      margin: 0 0 16px;
+      color: #0a7cff;
+      font-size: 17px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 12px;
+      text-align: center;
+    }
+    .profile-modal-box label {
+      display: block;
+      font-weight: bold;
+      font-size: 13px;
+      color: #444;
+      margin-top: 12px;
+      margin-bottom: 4px;
+    }
+    .profile-modal-box input,
+    .profile-modal-box select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      box-sizing: border-box;
+      margin-top: 0;
+    }
+    .profile-close-btn {
+      position: absolute;
+      top: 10px;
+      left: 14px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+      width: auto;
+      padding: 0;
+      margin: 0;
+      line-height: 1;
+    }
+    .profile-close-btn:hover { color: #333; }
+
+    #profileSaveBtn {
+      background: #28a745;
+      color: #fff;
+      border: 0;
+      width: 100%;
+      padding: 11px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+    #profileSaveBtn:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
+    #profileCodeError {
+      color: #dc3545;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 8px;
+      display: none;
+    }
+    #profileMsg {
+      font-size: 13px;
+      text-align: center;
+      margin-top: 8px;
+      color: #28a745;
+      display: none;
+    }
+    /* مرحلة الرمز السري */
+    #profileStep1 {}
+    /* مرحلة التعديل */
+    #profileStep2 { display: none; }
 
     h2 {
       text-align: center;
@@ -517,7 +644,6 @@
      color: #444;
      line-height: 1.7;
       min-height: 30px;
-      /* إضافة السطر أدناه هو الحل */
       white-space: pre-line; 
     }
     .help-close-btn {
@@ -589,6 +715,36 @@
       <button class="help-close-btn" type="button" onclick="closeHelp()">&#x2715;</button>
       <h4 id="helpTitle"></h4>
       <p id="helpBody"></p>
+    </div>
+  </div>
+
+  <!-- ===== نافذة تعديل الملف الشخصي ===== -->
+  <div id="profileModal" class="hidden">
+    <div class="profile-modal-box">
+      <button class="profile-close-btn" type="button" onclick="closeProfileModal()">&#x2715;</button>
+
+      <!-- المرحلة 1: الرمز السري -->
+      <div id="profileStep1">
+        <h4 id="profileStep1Title">🔒 رمز التحقق</h4>
+        <label id="profileCodeLabel">أدخل الرمز السري</label>
+        <input type="password" id="profileCodeInput" placeholder="••••••••"
+               style="text-align:center; letter-spacing:4px;"
+               onkeydown="if(event.key==='Enter') verifyProfileCode()">
+        <button onclick="verifyProfileCode()" id="profileVerifyBtn"
+                style="background:#0a7cff; margin-top:12px;">تحقق</button>
+        <p id="profileCodeError">الرمز غير صحيح!</p>
+      </div>
+
+      <!-- المرحلة 2: تعديل البيانات -->
+      <div id="profileStep2">
+        <h4 id="profileStep2Title">✏️ تعديل بيانات المندوب</h4>
+        <label id="profileRepLabel">اسم المندوب *</label>
+        <input type="text" id="profileRepInput" placeholder="اسم المندوب">
+        <label id="profileCityLabel">المدينة *</label>
+        <select id="profileCitySelect"></select>
+        <button id="profileSaveBtn" onclick="saveProfileData()">حفظ البيانات</button>
+        <p id="profileMsg">✅ تم الحفظ بنجاح!</p>
+      </div>
     </div>
   </div>
 
@@ -733,7 +889,29 @@
         <label data-key="city_label">المدينة *</label>
         <button class="help-icon" type="button" onclick="showHelp('city')">?</button>
       </div>
-      <input id="city">
+      <!-- قائمة منسدلة بمحافظات العراق -->
+      <select id="city">
+        <option value="">-- اختر المحافظة --</option>
+        <option value="Baghdad">بغداد - Baghdad</option>
+        <option value="Basra">البصرة - Basra</option>
+        <option value="Nineveh">نينوى - Nineveh</option>
+        <option value="Erbil">أربيل - Erbil</option>
+        <option value="Sulaymaniyah">السليمانية - Sulaymaniyah</option>
+        <option value="Kirkuk">كركوك - Kirkuk</option>
+        <option value="Dohuk">دهوك - Dohuk</option>
+        <option value="Anbar">الأنبار - Anbar</option>
+        <option value="Diyala">ديالى - Diyala</option>
+        <option value="Babil">بابل - Babil</option>
+        <option value="Karbala">كربلاء - Karbala</option>
+        <option value="Najaf">النجف - Najaf</option>
+        <option value="Wasit">واسط - Wasit</option>
+        <option value="Muthanna">المثنى - Muthanna</option>
+        <option value="Dhi Qar">ذي قار - Dhi Qar</option>
+        <option value="Maysan">ميسان - Maysan</option>
+        <option value="Qadisiyyah">القادسية - Qadisiyyah</option>
+        <option value="Saladin">صلاح الدين - Saladin</option>
+        <option value="Halabja">حلبجة - Halabja</option>
+      </select>
       <button onclick="saveLogin()" data-key="login_btn">دخول للنظام</button>
     </div>
 
@@ -1012,11 +1190,13 @@
       <div id="msg"></div>
     </div>
 
+    <!-- ===== شريط اللغة + زر تعديل الملف الشخصي ===== -->
     <div class="lang-switcher">
       <select id="langSelect" onchange="changeLanguage(this.value)">
         <option value="ar">العربية (Arabic)</option>
         <option value="ku">کوردی (Soranî)</option>
       </select>
+      <button id="profileEditBtn" type="button" onclick="openProfileModal()" title="تعديل بيانات المندوب">⚙️</button>
     </div>
   </div>
 
@@ -1064,6 +1244,30 @@
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuARPmJ4YRcK-8hSfe2iDaj4CmCn3-jeRYyzUBhaRuwa_Ei46BPWXZcDfQW4BCpPEq/exec";
+    const ACCESS_CODE = "Mm19941994Mm";
+
+    // قائمة محافظات العراق
+    const IRAQ_GOVERNORATES = [
+      { value: "Baghdad",       ar: "بغداد",        ku: "بەغدا" },
+      { value: "Basra",         ar: "البصرة",       ku: "بەسرە" },
+      { value: "موصل",         ar: "نينوى",         ku: "مووسڵ" },
+      { value: "Erbil",         ar: "أربيل",        ku: "هەولێر" },
+      { value: "سلیمانیە",     ar: "السليمانية",   ku: "سلێمانی" },
+      { value: "Kirkuk",        ar: "كركوك",        ku: "کەرکووک" },
+      { value: "Dohuk",         ar: "دهوك",         ku: "دهۆک" },
+      { value: "Anbar",         ar: "الأنبار",       ku: "ئەنبار" },
+      { value: "Diyala",        ar: "ديالى",        ku: "دیالە" },
+      { value: "Babil",         ar: "بابل",         ku: "بابل" },
+      { value: "Karbala",       ar: "كربلاء",        ku: "کەربەلا" },
+      { value: "Najaf",         ar: "النجف",        ku: "نەجەف" },
+      { value: "Wasit",         ar: "واسط",         ku: "واسط" },
+      { value: "Muthanna",      ar: "المثنى",       ku: "موسەننا" },
+      { value: "Dhi Qar",       ar: "ذي قار",       ku: "ذی قار" },
+      { value: "Maysan",        ar: "ميسان",        ku: "مەیسان" },
+      { value: "Qadisiyyah",    ar: "القادسية",     ku: "قادیسیە" },
+      { value: "صلاح الدين",    ar: "صلاح الدين",    ku: "سەڵاحەددین" },
+      { value: "Halabja",       ar: "حلبجة",        ku: "ھەڵەبجە" }
+    ];
 
     let currentMode = 'new';
     let visitStartTime = localStorage.getItem('visitStartTime') ? parseInt(localStorage.getItem('visitStartTime')) : null;
@@ -1100,7 +1304,13 @@
         refinery: "مصفى", hospital: "مستشفى", factory: "معمل", contractor: "مقاول",
         realestate: "عقارات", mechanic: "ميكانيكي", schools: "مدارس",
         search_placeholder: "ابحث عن عميل...",
-        search_no_result: "لا توجد نتائج", dp_label: "زيارات اليوم"
+        search_no_result: "لا توجد نتائج", dp_label: "زيارات اليوم",
+        profile_step1_title: "🔒 رمز التحقق", profile_code_label: "أدخل الرمز السري",
+        profile_verify_btn: "تحقق", profile_code_error: "الرمز غير صحيح!",
+        profile_step2_title: "✏️ تعديل بيانات المندوب",
+        profile_rep_label: "اسم المندوب *", profile_city_label: "المدينة *",
+        profile_save_btn: "حفظ البيانات", profile_saved: "✅ تم الحفظ بنجاح!",
+        profile_city_placeholder: "-- اختر المحافظة --"
       },
       ku: {
         modal_title: "بەیانی باش", modal_body: "ئایا ئامادەی بۆ ڕۆژێکی نوێ؟", modal_btn: "OK",
@@ -1125,259 +1335,87 @@
         refinery: "پاڵاوگەی نەوت", hospital: "نەخۆشخانە", factory: "کارگە",
         contractor: "خاوەنی ئامێری قورس", realestate: "خانووبەرە", mechanic: "وەستا", schools: "قوتابخانە",
         search_placeholder: "کڕیار بگەڕێ...",
-        search_no_result: "ئەنجامێک نەدۆزرایەوە", dp_label: "سەردانەکانی ئەمڕۆ"
+        search_no_result: "ئەنجامێک نەدۆزرایەوە", dp_label: "سەردانەکانی ئەمڕۆ",
+        profile_step1_title: "🔒 کۆدی پشتڕاستکردنەوە", profile_code_label: "کۆدی نهێنی بنووسە",
+        profile_verify_btn: "پشتڕاستکردنەوە", profile_code_error: "کۆدەکە هەڵەیە!",
+        profile_step2_title: "✏️ گۆڕینی زانیاری نوێنەر",
+        profile_rep_label: "ناوی نوێنەر *", profile_city_label: "شار *",
+        profile_save_btn: "پاشەکەوتکردن", profile_saved: "✅ بە سەرکەوتوویی پاشەکەوت کرا!",
+        profile_city_placeholder: "-- پارێزگا هەڵبژێرە --"
       }
     };
 
     // ============================================================
     // ===== نصوص المساعدة لكل حقل =====
-    // تعليمات: أضف النصوص في body بالعربية والكوردية
-    // الهيكل: { title: "عنوان الحقل", body: "وصف الحقل" }
     // ============================================================
     const helpTexts = {
       ar: {
-        // ─────────────────────────────────────────────
-        // أضف هنا نصوص المساعدة بالعربية
-        // ─────────────────────────────────────────────
-rep_name: {
-      title: "اسم المندوب",
-      body: "اكتب الاسم باللغة الانكليزية"
-    },
-    city: {
-      title: "المدينة",
-      body: "اكتب اسم المدينة باللغة الانكليزية"
-    },
-    has_oil: {
-      title: "زيت ريماكس",
-      body: "هل لديه زيت Rymax حالياً في الورشة؟"
-    },
-    ufi: {
-      title: "فلتر UFI",
-      body: "هل لديه فلاتر UFI حالياً؟"
-    },
-    trade_name: {
-      title: "الاسم التجاري",
-      body: "الاسم الظاهر على واجهة المحل أو المعروف به"
-    },
-    owner_name: {
-      title: "اسم المالك",
-      body: "اسم صاحب أو مدير الورشة"
-    },
-    address: {
-      title: "العنوان",
-      body: "اكتب العنوان الكامل بالتفصيل"
-    },
-    phone: {
-      title: "رقم الهاتف",
-      body: "رقم يحتوي على واتساب"
-    },
-    category: {
-      title: "الفئة",
-      body: "اختر نوع النشاط (ورشة، محل زيوت، جمله...)"
-    },
-    note: {
-      title: "الملاحظة",
-      body: "أي ملاحظة مهمة عن العميل أو الزيارة"
-    },
-rate: {
-  title: "التقييم",
-  body: "يمكنك منح إجمالي 5 نجوم لكل محل، بحيث يتم توزيعها على النحو التالي:\n\n\
-1. الموقع والمساحة (⭐): إذا كان الموقع استراتيجياً والمساحة مناسبة.\n\
-2. نوع البضاعة والإضاءة (⭐): حسب جودة المنتجات وجمال الديكور والإضاءة.\n\
-3. سمعة الشخص (⭐): إذا كان معروفاً ويحظى بثقة الناس.\n\
-4. النظافة والترتيب (⭐): حسب نظافة وتنظيم المحل.\n\
-5. التعامل والأسلوب (⭐): حسب طريقة البيع والتعامل."
-},
-    visit_days: {
-      title: "يوم الزيارة",
-      body: "حدد اليوم المناسبة للزيارة"
-    },
-    other_oil: {
-      title: "نوع الزيت (ماركة أخرى)",
-      body: "اذكر الماركات الأخرى الموجودة"
-    },
-    oil_grade: {
-      title: "درجة الزيت",
-      body: "مثال: 10W40 أو 5W30"
-    },
-    distance: {
-      title: "المسافة (كم تغيير الزيت)",
-      body: "كم يمشي قبل تغيير الزيت"
-    },
-    liter_price: {
-      title: "سعر اللتر",
-      body: "اكتب سعر البيع للزيوت الاخره"
-    },
-    store_img: {
-      title: "صورة المتجر",
-      body: "التقط صورة واضحة لواجهة المحل"
-    },
-    client_name: {
-      title: "اسم العميل",
-      body: "الاسم التجاري حسب ما تم ادخاله سابقاً"
-    },
-    has_order: {
-      title: "الطلبية",
-      body: "هل تم تسجيل طلبية؟"
-    },
-    order_amount: {
-      title: "مبلغ الطلبية",
-      body: "اكتب القيمة بالدولار"
-    },
-    no_order_reason: {
-      title: "سبب عدم الطلبية",
-      body: "اذكر السبب لعدم انشاء طلبية (سعر، منافس...)"
-    },
-    has_payment: {
-      title: "قبض المبلغ",
-      body: "هل تم استلام مبلغ؟"
-    },
-    pay_amount: {
-      title: "مبلغ القبض",
-      body: "المبلغ المستلم بالدولار"
-    },
-    no_pay_reason: {
-      title: "سبب عدم القبض",
-      body: "اذكر سبب عدم قبض مبلغ"
-    },
-    take_photo: {
-      title: "التقاط صورة",
-      body: "التقط صورة للورشة من الداخل او الخارج أو المنتجات"
-    },
-    current_km: {
-      title: "الكيلومتر الحالي",
-      body: "الكيلومتر في عداد السيارة اثناء بدء الدوام"
-    },
-    final_km: {
-      title: "الكيلومتر النهائي",
-      body: "الكيلومتر في عداد السيارة اثناء انهاء الدوام"
-    },
-    meter_img: {
-      title: "صورة العداد",
-      body: "التقط صورة واضحة يظهر فيه رقم العداد"
-    }
-  }, 
-
-  ku: {
-rep_name: {
-    title: "ناوی نوێنەر",
-    body: "ناو بە زمانی ئینگلیزی بنووسە"
-  },
-  city: {
-    title: "شار",
-    body: "ناوی شار بە زمانی ئینگلیزی بنووسە"
-  },
-  has_oil: {
-    title: "ڕۆنی ڕایماکس",
-    body: "ئایا ئێستا ڕۆنی Rymaxی هەیە لە  شوێنەکە؟"
-  },
-  ufi: {
-    title: "فلتەری UFI",
-    body: "ئایا ئێستا فلتەری UFI هەیە؟"
-  },
-  trade_name: {
-    title: "ناوی بازرگانی",
-    body: "ئەو ناوەی لەسەر تابلۆی دوکانەکە نووسراوە یان پێی ناسراوە"
-  },
-  owner_name: {
-    title: "ناوی خاوەن",
-    body: "ناوی خاوەن یان بەڕێوەبەری  شوێنەکە"
-  },
-  address: {
-    title: "ناونیشان",
-    body: "ناونیشانی تەواو بە وردەکارییەوە بنووسە"
-  },
-  phone: {
-    title: "ژمارەی تەلەفۆن",
-    body: "ژمارەیەک کە وەتسئەپی هەبێت"
-  },
-  category: {
-    title: "پۆلێن",
-    body: "جۆری چالاکییەکە هەڵبژێرە (وۆرک شۆپ، دوکانی ڕۆن، جوملە...)"
-  },
-  note: {
-    title: "تێبینی",
-    body: "هەر تێبینییەکی گرنگ دەربارەی کڕیار یان سەردانەکە"
-  },
-rate: {
-  title: "هەڵسەنگاندن",
-  body: "دەتوانیت بۆ هەر دوکانێک کۆی ٥ ئەستێرە بدەیت، بەم شێوەیە:\n\n\
-1. شوێن و ڕووبەر (⭐): ئەگەر شوێنەکە باش و گونجاو بێت.\n\
-2. جۆری کاڵا و ڕووناکی (⭐): بەپێی کوالێتی و ڕێکخستن.\n\
-3. ناوبانگ (⭐): ئەگەر ناسراو و متمانەپێکراو بێت.\n\
-4. پاکی و ڕێکخستن (⭐): بەپێی پاکی شوێن.\n\
-5. مامەڵە و هەڵسوکەوت (⭐): بەپێی شێوازی مامەڵە."
-},
-  visit_days: {
-    title: "ڕۆژی سەردان",
-    body: "ڕۆژی گونجاو بۆ سەردان دیاری بکە"
-  },
-  other_oil: {
-    title: "جۆری ڕۆن (مارکەیەکی تر)",
-    body: "مارکەکانی تری بەردەست بنووسە"
-  },
-  oil_grade: {
-    title: "پلەی ڕۆن",
-    body: "نموونە: 10W40 یان 5W30"
-  },
-  distance: {
-    title: "مەودا (کم بۆ گۆڕینی ڕۆن)",
-    body: "چەند دەڕوات پێش ئەوەی ڕۆنەکە بگۆڕێت"
-  },
-  liter_price: {
-    title: "نرخی لیتر",
-    body: "نرخی فرۆشتنی ڕۆنەکانی تر بنووسە"
-  },
-  store_img: {
-    title: "وێنەی دوکان",
-    body: "وێنەیەکی ڕوونی ڕووکاری دەرەوەی دوکانەکە بگرە"
-  },
-  client_name: {
-    title: "ناوی کڕیار",
-    body: "ناوی بازرگانی بەپێی ئەوەی پێشتر داخڵ کراوە"
-  },
-  has_order: {
-    title: "داواکاری",
-    body: "ئایا داواکاری تۆمارکراوە؟"
-  },
-  order_amount: {
-    title: "بڕی پارەی داواکاری",
-    body: "بڕەکەی بە دۆلار بنووسە"
-  },
-  no_order_reason: {
-    title: "هۆکاری نەکردنی داواکاری",
-    body: "هۆکاری تۆمارنەکردنی داواکاری بنووسە (نرخ، ڕکابەر...)"
-  },
-  has_payment: {
-    title: "وەرگرتنی پارە",
-    body: "ئایا هیچ بڕە پارەیەک وەرگیراوە؟"
-  },
-  pay_amount: {
-    title: "بڕی وەرگیراو",
-    body: "ئەو بڕەی وەرگیراوە بە دۆلار"
-  },
-  no_pay_reason: {
-    title: "هۆکاری وەرنەگرتنی پارە",
-    body: "هۆکاری وەرنەگرتنی پارە بنووسە"
-  },
-  take_photo: {
-    title: "وێنەگرتن",
-    body: "وێنەی شوێنەکە لە ناوەوە یان دەرەوە یان بەرهەمەکان بگرە"
-  },
-  current_km: {
-    title: "کیلۆمەتری ئێستا",
-    body: "کیلۆمەتری ناو گێچی ئۆتۆمبێل لە کاتی دەستپێکردنی دەوام"
-  },
-  final_km: {
-    title: "کیلۆمەتری کۆتایی",
-    body: "کیلۆمەتری ناو گێچی ئۆتۆمبێل لە کاتی کۆتاییهاتنی دەوام"
-  },
-  meter_img: {
-    title: "وێنەی گێچ (عداد)",
-    body: "وێنەیەکی ڕوون بگرە کە ژمارەی گێچەکەی تێدا دەربکەوێت"
-  }
-  }
-};
+        rep_name: { title: "اسم المندوب", body: "اكتب الاسم باللغة الانكليزية" },
+        city: { title: "المدينة", body: "اختر المدينة ضمن حدود عمل من القائمة " },
+        has_oil: { title: "زيت ريماكس", body: "هل لديه زيت Rymax حالياً في الورشة؟" },
+        ufi: { title: "فلتر UFI", body: "هل لديه فلاتر UFI حالياً؟" },
+        trade_name: { title: "الاسم التجاري", body: "الاسم الظاهر على واجهة المحل أو المعروف به" },
+        owner_name: { title: "اسم المالك", body: "اسم صاحب أو مدير الورشة" },
+        address: { title: "العنوان", body: "اكتب العنوان الكامل بالتفصيل" },
+        phone: { title: "رقم الهاتف", body: "رقم يحتوي على واتساب" },
+        category: { title: "الفئة", body: "اختر نوع النشاط (ورشة، محل زيوت، جمله...)" },
+        note: { title: "الملاحظة", body: "أي ملاحظة مهمة عن العميل أو الزيارة" },
+        rate: {
+          title: "التقييم",
+          body: "يمكنك منح إجمالي 5 نجوم لكل محل، بحيث يتم توزيعها على النحو التالي:\n\n1. الموقع والمساحة (⭐): إذا كان الموقع استراتيجياً والمساحة مناسبة.\n2. نوع البضاعة والإضاءة (⭐): حسب جودة المنتجات وجمال الديكور والإضاءة.\n3. سمعة الشخص (⭐): إذا كان معروفاً ويحظى بثقة الناس.\n4. النظافة والترتيب (⭐): حسب نظافة وتنظيم المحل.\n5. التعامل والأسلوب (⭐): حسب طريقة البيع والتعامل."
+        },
+        visit_days: { title: "يوم الزيارة", body: "حدد اليوم المناسبة للزيارة" },
+        other_oil: { title: "نوع الزيت (ماركة أخرى)", body: "اذكر الماركات الأخرى الموجودة" },
+        oil_grade: { title: "درجة الزيت", body: "مثال: 10W40 أو 5W30" },
+        distance: { title: "المسافة (كم تغيير الزيت)", body: "كم يمشي قبل تغيير الزيت" },
+        liter_price: { title: "سعر اللتر", body: "اكتب سعر البيع للزيوت الاخره" },
+        store_img: { title: "صورة المتجر", body: "التقط صورة واضحة لواجهة المحل" },
+        client_name: { title: "اسم العميل", body: "الاسم التجاري حسب ما تم ادخاله سابقاً" },
+        has_order: { title: "الطلبية", body: "هل تم تسجيل طلبية؟" },
+        order_amount: { title: "مبلغ الطلبية", body: "اكتب القيمة بالدولار" },
+        no_order_reason: { title: "سبب عدم الطلبية", body: "اذكر السبب لعدم انشاء طلبية (سعر، منافس...)" },
+        has_payment: { title: "قبض المبلغ", body: "هل تم استلام مبلغ؟" },
+        pay_amount: { title: "مبلغ القبض", body: "المبلغ المستلم بالدولار" },
+        no_pay_reason: { title: "سبب عدم القبض", body: "اذكر سبب عدم قبض مبلغ" },
+        take_photo: { title: "التقاط صورة", body: "التقط صورة للورشة من الداخل او الخارج أو المنتجات" },
+        current_km: { title: "الكيلومتر الحالي", body: "الكيلومتر في عداد السيارة اثناء بدء الدوام" },
+        final_km: { title: "الكيلومتر النهائي", body: "الكيلومتر في عداد السيارة اثناء انهاء الدوام" },
+        meter_img: { title: "صورة العداد", body: "التقط صورة واضحة يظهر فيه رقم العداد" }
+      },
+      ku: {
+        rep_name: { title: "ناوی نوێنەر", body: "ناو بە زمانی ئینگلیزی بنووسە" },
+        city: { title: "شار", body: "لە لیستەکەدا شارێک لە سنووری کارەکەتدا هەڵبژێرە." },
+        has_oil: { title: "ڕۆنی ڕایماکس", body: "ئایا ئێستا ڕۆنی Rymaxی هەیە لە شوێنەکە؟" },
+        ufi: { title: "فلتەری UFI", body: "ئایا ئێستا فلتەری UFI هەیە؟" },
+        trade_name: { title: "ناوی بازرگانی", body: "ئەو ناوەی لەسەر تابلۆی دوکانەکە نووسراوە یان پێی ناسراوە" },
+        owner_name: { title: "ناوی خاوەن", body: "ناوی خاوەن یان بەڕێوەبەری شوێنەکە" },
+        address: { title: "ناونیشان", body: "ناونیشانی تەواو بە وردەکارییەوە بنووسە" },
+        phone: { title: "ژمارەی تەلەفۆن", body: "ژمارەیەک کە وەتسئەپی هەبێت" },
+        category: { title: "پۆلێن", body: "جۆری چالاکییەکە هەڵبژێرە (وۆرک شۆپ، دوکانی ڕۆن، جوملە...)" },
+        note: { title: "تێبینی", body: "هەر تێبینییەکی گرنگ دەربارەی کڕیار یان سەردانەکە" },
+        rate: {
+          title: "هەڵسەنگاندن",
+          body: "دەتوانیت بۆ هەر دوکانێک کۆی ٥ ئەستێرە بدەیت، بەم شێوەیە:\n\n1. شوێن و ڕووبەر (⭐): ئەگەر شوێنەکە باش و گونجاو بێت.\n2. جۆری کاڵا و ڕووناکی (⭐): بەپێی کوالێتی و ڕێکخستن.\n3. ناوبانگ (⭐): ئەگەر ناسراو و متمانەپێکراو بێت.\n4. پاکی و ڕێکخستن (⭐): بەپێی پاکی شوێن.\n5. مامەڵە و هەڵسوکەوت (⭐): بەپێی شێوازی مامەڵە."
+        },
+        visit_days: { title: "ڕۆژی سەردان", body: "ڕۆژی گونجاو بۆ سەردان دیاری بکە" },
+        other_oil: { title: "جۆری ڕۆن (مارکەیەکی تر)", body: "مارکەکانی تری بەردەست بنووسە" },
+        oil_grade: { title: "پلەی ڕۆن", body: "نموونە: 10W40 یان 5W30" },
+        distance: { title: "مەودا (کم بۆ گۆڕینی ڕۆن)", body: "چەند دەڕوات پێش ئەوەی ڕۆنەکە بگۆڕێت" },
+        liter_price: { title: "نرخی لیتر", body: "نرخی فرۆشتنی ڕۆنەکانی تر بنووسە" },
+        store_img: { title: "وێنەی دوکان", body: "وێنەیەکی ڕوونی ڕووکاری دەرەوەی دوکانەکە بگرە" },
+        client_name: { title: "ناوی کڕیار", body: "ناوی بازرگانی بەپێی ئەوەی پێشتر داخڵ کراوە" },
+        has_order: { title: "داواکاری", body: "ئایا داواکاری تۆمارکراوە؟" },
+        order_amount: { title: "بڕی پارەی داواکاری", body: "بڕەکەی بە دۆلار بنووسە" },
+        no_order_reason: { title: "هۆکاری نەکردنی داواکاری", body: "هۆکاری تۆمارنەکردنی داواکاری بنووسە (نرخ، ڕکابەر...)" },
+        has_payment: { title: "وەرگرتنی پارە", body: "ئایا هیچ بڕە پارەیەک وەرگیراوە؟" },
+        pay_amount: { title: "بڕی وەرگیراو", body: "ئەو بڕەی وەرگیراوە بە دۆلار" },
+        no_pay_reason: { title: "هۆکاری وەرنەگرتنی پارە", body: "هۆکاری وەرنەگرتنی پارە بنووسە" },
+        take_photo: { title: "وێنەگرتن", body: "وێنەی شوێنەکە لە ناوەوە یان دەرەوە یان بەرهەمەکان بگرە" },
+        current_km: { title: "کیلۆمەتری ئێستا", body: "کیلۆمەتری ناو گێچی ئۆتۆمبێل لە کاتی دەستپێکردنی دەوام" },
+        final_km: { title: "کیلۆمەتری کۆتایی", body: "کیلۆمەتری ناو گێچی ئۆتۆمبێل لە کاتی کۆتاییهاتنی دەوام" },
+        meter_img: { title: "وێنەی گێچ (عداد)", body: "وێنەیەکی ڕوون بگرە کە ژمارەی گێچەکەی تێدا دەربکەوێت" }
+      }
+    };
 
     // ============================================================
     // وظائف نافذة المساعدة
@@ -1394,10 +1432,116 @@ rate: {
       document.getElementById('helpModal').classList.add('hidden');
     }
 
-    // إغلاق نافذة المساعدة عند النقر خارجها
     document.getElementById('helpModal').addEventListener('click', function(e) {
       if (e.target === this) closeHelp();
     });
+
+    // ============================================================
+    // ===== وظائف تعديل الملف الشخصي =====
+    // ============================================================
+
+    // بناء قائمة المحافظات في نافذة التعديل
+    function buildGovernoratesDropdown(lang, selectedValue) {
+      const sel = document.getElementById('profileCitySelect');
+      sel.innerHTML = '';
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = translations[lang].profile_city_placeholder;
+      sel.appendChild(placeholder);
+      IRAQ_GOVERNORATES.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.value;
+        opt.textContent = lang === 'ku'
+          ? `${g.ku} - ${g.value}`
+          : `${g.ar} - ${g.value}`;
+        if (g.value === selectedValue) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    }
+
+    function openProfileModal() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const t = translations[lang];
+
+      // إعادة تعيين النافذة إلى المرحلة 1
+      document.getElementById('profileStep1').style.display = 'block';
+      document.getElementById('profileStep2').style.display = 'none';
+      document.getElementById('profileCodeInput').value = '';
+      document.getElementById('profileCodeError').style.display = 'none';
+      document.getElementById('profileMsg').style.display = 'none';
+
+      // تطبيق الترجمة
+      document.getElementById('profileStep1Title').textContent = t.profile_step1_title;
+      document.getElementById('profileCodeLabel').textContent  = t.profile_code_label;
+      document.getElementById('profileVerifyBtn').textContent  = t.profile_verify_btn;
+      document.getElementById('profileCodeError').textContent  = t.profile_code_error;
+
+      document.getElementById('profileModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('profileCodeInput').focus(), 100);
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
+
+    document.getElementById('profileModal').addEventListener('click', function(e) {
+      if (e.target === this) closeProfileModal();
+    });
+
+    function verifyProfileCode() {
+      const entered = document.getElementById('profileCodeInput').value;
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const t = translations[lang];
+
+      if (entered === ACCESS_CODE) {
+        // انتقال إلى المرحلة 2
+        document.getElementById('profileStep1').style.display = 'none';
+        document.getElementById('profileStep2').style.display = 'block';
+
+        // تطبيق الترجمة
+        document.getElementById('profileStep2Title').textContent = t.profile_step2_title;
+        document.getElementById('profileRepLabel').textContent   = t.profile_rep_label;
+        document.getElementById('profileCityLabel').textContent  = t.profile_city_label;
+        document.getElementById('profileSaveBtn').textContent    = t.profile_save_btn;
+
+        // تعبئة البيانات الحالية
+        document.getElementById('profileRepInput').value = localStorage.repName || '';
+        buildGovernoratesDropdown(lang, localStorage.city || '');
+      } else {
+        const errEl = document.getElementById('profileCodeError');
+        errEl.textContent = t.profile_code_error;
+        errEl.style.display = 'block';
+        document.getElementById('profileCodeInput').value = '';
+        document.getElementById('profileCodeInput').focus();
+      }
+    }
+
+    function saveProfileData() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      const t = translations[lang];
+      const newRep  = document.getElementById('profileRepInput').value.trim();
+      const newCity = document.getElementById('profileCitySelect').value;
+
+      if (!newRep || !newCity) {
+        alert(t.alert_fill);
+        return;
+      }
+
+      localStorage.repName = newRep;
+      localStorage.city    = newCity;
+
+      const msgEl = document.getElementById('profileMsg');
+      msgEl.textContent = t.profile_saved;
+      msgEl.style.display = 'block';
+
+      const btn = document.getElementById('profileSaveBtn');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        closeProfileModal();
+        location.reload();
+      }, 1200);
+    }
 
     // ============================================================
     // وظائف البحث عن العملاء
@@ -1431,7 +1575,6 @@ rate: {
       const q = query.trim();
       if (!q) return;
 
-      // البحث في جميع العملاء بغض النظر عن اليوم
       const results = allClients.filter(c =>
         c.tradeName && c.tradeName.includes(q)
       );
@@ -1456,20 +1599,16 @@ rate: {
 
         item.appendChild(nameSpan);
         item.appendChild(daySpan);
-
         item.addEventListener('click', () => selectSearchResult(client));
         suggestionsBox.appendChild(item);
       });
     }
 
     function selectSearchResult(client) {
-      // تحديث فلتر اليوم ليطابق يوم العميل
       if (client.visitDays) {
         document.getElementById('reg_daySelect').value = client.visitDays;
         filterClientsByDay();
       }
-
-      // تحديد العميل في القائمة المنسدلة
       const select = document.getElementById('reg_clientName');
       for (let i = 0; i < select.options.length; i++) {
         if (select.options[i].text === client.tradeName ||
@@ -1479,15 +1618,11 @@ rate: {
           break;
         }
       }
-
       toggleDetailsBtn();
-
-      // إغلاق البحث بعد الاختيار
       document.getElementById('searchSuggestions').innerHTML = '';
       document.getElementById('clientSearchInput').value = client.tradeName;
     }
 
-    // إغلاق الاقتراحات عند النقر خارج الحاوية
     document.addEventListener('click', function(e) {
       const container = document.getElementById('clientSearchContainer');
       if (container && !container.contains(e.target) &&
@@ -1497,12 +1632,11 @@ rate: {
     });
 
     // ============================================================
-    // وظائف التحقق من الرمز
+    // وظائف التحقق من الرمز (الأولي)
     // ============================================================
     function verifyAccessCode() {
       const input = document.getElementById('accessCode').value;
-      const correctCode = "Mm19941994Mm";
-      if (input === correctCode) {
+      if (input === ACCESS_CODE) {
         localStorage.setItem('isVerified', 'true');
         document.getElementById('securityModal').classList.add('hidden');
       } else {
@@ -1570,18 +1704,30 @@ rate: {
         clientSelect.options[0].text = (lang === 'ku') ? "کڕیار هەڵبژێرە..." : "اختر العميل...";
       }
 
-      // تحديث placeholder شريط البحث إذا كان مفتوحاً
       const searchInput = document.getElementById('clientSearchInput');
       if (searchInput) {
         searchInput.placeholder = translations[lang].search_placeholder || 'ابحث...';
       }
       renderDailyProgress();
+      const loginCitySelect = document.getElementById('city');
+     if (loginCitySelect) {
+     const currentVal = loginCitySelect.value;
+     loginCitySelect.innerHTML = `<option value="">${translations[lang].profile_city_placeholder}</option>`;
+     IRAQ_GOVERNORATES.forEach(g => {
+      const opt = document.createElement('option');
+      opt.value = g.value;
+      opt.textContent = lang === 'ku' ? `${g.ku} - ${g.value}` : `${g.ar} - ${g.value}`;
+      if (g.value === currentVal) opt.selected = true;
+      loginCitySelect.appendChild(opt);
+      });
+     }
+
     }
 
     function saveLogin() {
       const lang = localStorage.getItem('appLang') || 'ar';
       const r = document.getElementById('repName').value.trim();
-      const c = document.getElementById('city').value.trim();
+      const c = document.getElementById('city').value;
       if (!r || !c) return alert(translations[lang].alert_fill);
       localStorage.repName = r; localStorage.city = c;
       location.reload();
@@ -1651,39 +1797,39 @@ rate: {
           document.getElementById('reg_clientName').innerHTML = '<option value="">خطأ في الاتصال</option>';
         });
     }
+
     // ─── شريط التقدم اليومي ────────────────────────────────────
-let _dpCount = 0, _dpTarget = 0; // لحفظ القيم عند تغيير اللغة
+    let _dpCount = 0, _dpTarget = 0;
 
-function fetchDailyProgress() {
-  const repName = localStorage.repName;
-  if (!repName) return;
+    function fetchDailyProgress() {
+      const repName = localStorage.repName;
+      if (!repName) return;
 
-  // أيقونة التحميل
-  document.getElementById('dpCount').textContent = '⏳';
-  document.getElementById('dpFill').style.width = '0%';
+      document.getElementById('dpCount').textContent = '⏳';
+      document.getElementById('dpFill').style.width = '0%';
 
-  fetch(`${SCRIPT_URL}?action=getDailyProgress&repName=${encodeURIComponent(repName)}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.status !== 'success') return;
-      _dpCount  = data.count  || 0;
-      _dpTarget = data.target || 0;
-      renderDailyProgress();
-    })
-    .catch(() => {});
-}
+      fetch(`${SCRIPT_URL}?action=getDailyProgress&repName=${encodeURIComponent(repName)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status !== 'success') return;
+          _dpCount  = data.count  || 0;
+          _dpTarget = data.target || 0;
+          renderDailyProgress();
+        })
+        .catch(() => {});
+    }
 
-function renderDailyProgress() {
-  const lang = localStorage.getItem('appLang') || 'ar';
-  document.getElementById('dpLabel').textContent =
-    translations[lang].dp_label || 'زيارات اليوم';
-  document.getElementById('dpCount').textContent =
-    _dpTarget > 0 ? `${_dpCount} / ${_dpTarget}` : _dpCount;
-  const pct = _dpTarget > 0 ? Math.min((_dpCount / _dpTarget) * 100, 100) : 0;
-  document.getElementById('dpFill').style.width = pct + '%';
-  document.getElementById('dailyProgress')
-    .classList.toggle('dp-done', _dpCount >= _dpTarget && _dpTarget > 0);
-}
+    function renderDailyProgress() {
+      const lang = localStorage.getItem('appLang') || 'ar';
+      document.getElementById('dpLabel').textContent =
+        translations[lang].dp_label || 'زيارات اليوم';
+      document.getElementById('dpCount').textContent =
+        _dpTarget > 0 ? `${_dpCount} / ${_dpTarget}` : _dpCount;
+      const pct = _dpTarget > 0 ? Math.min((_dpCount / _dpTarget) * 100, 100) : 0;
+      document.getElementById('dpFill').style.width = pct + '%';
+      document.getElementById('dailyProgress')
+        .classList.toggle('dp-done', _dpCount >= _dpTarget && _dpTarget > 0);
+    }
 
     function filterClientsByDay() {
       const selectedDay = document.getElementById('reg_daySelect').value;
